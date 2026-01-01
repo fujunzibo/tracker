@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>地址集合管理</title>
+    <!-- 引入Vue 3 -->
+    <script src="//unpkg.com/vue@3"></script>
+    <!-- 引入Element Plus -->
+    <link rel="stylesheet" href="https://unpkg.com/element-plus/dist/index.css">
+    <script src="https://unpkg.com/element-plus"></script>
+    <script src="//unpkg.com/element-plus/dist/locale/zh-cn"></script>
+    <!-- 引入Element Plus 图标 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-plus/theme-chalk/dark/css-vars.css">
+    <script src="https://unpkg.com/@element-plus/icons-vue"></script>
+    <!-- 引入axios -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+        .header {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .sql-editor .el-textarea__inner {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace !important;
+            font-size: 14px !important;
+            line-height: 1.6 !important;
+            padding: 12px !important;
+            background-color: #1e1e1e !important;
+            color: #d4d4d4 !important;
+            border: 1px solid #2d2d2d !important;
+            border-radius: 4px !important;
+            resize: vertical !important;
+            tab-size: 4;
+        }
+        .sql-editor .el-textarea__inner:focus {
+            outline: none !important;
+            border-color: #0e639c !important;
+            box-shadow: 0 0 0 2px rgba(14, 99, 156, 0.2) !important;
+        }
+        .sql-editor .el-textarea__inner::placeholder {
+            color: #808080 !important;
+        }
+        /* 滚动条样式 */
+        .sql-editor .el-textarea__inner::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+        .sql-editor .el-textarea__inner::-webkit-scrollbar-track {
+            background: #1e1e1e;
+            border-radius: 4px;
+        }
+        .sql-editor .el-textarea__inner::-webkit-scrollbar-thumb {
+            background: #424242;
+            border-radius: 4px;
+            border: 2px solid #1e1e1e;
+        }
+        .sql-editor .el-textarea__inner::-webkit-scrollbar-thumb:hover {
+            background: #4f4f4f;
+        }
+        /* 选中文本的样式 */
+        .sql-editor .el-textarea__inner::selection {
+            background-color: #264f78 !important;
+            color: #ffffff !important;
+        }
+        .sql-input-container {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+            align-items: flex-start;
+        }
+        .sql-input-container .el-textarea {
+            flex: 1;
+            min-width: 0;
+        }
+        .button-container {
+            padding-top: 4px;
+        }
+        .preview-list {
+            border: 1px solid #dcdfe6;
+            border-radius: 4px;
+            padding: 12px;
+            background-color: #f8f9fa;
+            margin-top: 50px;
+        }
+        .preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            color: #606266;
+        }
+        .preview-content {
+            min-height: 40px;
+        }
+        .preview-content {
+            min-height: 40px;
+            margin-top: 8px;
+        }
+        .table-container {
+            width: 100%;
+            border: 1px solid var(--el-border-color-lighter);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .address-table {
+            --el-table-border-color: var(--el-border-color-lighter);
+        }
+        .address-table .el-tag {
+            margin: 4px 0;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .preview-content::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .preview-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+        .preview-content::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 3px;
+        }
+        .preview-content::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        .el-tag.is-excluded {
+            opacity: 0.6;
+            text-decoration: line-through;
+            cursor: not-allowed;
+        }
+        .el-tag.is-excluded .el-tag__close {
+            display: none;
+        }
+        .address-list {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #dcdfe6;
+            border-radius: 4px;
+            padding: 10px;
+            margin-top: 10px;
+        }
+        .address-tag {
+            margin: 0 8px 8px 0;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div id="app" class="container" v-cloak>
+        <!-- 登录对话框 -->
+        <el-dialog
+            v-model="loginVisible"
+            title="请输入访问令牌"
+            width="400px"
+            :close-on-click-modal="false"
+            :show-close="false">
+            <el-form :model="loginForm">
+                <el-form-item>
+                    <el-input 
+                        v-model="loginForm.token" 
+                        placeholder="请输入令牌"
+                        @keyup.enter="handleLogin"></el-input>
+                </el-form-item>
+            </el-form>
+            <template #footer>
+                <el-button type="primary" @click="handleLogin" :loading="loginForm.loading">
+                    确定
+                </el-button>
+            </template>
+        </el-dialog>
+
+        <div class="header">
+            <h2>地址集合管理</h2>
+            <div>
+                <el-button type="primary" @click="showCreateDialog">创建地址集合</el-button>
+                <el-button type="warning" @click="logout">退出登录</el-button>
+            </div>
+        </div>
+
+        <!-- 地址集合列表 -->
+        <el-table :data="addressSets" style="width: 100%" v-loading="loading">
+            <el-table-column prop="name" label="名称" width="200"></el-table-column>
+            <el-table-column prop="description" label="描述"></el-table-column>
+            <el-table-column label="操作" width="300">
+                <template #default="{ row }">
+                    <el-button type="primary" size="small" @click="viewAddressSet(row)">
+                        查看
+                    </el-button>
+                    <el-button type="warning" size="small" @click="editAddressSet(row)">
+                        编辑
+                    </el-button>
+                    <el-button type="success" size="small" @click="refreshAddressSet(row)">
+                        刷新缓存
+                    </el-button>
+                    <el-button type="danger" size="small" @click="deleteAddressSet(row)">
+                        删除
+                    </el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+
+        <!-- 创建/编辑对话框 -->
+        <el-dialog 
+            v-model="dialogVisible"
+            :title="isEdit ? '编辑地址集合' : '创建地址集合'"
+            width="800px"
+            :close-on-click-modal="false">
+            <el-form :model="form" label-width="100px">
+                <el-form-item label="名称" required>
+                    <el-input v-model="form.name" placeholder="输入名称"></el-input>
+                </el-form-item>
+                <el-form-item label="描述">
+                    <el-input v-model="form.description" type="textarea" :rows="2" placeholder="输入描述"></el-input>
+                </el-form-item>
+                <el-form-item label="SQL查询" required>
+                    <div class="sql-input-container">
+                        <el-input
+                            v-model="form.sqlQuery"
+                            type="textarea"
+                            class="sql-editor"
+                            :rows="8"
+                            placeholder="输入SQL查询语句，必须且只能返回一个名为address的字段"></el-input>
+                        <div class="button-container">
+                            <el-button 
+                                type="primary"
+                                @click="previewAddressList"
+                                :loading="previewLoading"
+                                style="width: 100px;">
+                                查询预览
+                            </el-button>
+                        </div>
+                    </div>
+                    <div class="el-form-item__error" style="margin-top: 8px;">
+                        注意：SQL必须且只能返回一个名为address的字段
+                    </div>
+                </el-form-item>
+                <el-form-item label="匹配地址" v-if="previewAddresses.length > 0 || previewLoading">
+                    <div class="preview-list" v-loading="previewLoading">
+                        <div class="preview-header">
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <span>当前匹配 {{ previewAddresses.length }} 个地址</span>
+                                <el-input
+                                    v-model="addressSearchKeyword"
+                                    placeholder="搜索地址"
+                                    style="width: 200px;"
+                                    clearable>
+                                    <template #prefix>
+                                        <el-icon><Search /></el-icon>
+                                    </template>
+                                </el-input>
+                            </div>
+                            <el-button 
+                                type="primary" 
+                                link 
+                                size="small"
+                                @click="excludeAllAddresses"
+                                v-if="previewAddresses.length > 0">
+                                全部排除
+                            </el-button>
+                        </div>
+                        <div class="preview-content">
+                            <div ref="tableContainer" class="table-container">
+                                <el-table-v2
+                                    :columns="addressColumns"
+                                    :data="filteredAddresses"
+                                    :height="300"
+                                    :width="620"
+                                    :row-height="36"
+                                    fixed
+                                    class="address-table">
+                                    <template #cell="{ column, rowData }">
+                                        <template v-if="column.key === 'address'">
+                                            <el-tag
+                                                :class="{ 'is-excluded': form.excludedAddresses.includes(rowData.address) }"
+                                                closable
+                                                @close="excludeAddress(rowData.address)"
+                                                style="max-width: 600px;">
+                                                {{ rowData.address }}
+                                            </el-tag>
+                                        </template>
+                                    </template>
+                                </el-table-v2>
+                            </div>
+                        </div>
+                    </div>
+                </el-form-item>
+                <el-form-item label="排除地址">
+                    <el-input 
+                        v-model="form.excludeAddressInput"
+                        type="textarea" 
+                        :rows="3"
+                        placeholder="输入要排除的地址，多个地址用换行或逗号分隔"></el-input>
+                </el-form-item>
+                <div v-if="form.excludedAddresses.length > 0" class="address-list">
+                    <el-tag
+                        v-for="addr in form.excludedAddresses"
+                        :key="addr"
+                        class="address-tag"
+                        closable
+                        @close="removeExcludedAddress(addr)">
+                        {{ addr }}
+                    </el-tag>
+                </div>
+            </el-form>
+            <template #footer>
+                <el-button @click="dialogVisible = false" :disabled="submitting">取消</el-button>
+                <el-button type="primary" @click="saveAddressSet" :loading="submitting">
+                    确定
+                </el-button>
+            </template>
+        </el-dialog>
+
+        <!-- 查看对话框 -->
+        <el-dialog
+            v-model="viewDialogVisible"
+            title="查看地址集合"
+            width="800px">
+            <el-descriptions :column="1" border>
+                <el-descriptions-item label="名称">{{ currentSet.name }}</el-descriptions-item>
+                <el-descriptions-item label="描述">{{ currentSet.description }}</el-descriptions-item>
+                <el-descriptions-item label="SQL查询">
+                    <el-input
+                        v-model="currentSet.sqlQuery"
+                        type="textarea"
+                        class="sql-editor"
+                        :rows="8"
+                        readonly></el-input>
+                </el-descriptions-item>
+                <el-descriptions-item label="排除地址">
+                    <div v-if="currentSet.excludedAddresses?.length > 0" class="address-list">
+                        <el-tag
+                            v-for="addr in currentSet.excludedAddresses"
+                            :key="addr"
+                            class="address-tag">
+                            {{ addr }}
+                        </el-tag>
+                    </div>
+                    <span v-else>无</span>
+                </el-descriptions-item>
+                <el-descriptions-item label="地址列表">
+                    <div v-if="currentSet.addresses?.length > 0">
+                        <div style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                            <span>共 {{ currentSet.addresses.length }} 个地址</span>
+                            <el-input
+                                v-model="viewAddressSearchKeyword"
+                                placeholder="搜索地址"
+                                style="width: 200px;"
+                                clearable>
+                                <template #prefix>
+                                    <el-icon><Search /></el-icon>
+                                </template>
+                            </el-input>
+                        </div>
+                        <div class="table-container">
+                            <el-table-v2
+                                :columns="addressColumns"
+                                :data="filteredViewAddresses"
+                                :width="620"
+                                :height="300"
+                                :row-height="36"
+                                fixed
+                                class="address-table">
+                                <template #cell="{ column, rowData }">
+                                    <template v-if="column.key === 'address'">
+                                        <el-tag style="max-width: 600px;">{{ rowData.address }}</el-tag>
+                                    </template>
+                                </template>
+                            </el-table-v2>
+                        </div>
+                    </div>
+                    <span v-else>无</span>
+                </el-descriptions-item>
+            </el-descriptions>
+        </el-dialog>
+    </div>
+
+    <script>
+        const { createApp, ref, computed, nextTick, watch, onMounted } = Vue
+        const app = createApp({
+            setup() {
+                const addressSets = ref([])
+                const loading = ref(false)
+                const dialogVisible = ref(false)
+                const viewDialogVisible = ref(false)
+                const submitting = ref(false)
+                const loginVisible = ref(true)
+                const isEdit = ref(false)
+                const form = ref({
+                    id: 0,
+                    name: '',
+                    description: '',
+                    sqlQuery: '',
+                    excludeAddressInput: '',
+                    excludedAddresses: []
+                })
+                const previewAddresses = ref([])
+                const previewLoading = ref(false)
+                const addressSearchKeyword = ref('')
+                const viewAddressSearchKeyword = ref('')
+
+                // 表格列定义
+                const addressColumns = [
+                    {
+                        key: 'address',
+                        title: '地址',
+                        width: 650,
+                        dataKey: 'address'
+                    }
+                ]
+
+
+                // 过滤后的地址列表（编辑对话框）
+                const filteredAddresses = computed(() => {
+                    const keyword = addressSearchKeyword.value.toLowerCase().trim()
+                    let addresses
+                    if (!keyword)
+                      addresses = previewAddresses.value
+                    else
+                      addresses = addresses.filter(addr => 
+                        addr.toLowerCase().includes(keyword)
+                      )
+                    return addresses.map(addr => { return { address: addr } })
+                })
+
+                // 过滤后的地址列表（查看对话框）
+                const filteredViewAddresses = computed(() => {
+                    const keyword = viewAddressSearchKeyword.value.toLowerCase().trim()
+                    let addresses
+                    if (!keyword)
+                      addresses = currentSet.value.addresses || []
+                    else
+                      addresses = addresses.filter(addr => 
+                        addr.toLowerCase().includes(keyword)
+                      )
+                    return addresses.map(addr => { return { address: addr } })
+                })
+
+                const loginForm = ref({
+                    token: '',
+                    loading: false
+                })
+
+                const currentSet = ref({})
+
+                // 检查是否已登录
+                const checkAuth = () => {
+                    let token = localStorage.getItem('token')
+                    if (!token) {
+                        // 从url参数中获取token
+                        const urlParams = new URLSearchParams(window.location.search)
+                        token = urlParams.get('t')
+                        if (token) localStorage.setItem('token', token)
+                    }
+                    if (token) {
+                        loginVisible.value = false
+                        axios.defaults.headers.common['X-Secret'] = token
+                        return true
+                    }
+                    loginVisible.value = true
+                    return false
+                }
+
+                // 处理登录
+                const handleLogin = async () => {
+                    if (!loginForm.value.token.trim()) {
+                        ElementPlus.ElMessage.warning('请输入令牌')
+                        return
+                    }
+
+                    loginForm.value.loading = true
+                    try {
+                        // 测试token是否有效
+                        const token = loginForm.value.token.trim()
+                        axios.defaults.headers.common['X-Secret'] = token
+                        await axios.get('/api/test')
+                        
+                        // 保存token并关闭登录框
+                        localStorage.setItem('token', token)
+                        loginVisible.value = false
+                        ElementPlus.ElMessage.success('登录成功')
+                        
+                        // 加载数据
+                        fetchAddressSets()
+                    } catch (error) {
+                        ElementPlus.ElMessage.error('令牌无效，请重试')
+                        axios.defaults.headers.common['X-Secret'] = ''
+                    } finally {
+                        loginForm.value.loading = false
+                    }
+                }
+
+                // 退出登录
+                const logout = () => {
+                    localStorage.removeItem('token')
+                    axios.defaults.headers.common['X-Secret'] = ''
+                    loginVisible.value = true
+                    addressSets.value = []
+                }
+
+                // 获取地址集合列表
+                const fetchAddressSets = async () => {
+                    loading.value = true
+                    try {
+                        const response = await axios.get('/api/address-set/list')
+                        addressSets.value = response.data
+                    } catch (error) {
+                        ElementPlus.ElMessage.error('获取地址集合列表失败：' + error.message)
+                    } finally {
+                        loading.value = false
+                    }
+                }
+
+                // 显示创建对话框
+                const showCreateDialog = () => {
+                    isEdit.value = false
+                    form.value = {
+                        id: 0,
+                        name: '',
+                        description: '',
+                        sqlQuery: '',
+                        excludeAddressInput: '',
+                        excludedAddresses: []
+                    }
+                    previewAddresses.value = []
+                    dialogVisible.value = true
+                }
+
+                // 编辑地址集合
+                const editAddressSet = async (row) => {
+                    isEdit.value = true
+                    form.value = {
+                        id: row.id,
+                        name: row.name,
+                        description: row.description,
+                        sqlQuery: row.sqlQuery,
+                        excludeAddressInput: '',
+                        excludedAddresses: [...row.excludedAddresses]
+                    }
+                    dialogVisible.value = true
+
+                    // 加载预览数据
+                    previewLoading.value = true
+                    try {
+                        const response = await axios.post('/api/address-set/preview', { sqlQuery: row.sqlQuery })
+                        previewAddresses.value = response.data
+                    } catch (error) {
+                        previewAddresses.value = []
+                        if (error.response?.status !== 400) {
+                            ElementPlus.ElMessage.error('预览失败：' + error.message)
+                        }
+                    } finally {
+                        previewLoading.value = false
+                    }
+                }
+
+                // 查看地址集合
+                const viewAddressSet = async (row) => {
+                    try {
+                        const response = await axios.get(`/api/address-set/get?id=${row.id}`)
+                        currentSet.value = response.data
+                        viewDialogVisible.value = true
+                    } catch (error) {
+                        ElementPlus.ElMessage.error('获取地址集合详情失败：' + error.message)
+                    }
+                }
+
+                // 删除地址集合
+                const deleteAddressSet = async (row) => {
+                    try {
+                        await ElementPlus.ElMessageBox.confirm(
+                            '确定要删除这个地址集合吗？',
+                            '提示',
+                            {
+                                confirmButtonText: '确定',
+                                cancelButtonText: '取消',
+                                type: 'warning',
+                            }
+                        )
+                        
+                        await axios.get(`/api/address-set/delete?id=${row.id}`)
+                        ElementPlus.ElMessage.success('删除成功')
+                        fetchAddressSets()
+                    } catch (error) {
+                        if (error !== 'cancel') {
+                            ElementPlus.ElMessage.error('删除失败：' + error.message)
+                        }
+                    }
+                }
+
+                // 刷新地址集合缓存
+                const refreshAddressSet = async (row) => {
+                    try {
+                        await axios.get(`/api/address-set/refresh?id=${row.id}`)
+                        ElementPlus.ElMessage.success('刷新成功')
+                        if (viewDialogVisible.value && currentSet.value.id === row.id) {
+                            viewAddressSet(row)
+                        }
+                    } catch (error) {
+                        ElementPlus.ElMessage.error('刷新失败：' + error.message)
+                    }
+                }
+
+                // 保存地址集合
+                const saveAddressSet = async () => {
+                    if (!form.value.name.trim()) {
+                        ElementPlus.ElMessage.warning('请输入名称')
+                        return
+                    }
+
+                    if (!form.value.sqlQuery.trim()) {
+                        ElementPlus.ElMessage.warning('请输入SQL查询')
+                        return
+                    }
+
+                    // 处理新输入的排除地址
+                    if (form.value.excludeAddressInput.trim()) {
+                        const newAddresses = form.value.excludeAddressInput
+                            .split(/[\n,]+/)
+                            .map(addr => addr.trim())
+                            .filter(addr => addr && /^0x[a-fA-F0-9]{40}$/.test(addr))
+                        form.value.excludedAddresses.push(...newAddresses)
+                        form.value.excludedAddresses = [...new Set(form.value.excludedAddresses)]
+                        form.value.excludeAddressInput = ''
+                    }
+
+                    const data = {
+                        id: form.value.id,
+                        name: form.value.name.trim(),
+                        description: form.value.description.trim(),
+                        sqlQuery: form.value.sqlQuery.trim(),
+                        excludedAddresses: form.value.excludedAddresses
+                    }
+
+                    submitting.value = true
+                    try {
+                        const url = isEdit.value ? '/api/address-set/update' : '/api/address-set/create'
+                        const response = await axios.post(url, data)
+                        ElementPlus.ElMessage.success(isEdit.value ? '更新成功' : '创建成功')
+                        dialogVisible.value = false
+                        fetchAddressSets()
+                    } catch (error) {
+                        ElementPlus.ElMessage.error((isEdit.value ? '更新' : '创建') + '失败：' + error.message)
+                    } finally {
+                        submitting.value = false
+                    }
+                }
+
+                // 移除排除地址
+                const removeExcludedAddress = (addr) => {
+                    const index = form.value.excludedAddresses.indexOf(addr)
+                    if (index > -1) {
+                        form.value.excludedAddresses.splice(index, 1)
+                    }
+                }
+
+                // 预览地址列表
+                const previewAddressList = async () => {
+                    const sql = form.value.sqlQuery.trim()
+                    if (!sql) {
+                        ElementPlus.ElMessage.warning('请输入SQL查询')
+                        return
+                    }
+
+                    previewLoading.value = true
+                    try {
+                        const response = await axios.post('/api/address-set/preview', { sqlQuery: sql })
+                        previewAddresses.value = response.data
+                    } catch (error) {
+                        previewAddresses.value = []
+                        if (error.response?.status !== 400) {
+                            ElementPlus.ElMessage.error('预览失败：' + error.message)
+                        }
+                    } finally {
+                        previewLoading.value = false
+                    }
+                }
+
+                // 排除单个地址
+                const excludeAddress = (addr) => {
+                    if (!form.value.excludedAddresses.includes(addr)) {
+                        form.value.excludedAddresses.push(addr)
+                        ElementPlus.ElMessage.success('已添加到排除列表')
+                    }
+                }
+
+                // 排除所有地址
+                const excludeAllAddresses = () => {
+                    const newAddresses = previewAddresses.value.filter(
+                        addr => !form.value.excludedAddresses.includes(addr)
+                    )
+                    if (newAddresses.length > 0) {
+                        form.value.excludedAddresses.push(...newAddresses)
+                        ElementPlus.ElMessage.success(`已添加 ${newAddresses.length} 个地址到排除列表`)
+                    }
+                }
+
+                // 初始化
+                onMounted(() => {
+                    if (checkAuth()) {
+                        fetchAddressSets()
+                    }
+                })
+
+                return {
+                    addressSets,
+                    loading,
+                    dialogVisible,
+                    viewDialogVisible,
+                    submitting,
+                    loginVisible,
+                    loginForm,
+                    form,
+                    currentSet,
+                    isEdit,
+                    showCreateDialog,
+                    editAddressSet,
+                    viewAddressSet,
+                    deleteAddressSet,
+                    refreshAddressSet,
+                    saveAddressSet,
+                    removeExcludedAddress,
+                    handleLogin,
+                    logout,
+                    previewAddresses,
+                    previewLoading,
+                    previewAddressList,
+                    excludeAddress,
+                    excludeAllAddresses,
+                    addressSearchKeyword,
+                    viewAddressSearchKeyword,
+                    filteredAddresses,
+                    filteredViewAddresses,
+                    addressColumns
+                }
+            }
+        })
+
+        // 使用Element Plus
+        app.use(ElementPlus, {
+            locale: ElementPlusLocaleZhCn
+        })
+        app.mount('#app')
+    </script>
+</body>
+</html>

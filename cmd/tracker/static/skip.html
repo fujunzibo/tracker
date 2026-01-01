@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>排除地址管理</title>
+    <!-- 引入Vue 3 -->
+    <script src="//unpkg.com/vue@3"></script>
+    <!-- 引入Element Plus -->
+    <link rel="stylesheet" href="https://unpkg.com/element-plus/dist/index.css">
+    <script src="https://unpkg.com/element-plus"></script>
+    <script src="//unpkg.com/element-plus/dist/locale/zh-cn"></script>
+    <!-- 引入Element Plus 图标 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-plus/theme-chalk/dark/css-vars.css">
+    <script src="https://unpkg.com/@element-plus/icons-vue"></script>
+    <!-- 引入axios -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+        .header {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .address-type {
+            margin-left: 5px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        .manual {
+            background-color: #e6f4ff;
+            color: #1677ff;
+        }
+        .auto {
+            background-color: #f6ffed;
+            color: #52c41a;
+        }
+    </style>
+</head>
+<body>
+    <div id="app" class="container" v-cloak>
+        <!-- 登录对话框 -->
+        <el-dialog
+            v-model="loginVisible"
+            title="请输入访问令牌"
+            width="400px"
+            :close-on-click-modal="false"
+            :show-close="false">
+            <el-form :model="loginForm">
+                <el-form-item>
+                    <el-input 
+                        v-model="loginForm.token" 
+                        placeholder="请输入令牌"
+                        @keyup.enter="handleLogin" />
+                </el-form-item>
+            </el-form>
+            <template #footer>
+                <el-button type="primary" @click="handleLogin" :loading="loginForm.loading">
+                    确定
+                </el-button>
+            </template>
+        </el-dialog>
+
+        <div class="header">
+            <h2>排除地址管理</h2>
+            <div>
+                <el-button type="primary" @click="showAddDialog">添加排除地址</el-button>
+                <el-button type="success" @click="refreshCache" :loading="refreshing">
+                    {{ refreshing ? '刷新中...' : '刷新数据缓存' }}
+                </el-button>
+                <el-button type="warning" @click="logout">退出登录</el-button>
+            </div>
+        </div>
+
+        <!-- 搜索和筛选 -->
+        <div class="search-bar" style="margin-bottom: 20px;">
+            <el-row :gutter="20">
+                <el-col :span="8">
+                    <el-input
+                        v-model="searchQuery"
+                        placeholder="输入地址搜索"
+                        clearable
+                        @clear="handleSearch"
+                        @keyup.enter="handleSearch">
+                        <template #append>
+                            <el-button @click="handleSearch">
+                                搜索
+                            </el-button>
+                        </template>
+                    </el-input>
+                </el-col>
+                <el-col :span="6">
+                    <el-input
+                        v-model="remarkSearchQuery"
+                        placeholder="输入备注搜索"
+                        clearable
+                        @clear="handleSearch"
+                        @keyup.enter="handleSearch">
+                    </el-input>
+                </el-col>
+                <el-col :span="6">
+                    <el-select
+                        v-model="filterType"
+                        placeholder="选择忽略类型"
+                        clearable
+                        style="width: 100%"
+                        @change="handleSearch">
+                        <el-option label="全部" value=""></el-option>
+                        <el-option label="人工忽略" :value="0"></el-option>
+                        <el-option label="自动忽略" :value="1"></el-option>
+                    </el-select>
+                </el-col>
+            </el-row>
+        </div>
+
+        <!-- 地址列表 -->
+        <el-table 
+            :data="addresses" 
+            v-loading="loading"
+            @selection-change="handleSelectionChange">
+            <el-table-column type="selection" :selectable="row => row.type === 0" width="55"></el-table-column>
+            <el-table-column prop="address" label="地址">
+                <template #default="{ row }">
+                    {{ row.address }}
+                    <span :class="['address-type', row.type === 0 ? 'manual' : 'auto']">
+                        {{ row.type === 0 ? '人工忽略' : '自动忽略' }}
+                    </span>
+                </template>
+            </el-table-column>
+            <el-table-column prop="remark" label="备注" min-width="150">
+                <template #default="{ row }">
+                    <div style="display: flex; align-items: center;">
+                        <span v-if="!row.isEditingRemark" style="margin-right: 8px;">{{ row.remark }}</span>
+                        <el-input
+                            v-else
+                            v-model="row.editingRemark"
+                            size="small"
+                            style="margin-right: 8px;"
+                            @keyup.enter="updateRemark(row)"
+                            @keyup.esc="cancelEditRemark(row)">
+                        </el-input>
+                        <template v-if="row.type === 0">
+                            <el-button
+                                v-if="!row.isEditingRemark"
+                                type="primary"
+                                size="small"
+                                link
+                                @click="startEditRemark(row)">
+                                编辑
+                            </el-button>
+                            <template v-else>
+                                <el-button
+                                    type="success"
+                                    size="small"
+                                    link
+                                    @click="updateRemark(row)">
+                                    保存
+                                </el-button>
+                                <el-button
+                                    type="info"
+                                    size="small"
+                                    link
+                                    @click="cancelEditRemark(row)">
+                                    取消
+                                </el-button>
+                            </template>
+                        </template>
+                    </div>
+                </template>
+            </el-table-column>
+            <el-table-column label="操作" width="150">
+                <template #default="{ row }">
+                    <el-button 
+                        type="danger" 
+                        size="small" 
+                        :disabled="row.type === 1"
+                        @click="deleteAddress([row])">
+                        删除
+                    </el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+
+        <!-- 批量操作工具栏 -->
+        <div class="batch-toolbar" style="margin: 20px 0;" v-if="selectedAddresses.length > 0">
+            <el-button type="danger" @click="deleteAddress(selectedAddresses)">
+                批量删除 ({{ selectedAddresses.length }})
+            </el-button>
+        </div>
+
+        <!-- 分页 -->
+        <div class="pagination-container" style="margin-top: 20px; text-align: right;">
+            <el-pagination
+                v-model:current-page="pagination.page"
+                v-model:page-size="pagination.pageSize"
+                :page-sizes="[10, 20, 50, 100]"
+                :total="pagination.total"
+                layout="total, sizes, prev, pager, next"
+                @size-change="handleSizeChange"
+                @current-change="handleCurrentChange"
+            />
+        </div>
+
+        <!-- 添加地址对话框 -->
+        <el-dialog 
+            v-model="dialogVisible" 
+            title="添加排除地址"
+            width="500px"
+            :close-on-click-modal="false">
+            <el-form :model="form" label-width="100px">
+                <el-form-item label="地址">
+                    <el-input 
+                        v-model="form.address" 
+                        type="textarea" 
+                        :rows="8"
+                        placeholder="请输入或粘贴包含地址的文本，系统会自动提取以0x开头的地址。
+
+示例文本：
+0xcac19662ec88d23fa1c81ac0e8570b0cf2ff26b3
+0xecb63caa47c7c4e77f60f1ce858cf28dc2b82b00" />
+                </el-form-item>
+                <div class="address-preview" v-if="parsedAddresses.length > 0" style="margin-bottom: 20px;">
+                    <div style="margin-bottom: 10px; color: #666;">
+                        已识别 {{ parsedAddresses.length }} 个地址：
+                    </div>
+                    <el-tag 
+                        v-for="addr in parsedAddresses.slice(0, 5)" 
+                        :key="addr" 
+                        style="margin-right: 8px; margin-bottom: 8px;">
+                        {{ addr }}
+                    </el-tag>
+                    <el-tag v-if="parsedAddresses.length > 5" type="info">
+                        等 {{ parsedAddresses.length }} 个地址
+                    </el-tag>
+                </div>
+                <el-form-item label="备注">
+                    <el-input v-model="form.remark" placeholder="输入备注信息" />
+                </el-form-item>
+            </el-form>
+            <template #footer>
+                <el-button @click="dialogVisible = false">取消</el-button>
+                <el-button type="primary" @click="addAddress" :loading="submitting">
+                    确定
+                </el-button>
+            </template>
+        </el-dialog>
+    </div>
+
+    <script>
+        const { createApp, ref, computed } = Vue
+        const app = createApp({
+            setup() {
+                const addresses = ref([])
+                const loading = ref(false)
+                const dialogVisible = ref(false)
+                const submitting = ref(false)
+                const selectedAddresses = ref([])
+                const loginVisible = ref(true)
+                const refreshing = ref(false)
+                const form = ref({
+                    address: '',
+                    remark: ''
+                })
+                const loginForm = ref({
+                    token: '',
+                    loading: false
+                })
+                const pagination = ref({
+                    page: 1,
+                    pageSize: 10,
+                    total: 0
+                })
+                const searchQuery = ref('')
+                const remarkSearchQuery = ref('')
+                const filterType = ref('')
+
+                // 检查是否已登录
+                const checkAuth = () => {
+                    let token = localStorage.getItem('token')
+                    if (!token) {
+                        // 从url参数中获取token
+                        const urlParams = new URLSearchParams(window.location.search)
+                        token = urlParams.get('t')
+                        if (token)localStorage.setItem('token', token)
+                    }
+                    if (token) {
+                        loginVisible.value = false
+                        axios.defaults.headers.common['X-Secret'] = token
+                        return true
+                    }
+                    loginVisible.value = true
+                    return false
+                }
+
+                // 处理登录
+                const handleLogin = async () => {
+                    if (!loginForm.value.token.trim()) {
+                        ElementPlus.ElMessage.warning('请输入令牌')
+                        return
+                    }
+
+                    loginForm.value.loading = true
+                    try {
+                        // 测试token是否有效
+                        const token = loginForm.value.token.trim()
+                        axios.defaults.headers.common['X-Secret'] = token
+                        await axios.get('/api/test')
+                        
+                        // 保存token并关闭登录框
+                        localStorage.setItem('token', token)
+                        loginVisible.value = false
+                        ElementPlus.ElMessage.success('登录成功')
+                        
+                        // 加载数据
+                        fetchAddresses()
+                    } catch (error) {
+                        ElementPlus.ElMessage.error('令牌无效，请重试')
+                        axios.defaults.headers.common['X-Secret'] = ''
+                    } finally {
+                        loginForm.value.loading = false
+                    }
+                }
+
+                // 退出登录
+                const logout = () => {
+                    localStorage.removeItem('token')
+                    axios.defaults.headers.common['X-Secret'] = ''
+                    loginVisible.value = true
+                    addresses.value = []
+                    selectedAddresses.value = []
+                    pagination.value = {
+                        page: 1,
+                        pageSize: 10,
+                        total: 0
+                    }
+                }
+
+                // 初始化检查登录状态
+                checkAuth()
+
+                // 解析地址文本
+                const parseAddresses = (text) => {
+                    if (!text) return []
+                    
+                    // 使用正则表达式直接匹配所有0x开头的40位十六进制地址
+                    const matches = text.match(/0x[a-fA-F0-9]{40}/g) || []
+                    
+                    // 去重并返回
+                    return [...new Set(matches)]
+                }
+
+                // 计算属性：已解析的地址列表
+                const parsedAddresses = computed(() => {
+                    return parseAddresses(form.value.address)
+                })
+
+                // 获取地址列表
+                const fetchAddresses = async () => {
+                    loading.value = true
+                    try {
+                        const params = new URLSearchParams({
+                            page: pagination.value.page,
+                            pageSize: pagination.value.pageSize
+                        })
+                        
+                        // 添加搜索参数
+                        if (searchQuery.value.trim()) {
+                            params.append('search', searchQuery.value.trim())
+                        }
+
+                        // 添加备注搜索参数
+                        if (remarkSearchQuery.value.trim()) {
+                            params.append('remarkSearch', remarkSearchQuery.value.trim())
+                        }
+                        
+                        // 添加类型筛选
+                        if (filterType.value !== '') {
+                            params.append('type', filterType.value)
+                        }
+
+                        const response = await axios.get(`/api/skip/list?${params.toString()}`)
+                        addresses.value = response.data.items
+                        pagination.value.total = response.data.total
+                    } catch (error) {
+                        ElementPlus.ElMessage.error('获取地址列表失败：' + error.message)
+                    } finally {
+                        loading.value = false
+                    }
+                }
+
+                // 处理搜索和筛选
+                const handleSearch = () => {
+                    pagination.value.page = 1
+                    fetchAddresses()
+                }
+
+                // 添加地址
+                const addAddress = async () => {
+                    const addresses = parsedAddresses.value
+                    if (addresses.length === 0) {
+                        ElementPlus.ElMessage.warning('请输入有效的地址')
+                        return
+                    }
+
+                    submitting.value = true
+                    try {
+                        const params = new URLSearchParams()
+                        params.append('address', addresses.join(','))
+                        if (form.value.remark) {
+                            params.append('remark', form.value.remark)
+                        }
+                        await axios.get(`/api/skip/add?${params.toString()}`)
+                        dialogVisible.value = false
+                        form.value = { address: '', remark: '' }
+                        fetchAddresses()
+                        ElementPlus.ElMessage.success(`成功添加 ${addresses.length} 个地址`)
+                    } catch (error) {
+                        ElementPlus.ElMessage.error('添加失败：' + error.message)
+                    } finally {
+                        submitting.value = false
+                    }
+                }
+
+                // 删除地址
+                const deleteAddress = async (rows) => {
+                    if (!Array.isArray(rows)) rows = [rows]
+                    const addresses = rows.map(row => row.address)
+                    
+                    try {
+                        await ElementPlus.ElMessageBox.confirm(
+                            `确定要删除这 ${addresses.length} 个地址吗？`,
+                            '提示',
+                            {
+                                confirmButtonText: '确定',
+                                cancelButtonText: '取消',
+                                type: 'warning',
+                            }
+                        )
+                        
+                        const params = new URLSearchParams()
+                        params.append('address', addresses.join(','))
+                        await axios.get(`/api/skip/delete?${params.toString()}`)
+                        selectedAddresses.value = []
+                        fetchAddresses()
+                        ElementPlus.ElMessage.success(`成功删除 ${addresses.length} 个地址`)
+                    } catch (error) {
+                        if (error !== 'cancel') {
+                            ElementPlus.ElMessage.error('删除失败：' + error.message)
+                        }
+                    }
+                }
+
+                // 处理表格选择变化
+                const handleSelectionChange = (selection) => {
+                    selectedAddresses.value = selection
+                }
+
+                // 开始编辑备注
+                const startEditRemark = (row) => {
+                    row.isEditingRemark = true
+                    row.editingRemark = row.remark || ''
+                }
+
+                // 取消编辑备注
+                const cancelEditRemark = (row) => {
+                    row.isEditingRemark = false
+                    row.editingRemark = ''
+                }
+
+                // 更新备注
+                const updateRemark = async (row) => {
+                    if (!row.isEditingRemark) return
+
+                    try {
+                        const params = new URLSearchParams({
+                            address: row.address,
+                            remark: row.editingRemark || ''
+                        })
+                        await axios.get(`/api/skip/remark?${params.toString()}`)
+                        row.remark = row.editingRemark
+                        row.isEditingRemark = false
+                        ElementPlus.ElMessage.success('更新备注成功')
+                    } catch (error) {
+                        ElementPlus.ElMessage.error('更新备注失败：' + error.message)
+                    }
+                }
+
+                // 刷新缓存
+                const refreshCache = async () => {
+                    if (refreshing.value) return
+                    
+                    refreshing.value = true
+                    try {
+                        await ElementPlus.ElMessageBox.confirm(
+                            '刷新数据缓存可能需要较长时间，是否继续？',
+                            '提示',
+                            {
+                                confirmButtonText: '继续',
+                                cancelButtonText: '取消',
+                                type: 'warning',
+                            }
+                        )
+
+                        const loadingInstance = ElementPlus.ElLoading.service({
+                            lock: true,
+                            text: '正在刷新数据缓存，请稍候...',
+                            background: 'rgba(0, 0, 0, 0.7)'
+                        })
+
+                        try {
+                            await axios.get('/api/data/refresh')
+                            ElementPlus.ElMessage.success('刷新成功')
+                            fetchAddresses()
+                        } finally {
+                            loadingInstance.close()
+                        }
+                    } catch (error) {
+                        if (error !== 'cancel') {
+                            ElementPlus.ElMessage.error('刷新失败：' + error.message)
+                        }
+                    } finally {
+                        refreshing.value = false
+                    }
+                }
+
+                // 显示添加对话框
+                const showAddDialog = () => {
+                    form.value = { address: '', remark: '' }
+                    dialogVisible.value = true
+                }
+
+                // 处理页码变化
+                const handleCurrentChange = (page) => {
+                    pagination.value.page = page
+                    fetchAddresses()
+                }
+
+                // 处理每页条数变化
+                const handleSizeChange = (size) => {
+                    pagination.value.pageSize = size
+                    pagination.value.page = 1
+                    fetchAddresses()
+                }
+
+                // 初始化时获取地址列表
+                fetchAddresses()
+
+                return {
+                    addresses,
+                    loading,
+                    dialogVisible,
+                    submitting,
+                    form,
+                    pagination,
+                    selectedAddresses,
+                    parsedAddresses,
+                    loginVisible,
+                    loginForm,
+                    searchQuery,
+                    remarkSearchQuery,
+                    filterType,
+                    refreshing,
+                    showAddDialog,
+                    addAddress,
+                    deleteAddress,
+                    refreshCache,
+                    handleCurrentChange,
+                    handleSizeChange,
+                    handleSelectionChange,
+                    handleSearch,
+                    handleLogin,
+                    logout,
+                    startEditRemark,
+                    cancelEditRemark,
+                    updateRemark
+                }
+            }
+        })
+
+        // 配置axios错误拦截器
+        axios.interceptors.response.use(
+            response => response,
+            error => {
+                if (error.response && error.response.status === 401) {
+                    // 如果返回401，说明token无效，需要重新登录
+                    localStorage.removeItem('token')
+                    app.config.globalProperties.loginVisible = true
+                    ElementPlus.ElMessage.error('登录已过期，请重新登录')
+                }
+                return Promise.reject(error)
+            }
+        )
+
+        // 使用Element Plus
+        app.use(ElementPlus, {
+            locale: ElementPlusLocaleZhCn
+        })
+        app.mount('#app')
+    </script>
+</body>
+</html>
