@@ -47,6 +47,11 @@ func CreateUserQysyTable() error {
 
 // SaveUserQysy 保存或更新用户权益损益数据
 func SaveUserQysy(data *UserQysy) error {
+	// 用户权益为0的数据不写入数据库
+	if data.UserEquity == 0 {
+		return nil
+	}
+	
 	query := fmt.Sprintf(`
 		INSERT INTO %s (address, user_equity, total_loss, profit_loss_ratio, fee_ratio, avg_trade_count_7d, updated_at)
 		VALUES ($1, $2, $3, $4, $5, $6, $7)
@@ -83,6 +88,18 @@ func BatchSaveUserQysy(dataList []*UserQysy) error {
 		return nil
 	}
 	
+	// 过滤掉用户权益为0的数据
+	var validDataList []*UserQysy
+	for _, data := range dataList {
+		if data.UserEquity != 0 {
+			validDataList = append(validDataList, data)
+		}
+	}
+	
+	if len(validDataList) == 0 {
+		return nil
+	}
+	
 	query := fmt.Sprintf(`
 		INSERT INTO %s (address, user_equity, total_loss, profit_loss_ratio, fee_ratio, avg_trade_count_7d, updated_at)
 		VALUES ($1, $2, $3, $4, $5, $6, $7)
@@ -96,7 +113,7 @@ func BatchSaveUserQysy(dataList []*UserQysy) error {
 	`, TableUserQysy)
 	
 	batch := &pgx.Batch{}
-	for _, data := range dataList {
+	for _, data := range validDataList {
 		batch.Queue(query,
 			data.Address,
 			data.UserEquity,
@@ -114,10 +131,13 @@ func BatchSaveUserQysy(dataList []*UserQysy) error {
 	batchResults := db.SendBatch(ctx, batch)
 	defer batchResults.Close()
 	
-	for i := 0; i < len(dataList); i++ {
+	for i := 0; i < len(validDataList); i++ {
 		_, err := batchResults.Exec()
 		if err != nil {
-			return fmt.Errorf("批量保存失败 [%d]: %w", i, err)
+			// 输出详细错误信息，包括具体的数据值
+			data := validDataList[i]
+			return fmt.Errorf("批量保存失败 [%d] address=%s user_equity=%f total_loss=%f profit_loss_ratio=%f fee_ratio=%f avg_trade_count_7d=%f: %w", 
+				i, data.Address, data.UserEquity, data.TotalLoss, data.ProfitLossRatio, data.FeeRatio, data.AvgTradeCount7d, err)
 		}
 	}
 	return nil
@@ -151,4 +171,3 @@ func GetAllAddresses() ([]string, error) {
 	
 	return addresses, nil
 }
-
