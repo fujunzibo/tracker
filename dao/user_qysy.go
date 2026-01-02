@@ -47,8 +47,8 @@ func CreateUserQysyTable() error {
 
 // SaveUserQysy 保存或更新用户权益损益数据
 func SaveUserQysy(data *UserQysy) error {
-	// 用户权益为0的数据不写入数据库
-	if data.UserEquity == 0 {
+	// 只有当用户权益为0且用户损益(累计亏损)也为0时，才不写入数据库
+	if data.UserEquity == 0 && data.TotalLoss == 0 {
 		return nil
 	}
 	
@@ -88,10 +88,10 @@ func BatchSaveUserQysy(dataList []*UserQysy) error {
 		return nil
 	}
 	
-	// 过滤掉用户权益为0的数据
+	// 过滤掉用户权益为0且用户损益(累计亏损)也为0的数据
 	var validDataList []*UserQysy
 	for _, data := range dataList {
-		if data.UserEquity != 0 {
+		if !(data.UserEquity == 0 && data.TotalLoss == 0) {
 			validDataList = append(validDataList, data)
 		}
 	}

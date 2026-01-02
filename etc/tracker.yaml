@@ -3,7 +3,7 @@
 
 # 数据库连接字符串 (PostgreSQL)
 # 格式: postgres://用户名:密码@主机:端口/数据库名?sslmode=disable
-dsn: postgres://postgres:UpSQbG5uXCOmA4nk6z4j@localhost:15432/tracker?sslmode=disable
+dsn: postgres://postgres:UpSQbG5uXCOmA4nk6z4j@localhost:15433/tracker?sslmode=disable
 
 # HTTP 服务器配置
 server:

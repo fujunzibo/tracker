@@ -36249,3 +36249,1064 @@ time=2026-01-02T11:04:37.885+08:00 level=INFO source=D:/collect/cmd/tracker/comm
 time=2026-01-02T11:04:42.938+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=49 processed=12300 success=12300 errors=0
 time=2026-01-02T11:04:47.939+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=22 processed=12400 success=12400 errors=0
 time=2026-01-02T11:04:52.934+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=40 processed=12500 success=12500 errors=0
+time=2026-01-02T11:18:58.555+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:74 msg=表创建/检查完成
+time=2026-01-02T11:19:26.957+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:83 msg=获取到地址列表 count=178508
+time=2026-01-02T11:19:27.503+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:200 msg=查询结果 worker=4 address=0x000000000005dfe874f01071d0e05f99178a5cfc user_equity=3331.67994 total_loss=979.40204997
+time=2026-01-02T11:19:27.586+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:200 msg=查询结果 worker=6 address=0x000000000056f99d36b6f2e0c51fd41496bbacb8 user_equity=0 total_loss=0
+time=2026-01-02T11:19:27.598+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:200 msg=查询结果 worker=7 address=0x0000000000d14562212733c7da3923dfe2613603 user_equity=32.612293 total_loss=0
+time=2026-01-02T11:19:27.675+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:200 msg=查询结果 worker=41 address=0x00062d6b30f46d102a9a57f30e52736529c8f4e5 user_equity=0.453712 total_loss=20.63720199
+time=2026-01-02T11:19:27.695+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:200 msg=查询结果 worker=46 address=0x00064a7b96ccc192c2bf0531bfa531faa778d419 user_equity=0.041107 total_loss=0
+time=2026-01-02T11:19:31.306+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=50 total_skipped=19 progress=0.028009949133932375
+time=2026-01-02T11:19:32.113+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=94 processed=100 success=100 errors=0
+time=2026-01-02T11:19:37.126+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=94 processed=200 success=200 errors=0
+time=2026-01-02T11:19:40.991+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=100 total_skipped=169 progress=0.05601989826786475
+time=2026-01-02T11:19:42.206+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=91 processed=300 success=300 errors=0
+time=2026-01-02T11:19:47.124+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=7 processed=400 success=400 errors=0
+time=2026-01-02T11:19:52.121+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=57 processed=500 success=500 errors=0
+time=2026-01-02T11:19:57.092+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=8 processed=600 success=600 errors=0
+time=2026-01-02T11:20:06.078+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=65 processed=700 success=700 errors=0
+time=2026-01-02T11:20:08.398+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=150 total_skipped=544 progress=0.08402984740179711
+time=2026-01-02T11:20:08.607+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=75 processed=800 success=800 errors=0
+time=2026-01-02T11:20:11.233+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=200 total_skipped=671 progress=0.1120397965357295
+time=2026-01-02T11:20:12.484+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=45 processed=900 success=900 errors=0
+time=2026-01-02T11:20:17.295+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=35 processed=1000 success=1000 errors=0
+time=2026-01-02T11:20:22.326+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=86 processed=1100 success=1100 errors=0
+time=2026-01-02T11:20:27.379+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=50 processed=1200 success=1200 errors=0
+time=2026-01-02T11:20:32.331+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=50 processed=1300 success=1300 errors=0
+time=2026-01-02T11:20:37.378+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=83 processed=1400 success=1400 errors=0
+time=2026-01-02T11:20:42.195+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=50 processed=1500 success=1500 errors=0
+time=2026-01-02T11:20:47.082+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=89 processed=1600 success=1600 errors=0
+time=2026-01-02T11:20:52.049+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=89 processed=1700 success=1700 errors=0
+time=2026-01-02T11:20:57.129+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=89 processed=1800 success=1800 errors=0
+time=2026-01-02T11:21:03.100+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=17 processed=1900 success=1900 errors=0
+time=2026-01-02T11:21:03.457+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=250 total_skipped=1646 progress=0.14004974566966186
+time=2026-01-02T11:21:07.025+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=17 processed=2000 success=2000 errors=0
+time=2026-01-02T11:21:12.045+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=17 processed=2100 success=2100 errors=0
+time=2026-01-02T11:21:17.081+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=49 processed=2200 success=2200 errors=0
+time=2026-01-02T11:21:22.103+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=95 processed=2300 success=2300 errors=0
+time=2026-01-02T11:21:27.171+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=86 processed=2400 success=2400 errors=0
+time=2026-01-02T11:21:32.201+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=40 processed=2500 success=2500 errors=0
+time=2026-01-02T11:21:37.156+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=32 processed=2600 success=2600 errors=0
+time=2026-01-02T11:21:42.143+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=67 processed=2700 success=2700 errors=0
+time=2026-01-02T11:21:47.074+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=27 processed=2800 success=2800 errors=0
+time=2026-01-02T11:21:52.134+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=9 processed=2900 success=2900 errors=0
+time=2026-01-02T11:21:57.044+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=9 processed=3000 success=3000 errors=0
+time=2026-01-02T11:22:00.994+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=300 total_skipped=2756 progress=0.16805969480359423
+time=2026-01-02T11:22:02.576+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=32 processed=3100 success=3100 errors=0
+time=2026-01-02T11:22:04.047+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=350 total_skipped=2773 progress=0.19606964393752663
+time=2026-01-02T11:22:07.243+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=79 processed=3200 success=3200 errors=0
+time=2026-01-02T11:22:12.182+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=40 processed=3300 success=3300 errors=0
+time=2026-01-02T11:22:17.224+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=13 processed=3400 success=3400 errors=0
+time=2026-01-02T11:22:22.181+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=29 processed=3500 success=3500 errors=0
+time=2026-01-02T11:22:27.179+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=15 processed=3600 success=3600 errors=0
+time=2026-01-02T11:22:32.098+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=57 processed=3700 success=3700 errors=0
+time=2026-01-02T11:22:37.123+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=0 processed=3800 success=3800 errors=0
+time=2026-01-02T11:22:42.149+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=97 processed=3900 success=3900 errors=0
+time=2026-01-02T11:22:47.148+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=26 processed=4000 success=4000 errors=0
+time=2026-01-02T11:22:52.161+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=26 processed=4100 success=4100 errors=0
+time=2026-01-02T11:22:57.271+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=92 processed=4200 success=4200 errors=0
+time=2026-01-02T11:23:14.088+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=45 processed=4300 success=4300 errors=0
+time=2026-01-02T11:23:14.392+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=400 total_skipped=3867 progress=0.224079593071459
+time=2026-01-02T11:23:15.788+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=450 total_skipped=3879 progress=0.25208954220539137
+time=2026-01-02T11:23:19.258+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=14 processed=4400 success=4400 errors=0
+time=2026-01-02T11:23:23.195+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=65 processed=4500 success=4500 errors=0
+time=2026-01-02T11:23:28.070+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=30 processed=4600 success=4600 errors=0
+time=2026-01-02T11:23:29.620+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=500 total_skipped=4078 progress=0.2800994913393237
+time=2026-01-02T11:23:31.966+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=77 processed=4700 success=4700 errors=0
+time=2026-01-02T11:23:36.303+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=38 processed=4800 success=4800 errors=0
+time=2026-01-02T11:23:41.315+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=94 processed=4900 success=4900 errors=0
+time=2026-01-02T11:23:46.208+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=67 processed=5000 success=5000 errors=0
+time=2026-01-02T11:23:51.005+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=21 processed=5100 success=5100 errors=0
+time=2026-01-02T11:23:55.940+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=34 processed=5200 success=5200 errors=0
+time=2026-01-02T11:24:07.709+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=35 processed=5300 success=5300 errors=0
+time=2026-01-02T11:24:09.582+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=97 processed=5400 success=5400 errors=0
+time=2026-01-02T11:24:09.675+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=550 total_skipped=4760 progress=0.3081094404732561
+time=2026-01-02T11:24:09.947+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=600 total_skipped=4798 progress=0.33611938960718846
+time=2026-01-02T11:24:13.222+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=57 processed=5500 success=5500 errors=0
+time=2026-01-02T11:24:18.105+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=11 processed=5600 success=5600 errors=0
+time=2026-01-02T11:24:23.069+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=16 processed=5700 success=5700 errors=0
+time=2026-01-02T11:24:28.051+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=81 processed=5800 success=5800 errors=0
+time=2026-01-02T11:24:33.055+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=73 processed=5900 success=5900 errors=0
+time=2026-01-02T11:24:38.050+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=33 processed=6000 success=6000 errors=0
+time=2026-01-02T11:24:43.051+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=33 processed=6100 success=6100 errors=0
+time=2026-01-02T11:24:48.186+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=73 processed=6200 success=6200 errors=0
+time=2026-01-02T11:24:52.988+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=9 processed=6300 success=6300 errors=0
+time=2026-01-02T11:24:57.974+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=9 processed=6400 success=6400 errors=0
+time=2026-01-02T11:25:02.489+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=650 total_skipped=5802 progress=0.36412933874112086
+time=2026-01-02T11:25:03.634+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=85 processed=6500 success=6500 errors=0
+time=2026-01-02T11:25:04.474+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=700 total_skipped=5809 progress=0.39213928787505326
+time=2026-01-02T11:25:08.078+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=5 processed=6600 success=6600 errors=0
+time=2026-01-02T11:25:13.001+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=81 processed=6700 success=6700 errors=0
+time=2026-01-02T11:25:18.003+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=31 processed=6800 success=6800 errors=0
+time=2026-01-02T11:25:23.007+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=43 processed=6900 success=6900 errors=0
+time=2026-01-02T11:25:27.973+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=43 processed=7000 success=7000 errors=0
+time=2026-01-02T11:25:32.971+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=43 processed=7100 success=7100 errors=0
+time=2026-01-02T11:25:37.954+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=43 processed=7200 success=7200 errors=0
+time=2026-01-02T11:25:43.005+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=12 processed=7300 success=7300 errors=0
+time=2026-01-02T11:25:47.972+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=12 processed=7400 success=7400 errors=0
+time=2026-01-02T11:25:52.997+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=87 processed=7500 success=7500 errors=0
+time=2026-01-02T11:25:58.057+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=29 processed=7600 success=7600 errors=0
+time=2026-01-02T11:26:05.080+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=76 processed=7700 success=7700 errors=0
+time=2026-01-02T11:26:06.118+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=750 total_skipped=6915 progress=0.42014923700898554
+time=2026-01-02T11:26:08.123+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=800 total_skipped=6955 progress=0.448159186142918
+time=2026-01-02T11:26:08.792+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=35 processed=7800 success=7800 errors=0
+time=2026-01-02T11:26:13.923+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=10 processed=7900 success=7900 errors=0
+time=2026-01-02T11:26:18.138+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=32 processed=8000 success=8000 errors=0
+time=2026-01-02T11:26:23.121+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=26 processed=8100 success=8100 errors=0
+time=2026-01-02T11:26:28.027+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=48 processed=8200 success=8200 errors=0
+time=2026-01-02T11:26:33.041+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=66 processed=8300 success=8300 errors=0
+time=2026-01-02T11:26:37.957+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=66 processed=8400 success=8400 errors=0
+time=2026-01-02T11:26:42.957+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=66 processed=8500 success=8500 errors=0
+time=2026-01-02T11:26:47.956+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=66 processed=8600 success=8600 errors=0
+time=2026-01-02T11:26:52.954+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=66 processed=8700 success=8700 errors=0
+time=2026-01-02T11:26:57.978+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=66 processed=8800 success=8800 errors=0
+time=2026-01-02T11:27:02.197+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=850 total_skipped=8002 progress=0.4761691352768503
+time=2026-01-02T11:27:03.677+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=3 processed=8900 success=8900 errors=0
+time=2026-01-02T11:27:05.290+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=900 total_skipped=8038 progress=0.5041790844107827
+time=2026-01-02T11:27:08.053+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=18 processed=9000 success=9000 errors=0
+time=2026-01-02T11:27:13.126+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=70 processed=9100 success=9100 errors=0
+time=2026-01-02T11:27:18.141+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=0 processed=9200 success=9200 errors=0
+time=2026-01-02T11:27:23.059+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=27 processed=9300 success=9300 errors=0
+time=2026-01-02T11:27:28.103+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=38 processed=9400 success=9400 errors=0
+time=2026-01-02T11:27:33.030+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=36 processed=9500 success=9500 errors=0
+time=2026-01-02T11:27:37.957+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=36 processed=9600 success=9600 errors=0
+time=2026-01-02T11:27:42.950+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=36 processed=9700 success=9700 errors=0
+time=2026-01-02T11:27:47.949+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=36 processed=9800 success=9800 errors=0
+time=2026-01-02T11:27:52.950+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=36 processed=9900 success=9900 errors=0
+time=2026-01-02T11:27:57.985+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=36 processed=10000 success=10000 errors=0
+time=2026-01-02T11:28:03.032+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=950 total_skipped=9120 progress=0.5321890335447151
+time=2026-01-02T11:28:03.540+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=10 processed=10100 success=10100 errors=0
+time=2026-01-02T11:28:08.055+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=78 processed=10200 success=10200 errors=0
+time=2026-01-02T11:28:12.972+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=78 processed=10300 success=10300 errors=0
+time=2026-01-02T11:28:18.001+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=78 processed=10400 success=10400 errors=0
+time=2026-01-02T11:28:22.999+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=10 processed=10500 success=10500 errors=0
+time=2026-01-02T11:28:28.041+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=10 processed=10600 success=10600 errors=0
+time=2026-01-02T11:28:33.000+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=10 processed=10700 success=10700 errors=0
+time=2026-01-02T11:28:37.950+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=10 processed=10800 success=10800 errors=0
+time=2026-01-02T11:28:42.994+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=10 processed=10900 success=10900 errors=0
+time=2026-01-02T11:28:47.999+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=10 processed=11000 success=11000 errors=0
+time=2026-01-02T11:28:52.993+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=10 processed=11100 success=11100 errors=0
+time=2026-01-02T11:28:57.984+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=10 processed=11200 success=11200 errors=0
+time=2026-01-02T11:29:00.783+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=1000 total_skipped=10239 progress=0.5601989826786474
+time=2026-01-02T11:29:06.383+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=75 processed=11300 success=11300 errors=0
+time=2026-01-02T11:29:07.634+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=1050 total_skipped=10249 progress=0.5882089318125798
+time=2026-01-02T11:29:09.342+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=22 processed=11400 success=11400 errors=0
+time=2026-01-02T11:29:13.580+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=80 processed=11500 success=11500 errors=0
+time=2026-01-02T11:29:18.073+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=97 processed=11600 success=11600 errors=0
+time=2026-01-02T11:29:23.159+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=89 processed=11700 success=11700 errors=0
+time=2026-01-02T11:29:28.075+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=68 processed=11800 success=11800 errors=0
+time=2026-01-02T11:29:33.088+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=70 processed=11900 success=11900 errors=0
+time=2026-01-02T11:29:38.056+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=99 processed=12000 success=12000 errors=0
+time=2026-01-02T11:29:43.009+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=24 processed=12100 success=12100 errors=0
+time=2026-01-02T11:29:48.064+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=63 processed=12200 success=12200 errors=0
+time=2026-01-02T11:29:53.056+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=51 processed=12300 success=12300 errors=0
+time=2026-01-02T11:29:58.006+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=44 processed=12400 success=12400 errors=0
+time=2026-01-02T11:30:03.064+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=1100 total_skipped=11326 progress=0.6162188809465122
+time=2026-01-02T11:30:07.020+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=15 processed=12500 success=12500 errors=0
+time=2026-01-02T11:30:07.656+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=1150 total_skipped=11332 progress=0.6442288300804445
+time=2026-01-02T11:30:08.919+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=82 processed=12600 success=12600 errors=0
+time=2026-01-02T11:30:12.973+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=82 processed=12700 success=12700 errors=0
+time=2026-01-02T11:30:17.961+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=64 processed=12800 success=12800 errors=0
+time=2026-01-02T11:30:22.978+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=64 processed=12900 success=12900 errors=0
+time=2026-01-02T11:30:27.976+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=64 processed=13000 success=13000 errors=0
+time=2026-01-02T11:30:33.032+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=64 processed=13100 success=13100 errors=0
+time=2026-01-02T11:30:37.988+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=64 processed=13200 success=13200 errors=0
+time=2026-01-02T11:30:42.964+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=64 processed=13300 success=13300 errors=0
+time=2026-01-02T11:30:48.053+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=73 processed=13400 success=13400 errors=0
+time=2026-01-02T11:30:53.074+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=57 processed=13500 success=13500 errors=0
+time=2026-01-02T11:30:58.073+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=25 processed=13600 success=13600 errors=0
+time=2026-01-02T11:31:00.746+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=1200 total_skipped=12432 progress=0.6722387792143769
+time=2026-01-02T11:31:03.228+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=1250 total_skipped=12438 progress=0.7002487283483093
+time=2026-01-02T11:31:03.364+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=59 processed=13700 success=13700 errors=0
+time=2026-01-02T11:31:08.047+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=51 processed=13800 success=13800 errors=0
+time=2026-01-02T11:31:12.954+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=51 processed=13900 success=13900 errors=0
+time=2026-01-02T11:31:17.966+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=51 processed=14000 success=14000 errors=0
+time=2026-01-02T11:31:22.976+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=51 processed=14100 success=14100 errors=0
+time=2026-01-02T11:31:28.023+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=51 processed=14200 success=14200 errors=0
+time=2026-01-02T11:31:32.973+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=75 processed=14300 success=14300 errors=0
+time=2026-01-02T11:31:37.955+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=75 processed=14400 success=14400 errors=0
+time=2026-01-02T11:31:43.035+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=59 processed=14500 success=14500 errors=0
+time=2026-01-02T11:31:48.135+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=59 processed=14600 success=14600 errors=0
+time=2026-01-02T11:31:53.254+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=31 processed=14700 success=14700 errors=0
+time=2026-01-02T11:31:58.068+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=31 processed=14800 success=14800 errors=0
+time=2026-01-02T11:32:01.596+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=1300 total_skipped=13550 progress=0.7282586774822417
+time=2026-01-02T11:32:04.291+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=60 processed=14900 success=14900 errors=0
+time=2026-01-02T11:32:05.014+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=1350 total_skipped=13566 progress=0.7562686266161741
+time=2026-01-02T11:32:08.533+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=70 processed=15000 success=15000 errors=0
+time=2026-01-02T11:32:13.088+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=2 processed=15100 success=15100 errors=0
+time=2026-01-02T11:32:18.113+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=5 processed=15200 success=15200 errors=0
+time=2026-01-02T11:32:23.004+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=49 processed=15300 success=15300 errors=0
+time=2026-01-02T11:32:27.971+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=49 processed=15400 success=15400 errors=0
+time=2026-01-02T11:32:32.949+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=49 processed=15500 success=15500 errors=0
+time=2026-01-02T11:32:37.954+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=49 processed=15600 success=15600 errors=0
+time=2026-01-02T11:32:42.957+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=49 processed=15700 success=15700 errors=0
+time=2026-01-02T11:32:47.950+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=49 processed=15800 success=15800 errors=0
+time=2026-01-02T11:32:52.959+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=49 processed=15900 success=15900 errors=0
+time=2026-01-02T11:32:58.033+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=11 processed=16000 success=16000 errors=0
+time=2026-01-02T11:33:01.298+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=1400 total_skipped=14650 progress=0.7842785757501065
+time=2026-01-02T11:33:03.260+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=17 processed=16100 success=16100 errors=0
+time=2026-01-02T11:33:03.814+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=1450 total_skipped=14656 progress=0.8122885248840387
+time=2026-01-02T11:33:07.992+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=17 processed=16200 success=16200 errors=0
+time=2026-01-02T11:33:12.974+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=17 processed=16300 success=16300 errors=0
+time=2026-01-02T11:33:18.040+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=17 processed=16400 success=16400 errors=0
+time=2026-01-02T11:33:22.979+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=17 processed=16500 success=16500 errors=0
+time=2026-01-02T11:33:27.972+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=17 processed=16600 success=16600 errors=0
+time=2026-01-02T11:33:32.982+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=17 processed=16700 success=16700 errors=0
+time=2026-01-02T11:33:37.984+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=17 processed=16800 success=16800 errors=0
+time=2026-01-02T11:33:42.979+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=17 processed=16900 success=16900 errors=0
+time=2026-01-02T11:33:47.974+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=17 processed=17000 success=17000 errors=0
+time=2026-01-02T11:33:52.980+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=17 processed=17100 success=17100 errors=0
+time=2026-01-02T11:33:57.980+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=17 processed=17200 success=17200 errors=0
+time=2026-01-02T11:34:02.119+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=1500 total_skipped=15766 progress=0.8402984740179711
+time=2026-01-02T11:34:03.496+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=92 processed=17300 success=17300 errors=0
+time=2026-01-02T11:34:05.457+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=1550 total_skipped=15794 progress=0.8683084231519036
+time=2026-01-02T11:34:08.005+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=59 processed=17400 success=17400 errors=0
+time=2026-01-02T11:34:13.044+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=77 processed=17500 success=17500 errors=0
+time=2026-01-02T11:34:18.020+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=52 processed=17600 success=17600 errors=0
+time=2026-01-02T11:34:22.953+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=52 processed=17700 success=17700 errors=0
+time=2026-01-02T11:34:28.025+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=68 processed=17800 success=17800 errors=0
+time=2026-01-02T11:34:32.994+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=68 processed=17900 success=17900 errors=0
+time=2026-01-02T11:34:37.948+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=68 processed=18000 success=18000 errors=0
+time=2026-01-02T11:34:42.975+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=68 processed=18100 success=18100 errors=0
+time=2026-01-02T11:34:47.981+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=68 processed=18200 success=18200 errors=0
+time=2026-01-02T11:34:53.039+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=14 processed=18300 success=18300 errors=0
+time=2026-01-02T11:34:57.998+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=14 processed=18400 success=18400 errors=0
+time=2026-01-02T11:35:02.280+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=1600 total_skipped=16873 progress=0.896318372285836
+time=2026-01-02T11:35:03.374+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=59 processed=18500 success=18500 errors=0
+time=2026-01-02T11:35:08.366+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=29 processed=18600 success=18600 errors=0
+time=2026-01-02T11:35:13.124+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=6 processed=18700 success=18700 errors=0
+time=2026-01-02T11:35:18.028+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=52 processed=18800 success=18800 errors=0
+time=2026-01-02T11:35:23.172+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=97 processed=18900 success=18900 errors=0
+time=2026-01-02T11:35:28.010+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=43 processed=19000 success=19000 errors=0
+time=2026-01-02T11:35:32.960+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=43 processed=19100 success=19100 errors=0
+time=2026-01-02T11:35:37.975+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=43 processed=19200 success=19200 errors=0
+time=2026-01-02T11:35:42.959+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=43 processed=19300 success=19300 errors=0
+time=2026-01-02T11:35:48.003+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=76 processed=19400 success=19400 errors=0
+time=2026-01-02T11:35:53.021+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=79 processed=19500 success=19500 errors=0
+time=2026-01-02T11:35:58.036+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=76 processed=19600 success=19600 errors=0
+time=2026-01-02T11:36:00.765+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=1650 total_skipped=17986 progress=0.9243283214197684
+time=2026-01-02T11:36:02.862+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=1700 total_skipped=17987 progress=0.9523382705537006
+time=2026-01-02T11:36:03.400+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=99 processed=19700 success=19700 errors=0
+time=2026-01-02T11:36:07.991+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=20 processed=19800 success=19800 errors=0
+time=2026-01-02T11:36:12.968+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=20 processed=19900 success=19900 errors=0
+time=2026-01-02T11:36:17.968+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=99 processed=20000 success=20000 errors=0
+time=2026-01-02T11:36:23.000+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=99 processed=20100 success=20100 errors=0
+time=2026-01-02T11:36:28.053+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=51 processed=20200 success=20200 errors=0
+time=2026-01-02T11:36:33.073+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=51 processed=20300 success=20300 errors=0
+time=2026-01-02T11:36:37.959+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=51 processed=20400 success=20400 errors=0
+time=2026-01-02T11:36:43.121+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=79 processed=20500 success=20500 errors=0
+time=2026-01-02T11:36:47.954+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=79 processed=20600 success=20600 errors=0
+time=2026-01-02T11:36:52.952+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=79 processed=20700 success=20700 errors=0
+time=2026-01-02T11:36:58.046+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=45 processed=20800 success=20800 errors=0
+time=2026-01-02T11:37:01.330+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=1750 total_skipped=19093 progress=0.980348219687633
+time=2026-01-02T11:37:03.458+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=59 processed=20900 success=20900 errors=0
+time=2026-01-02T11:37:03.628+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=1800 total_skipped=19098 progress=1.0083581688215655
+time=2026-01-02T11:37:08.009+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=59 processed=21000 success=21000 errors=0
+time=2026-01-02T11:37:12.998+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=59 processed=21100 success=21100 errors=0
+time=2026-01-02T11:37:17.994+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=59 processed=21200 success=21200 errors=0
+time=2026-01-02T11:37:23.002+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=59 processed=21300 success=21300 errors=0
+time=2026-01-02T11:37:27.974+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=59 processed=21400 success=21400 errors=0
+time=2026-01-02T11:37:32.960+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=51 processed=21500 success=21500 errors=0
+time=2026-01-02T11:37:37.954+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=51 processed=21600 success=21600 errors=0
+time=2026-01-02T11:37:42.992+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=51 processed=21700 success=21700 errors=0
+time=2026-01-02T11:37:47.954+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=51 processed=21800 success=21800 errors=0
+time=2026-01-02T11:37:52.951+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=51 processed=21900 success=21900 errors=0
+time=2026-01-02T11:37:57.958+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=51 processed=22000 success=22000 errors=0
+time=2026-01-02T11:38:02.072+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=1850 total_skipped=20204 progress=1.0363681179554978
+time=2026-01-02T11:38:03.685+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=17 processed=22100 success=22100 errors=0
+time=2026-01-02T11:38:04.778+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=1900 total_skipped=20226 progress=1.0643780670894303
+time=2026-01-02T11:38:07.993+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=17 processed=22200 success=22200 errors=0
+time=2026-01-02T11:38:12.981+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=17 processed=22300 success=22300 errors=0
+time=2026-01-02T11:38:18.001+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=30 processed=22400 success=22400 errors=0
+time=2026-01-02T11:38:22.951+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=30 processed=22500 success=22500 errors=0
+time=2026-01-02T11:38:27.988+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=30 processed=22600 success=22600 errors=0
+time=2026-01-02T11:38:32.978+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=30 processed=22700 success=22700 errors=0
+time=2026-01-02T11:38:37.968+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=30 processed=22800 success=22800 errors=0
+time=2026-01-02T11:38:42.957+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=86 processed=22900 success=22900 errors=0
+time=2026-01-02T11:38:47.961+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=86 processed=23000 success=23000 errors=0
+time=2026-01-02T11:38:52.957+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=86 processed=23100 success=23100 errors=0
+time=2026-01-02T11:38:57.955+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=86 processed=23200 success=23200 errors=0
+time=2026-01-02T11:39:01.815+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=1950 total_skipped=21318 progress=1.0923880162233626
+time=2026-01-02T11:39:03.203+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=36 processed=23300 success=23300 errors=0
+time=2026-01-02T11:39:07.978+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=36 processed=23400 success=23400 errors=0
+time=2026-01-02T11:39:13.005+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=17 processed=23500 success=23500 errors=0
+time=2026-01-02T11:39:17.993+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=17 processed=23600 success=23600 errors=0
+time=2026-01-02T11:39:22.974+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=17 processed=23700 success=23700 errors=0
+time=2026-01-02T11:39:27.987+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=17 processed=23800 success=23800 errors=0
+time=2026-01-02T11:39:32.952+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=17 processed=23900 success=23900 errors=0
+time=2026-01-02T11:39:37.986+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=17 processed=24000 success=24000 errors=0
+time=2026-01-02T11:39:43.006+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=29 processed=24100 success=24100 errors=0
+time=2026-01-02T11:39:47.983+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=29 processed=24200 success=24200 errors=0
+time=2026-01-02T11:39:53.165+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=41 processed=24300 success=24300 errors=0
+time=2026-01-02T11:39:57.974+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=41 processed=24400 success=24400 errors=0
+time=2026-01-02T11:40:00.397+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=2000 total_skipped=22433 progress=1.1203979653572949
+time=2026-01-02T11:40:03.202+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=52 processed=24500 success=24500 errors=0
+time=2026-01-02T11:40:03.296+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=2050 total_skipped=22441 progress=1.1484079144912274
+time=2026-01-02T11:40:08.029+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=52 processed=24600 success=24600 errors=0
+time=2026-01-02T11:40:13.221+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=63 processed=24700 success=24700 errors=0
+time=2026-01-02T11:40:17.985+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=52 processed=24800 success=24800 errors=0
+time=2026-01-02T11:40:23.230+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=41 processed=24900 success=24900 errors=0
+time=2026-01-02T11:40:28.028+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=62 processed=25000 success=25000 errors=0
+time=2026-01-02T11:40:33.239+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=87 processed=25100 success=25100 errors=0
+time=2026-01-02T11:40:38.024+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=22 processed=25200 success=25200 errors=0
+time=2026-01-02T11:40:43.244+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=22 processed=25300 success=25300 errors=0
+time=2026-01-02T11:40:48.025+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=41 processed=25400 success=25400 errors=0
+time=2026-01-02T11:40:53.062+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=13 processed=25500 success=25500 errors=0
+time=2026-01-02T11:40:58.063+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=10 processed=25600 success=25600 errors=0
+time=2026-01-02T11:40:59.932+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=2100 total_skipped=23528 progress=1.1764178636251597
+time=2026-01-02T11:41:02.960+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=2150 total_skipped=23528 progress=1.2044278127590922
+time=2026-01-02T11:41:03.517+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=21 processed=25700 success=25700 errors=0
+time=2026-01-02T11:41:06.444+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=2200 total_skipped=23563 progress=1.2324377618930245
+time=2026-01-02T11:41:08.000+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=33 processed=25800 success=25800 errors=0
+time=2026-01-02T11:41:13.008+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=33 processed=25900 success=25900 errors=0
+time=2026-01-02T11:41:18.051+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=71 processed=26000 success=26000 errors=0
+time=2026-01-02T11:41:23.009+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=71 processed=26100 success=26100 errors=0
+time=2026-01-02T11:41:27.959+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=71 processed=26200 success=26200 errors=0
+time=2026-01-02T11:41:32.972+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=71 processed=26300 success=26300 errors=0
+time=2026-01-02T11:41:37.966+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=71 processed=26400 success=26400 errors=0
+time=2026-01-02T11:41:42.976+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=71 processed=26500 success=26500 errors=0
+time=2026-01-02T11:41:47.955+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=71 processed=26600 success=26600 errors=0
+time=2026-01-02T11:41:53.023+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=98 processed=26700 success=26700 errors=0
+time=2026-01-02T11:41:58.018+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=71 processed=26800 success=26800 errors=0
+time=2026-01-02T11:42:02.504+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=2250 total_skipped=24622 progress=1.2604477110269567
+time=2026-01-02T11:42:03.234+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=87 processed=26900 success=26900 errors=0
+time=2026-01-02T11:42:07.951+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=87 processed=27000 success=27000 errors=0
+time=2026-01-02T11:42:12.953+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=87 processed=27100 success=27100 errors=0
+time=2026-01-02T11:42:17.979+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=87 processed=27200 success=27200 errors=0
+time=2026-01-02T11:42:22.975+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=87 processed=27300 success=27300 errors=0
+time=2026-01-02T11:42:27.956+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=87 processed=27400 success=27400 errors=0
+time=2026-01-02T11:42:32.949+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=87 processed=27500 success=27500 errors=0
+time=2026-01-02T11:42:37.958+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=87 processed=27600 success=27600 errors=0
+time=2026-01-02T11:42:42.965+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=43 processed=27700 success=27700 errors=0
+time=2026-01-02T11:42:48.030+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=87 processed=27800 success=27800 errors=0
+time=2026-01-02T11:42:52.977+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=87 processed=27900 success=27900 errors=0
+time=2026-01-02T11:42:57.955+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=87 processed=28000 success=28000 errors=0
+time=2026-01-02T11:43:00.419+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=2300 total_skipped=25733 progress=1.288457660160889
+time=2026-01-02T11:43:02.943+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=2350 total_skipped=25734 progress=1.3164676092948215
+time=2026-01-02T11:43:03.307+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=17 processed=28100 success=28100 errors=0
+time=2026-01-02T11:43:07.981+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=17 processed=28200 success=28200 errors=0
+time=2026-01-02T11:43:12.957+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=17 processed=28300 success=28300 errors=0
+time=2026-01-02T11:43:17.972+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=17 processed=28400 success=28400 errors=0
+time=2026-01-02T11:43:22.977+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=17 processed=28500 success=28500 errors=0
+time=2026-01-02T11:43:27.965+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=17 processed=28600 success=28600 errors=0
+time=2026-01-02T11:43:32.969+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=17 processed=28700 success=28700 errors=0
+time=2026-01-02T11:43:37.971+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=17 processed=28800 success=28800 errors=0
+time=2026-01-02T11:43:42.973+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=17 processed=28900 success=28900 errors=0
+time=2026-01-02T11:43:47.977+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=17 processed=29000 success=29000 errors=0
+time=2026-01-02T11:43:52.983+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=17 processed=29100 success=29100 errors=0
+time=2026-01-02T11:43:57.972+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=17 processed=29200 success=29200 errors=0
+time=2026-01-02T11:44:02.032+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=2400 total_skipped=26839 progress=1.3444775584287538
+time=2026-01-02T11:44:04.238+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=27 processed=29300 success=29300 errors=0
+time=2026-01-02T11:44:05.158+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=2450 total_skipped=26844 progress=1.3724875075626863
+time=2026-01-02T11:44:08.046+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=66 processed=29400 success=29400 errors=0
+time=2026-01-02T11:44:13.001+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=46 processed=29500 success=29500 errors=0
+time=2026-01-02T11:44:18.000+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=22 processed=29600 success=29600 errors=0
+time=2026-01-02T11:44:22.951+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=22 processed=29700 success=29700 errors=0
+time=2026-01-02T11:44:28.041+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=22 processed=29800 success=29800 errors=0
+time=2026-01-02T11:44:32.972+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=22 processed=29900 success=29900 errors=0
+time=2026-01-02T11:44:38.038+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=61 processed=30000 success=30000 errors=0
+time=2026-01-02T11:44:42.997+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=61 processed=30100 success=30100 errors=0
+time=2026-01-02T11:44:48.008+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=61 processed=30200 success=30200 errors=0
+time=2026-01-02T11:44:53.092+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=48 processed=30300 success=30300 errors=0
+time=2026-01-02T11:44:58.005+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=0 processed=30400 success=30400 errors=0
+time=2026-01-02T11:45:02.069+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=2500 total_skipped=27955 progress=1.4004974566966186
+time=2026-01-02T11:45:03.535+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=48 processed=30500 success=30500 errors=0
+time=2026-01-02T11:45:04.320+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=2550 total_skipped=27963 progress=1.428507405830551
+time=2026-01-02T11:45:07.954+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=48 processed=30600 success=30600 errors=0
+time=2026-01-02T11:45:13.005+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=81 processed=30700 success=30700 errors=0
+time=2026-01-02T11:45:18.059+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=48 processed=30800 success=30800 errors=0
+time=2026-01-02T11:45:23.023+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=85 processed=30900 success=30900 errors=0
+time=2026-01-02T11:45:28.029+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=22 processed=31000 success=31000 errors=0
+time=2026-01-02T11:45:33.112+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=18 processed=31100 success=31100 errors=0
+time=2026-01-02T11:45:37.974+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=18 processed=31200 success=31200 errors=0
+time=2026-01-02T11:45:43.025+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=7 processed=31300 success=31300 errors=0
+time=2026-01-02T11:45:48.092+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=85 processed=31400 success=31400 errors=0
+time=2026-01-02T11:45:53.282+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=22 processed=31500 success=31500 errors=0
+time=2026-01-02T11:45:58.017+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=18 processed=31600 success=31600 errors=0
+time=2026-01-02T11:46:02.234+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=2600 total_skipped=29060 progress=1.4565173549644834
+time=2026-01-02T11:46:03.831+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=67 processed=31700 success=31700 errors=0
+time=2026-01-02T11:46:08.122+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=56 processed=31800 success=31800 errors=0
+time=2026-01-02T11:46:13.321+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=69 processed=31900 success=31900 errors=0
+time=2026-01-02T11:46:18.206+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=53 processed=32000 success=32000 errors=0
+time=2026-01-02T11:46:23.046+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=45 processed=32100 success=32100 errors=0
+time=2026-01-02T11:46:28.003+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=43 processed=32200 success=32200 errors=0
+time=2026-01-02T11:46:33.127+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=95 processed=32300 success=32300 errors=0
+time=2026-01-02T11:46:38.040+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=76 processed=32400 success=32400 errors=0
+time=2026-01-02T11:46:43.095+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=67 processed=32500 success=32500 errors=0
+time=2026-01-02T11:46:48.104+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=73 processed=32600 success=32600 errors=0
+time=2026-01-02T11:46:52.988+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=43 processed=32700 success=32700 errors=0
+time=2026-01-02T11:46:57.953+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=43 processed=32800 success=32800 errors=0
+time=2026-01-02T11:47:01.226+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=2650 total_skipped=30182 progress=1.4845273040984157
+time=2026-01-02T11:47:03.746+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=76 processed=32900 success=32900 errors=0
+time=2026-01-02T11:47:04.015+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=2700 total_skipped=30191 progress=1.5125372532323482
+time=2026-01-02T11:47:07.956+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=76 processed=33000 success=33000 errors=0
+time=2026-01-02T11:47:12.958+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=76 processed=33100 success=33100 errors=0
+time=2026-01-02T11:47:18.009+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=53 processed=33200 success=33200 errors=0
+time=2026-01-02T11:47:23.010+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=20 processed=33300 success=33300 errors=0
+time=2026-01-02T11:47:27.972+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=20 processed=33400 success=33400 errors=0
+time=2026-01-02T11:47:32.949+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=20 processed=33500 success=33500 errors=0
+time=2026-01-02T11:47:37.955+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=20 processed=33600 success=33600 errors=0
+time=2026-01-02T11:47:42.960+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=20 processed=33700 success=33700 errors=0
+time=2026-01-02T11:47:47.978+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=76 processed=33800 success=33800 errors=0
+time=2026-01-02T11:47:52.971+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=76 processed=33900 success=33900 errors=0
+time=2026-01-02T11:47:57.951+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=76 processed=34000 success=34000 errors=0
+time=2026-01-02T11:48:00.917+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=2750 total_skipped=31292 progress=1.5405472023662805
+time=2026-01-02T11:48:03.461+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=94 processed=34100 success=34100 errors=0
+time=2026-01-02T11:48:03.780+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=2800 total_skipped=31293 progress=1.568557151500213
+time=2026-01-02T11:48:08.014+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=13 processed=34200 success=34200 errors=0
+time=2026-01-02T11:48:13.071+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=14 processed=34300 success=34300 errors=0
+time=2026-01-02T11:48:18.053+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=75 processed=34400 success=34400 errors=0
+time=2026-01-02T11:48:22.952+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=75 processed=34500 success=34500 errors=0
+time=2026-01-02T11:48:28.000+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=65 processed=34600 success=34600 errors=0
+time=2026-01-02T11:48:33.020+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=77 processed=34700 success=34700 errors=0
+time=2026-01-02T11:48:38.004+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=95 processed=34800 success=34800 errors=0
+time=2026-01-02T11:48:43.069+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=23 processed=34900 success=34900 errors=0
+time=2026-01-02T11:48:47.964+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=23 processed=35000 success=35000 errors=0
+time=2026-01-02T11:48:52.952+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=23 processed=35100 success=35100 errors=0
+time=2026-01-02T11:48:57.970+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=23 processed=35200 success=35200 errors=0
+time=2026-01-02T11:49:00.939+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=2850 total_skipped=32390 progress=1.5965671006341453
+time=2026-01-02T11:49:03.410+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=77 processed=35300 success=35300 errors=0
+time=2026-01-02T11:49:03.673+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=2900 total_skipped=32396 progress=1.6245770497680774
+time=2026-01-02T11:49:07.981+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=77 processed=35400 success=35400 errors=0
+time=2026-01-02T11:49:12.996+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=77 processed=35500 success=35500 errors=0
+time=2026-01-02T11:49:18.003+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=49 processed=35600 success=35600 errors=0
+time=2026-01-02T11:49:22.972+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=49 processed=35700 success=35700 errors=0
+time=2026-01-02T11:49:27.951+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=49 processed=35800 success=35800 errors=0
+time=2026-01-02T11:49:32.954+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=49 processed=35900 success=35900 errors=0
+time=2026-01-02T11:49:37.954+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=49 processed=36000 success=36000 errors=0
+time=2026-01-02T11:49:43.017+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=49 processed=36100 success=36100 errors=0
+time=2026-01-02T11:49:47.978+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=49 processed=36200 success=36200 errors=0
+time=2026-01-02T11:49:53.044+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=49 processed=36300 success=36300 errors=0
+time=2026-01-02T11:49:57.954+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=49 processed=36400 success=36400 errors=0
+time=2026-01-02T11:50:01.719+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=2950 total_skipped=33500 progress=1.65258699890201
+time=2026-01-02T11:50:03.484+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=65 processed=36500 success=36500 errors=0
+time=2026-01-02T11:50:04.053+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=3000 total_skipped=33507 progress=1.6805969480359422
+time=2026-01-02T11:50:08.027+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=65 processed=36600 success=36600 errors=0
+time=2026-01-02T11:50:12.975+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=65 processed=36700 success=36700 errors=0
+time=2026-01-02T11:50:18.012+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=55 processed=36800 success=36800 errors=0
+time=2026-01-02T11:50:23.048+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=65 processed=36900 success=36900 errors=0
+time=2026-01-02T11:50:27.953+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=65 processed=37000 success=37000 errors=0
+time=2026-01-02T11:50:32.997+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=65 processed=37100 success=37100 errors=0
+time=2026-01-02T11:50:38.009+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=65 processed=37200 success=37200 errors=0
+time=2026-01-02T11:50:42.973+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=65 processed=37300 success=37300 errors=0
+time=2026-01-02T11:50:47.979+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=65 processed=37400 success=37400 errors=0
+time=2026-01-02T11:50:52.975+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=65 processed=37500 success=37500 errors=0
+time=2026-01-02T11:50:57.977+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=65 processed=37600 success=37600 errors=0
+time=2026-01-02T11:51:01.548+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=3050 total_skipped=34600 progress=1.708606897169875
+time=2026-01-02T11:51:03.804+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=91 processed=37700 success=37700 errors=0
+time=2026-01-02T11:51:04.254+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=3100 total_skipped=34610 progress=1.7366168463038072
+time=2026-01-02T11:51:08.090+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=69 processed=37800 success=37800 errors=0
+time=2026-01-02T11:51:13.082+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=87 processed=37900 success=37900 errors=0
+time=2026-01-02T11:51:18.056+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=10 processed=38000 success=38000 errors=0
+time=2026-01-02T11:51:23.103+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=44 processed=38100 success=38100 errors=0
+time=2026-01-02T11:51:28.002+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=4 processed=38200 success=38200 errors=0
+time=2026-01-02T11:51:32.968+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=4 processed=38300 success=38300 errors=0
+time=2026-01-02T11:51:38.003+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=4 processed=38400 success=38400 errors=0
+time=2026-01-02T11:51:42.973+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=4 processed=38500 success=38500 errors=0
+time=2026-01-02T11:51:47.973+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=4 processed=38600 success=38600 errors=0
+time=2026-01-02T11:51:52.999+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=4 processed=38700 success=38700 errors=0
+time=2026-01-02T11:51:57.982+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=4 processed=38800 success=38800 errors=0
+time=2026-01-02T11:52:02.481+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=3150 total_skipped=35720 progress=1.7646267954377393
+time=2026-01-02T11:52:03.127+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=25 processed=38900 success=38900 errors=0
+time=2026-01-02T11:52:05.662+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=3200 total_skipped=35748 progress=1.792636744571672
+time=2026-01-02T11:52:08.072+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=25 processed=39000 success=39000 errors=0
+time=2026-01-02T11:52:13.023+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=97 processed=39100 success=39100 errors=0
+time=2026-01-02T11:52:17.951+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=97 processed=39200 success=39200 errors=0
+time=2026-01-02T11:52:22.963+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=97 processed=39300 success=39300 errors=0
+time=2026-01-02T11:52:28.035+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=6 processed=39400 success=39400 errors=0
+time=2026-01-02T11:52:33.011+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=82 processed=39500 success=39500 errors=0
+time=2026-01-02T11:52:38.010+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=69 processed=39600 success=39600 errors=0
+time=2026-01-02T11:52:43.019+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=96 processed=39700 success=39700 errors=0
+time=2026-01-02T11:52:48.027+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=77 processed=39800 success=39800 errors=0
+time=2026-01-02T11:52:53.002+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=77 processed=39900 success=39900 errors=0
+time=2026-01-02T11:52:57.988+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=77 processed=40000 success=40000 errors=0
+time=2026-01-02T11:53:01.682+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=3250 total_skipped=36808 progress=1.820646693705604
+time=2026-01-02T11:53:03.317+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=88 processed=40100 success=40100 errors=0
+time=2026-01-02T11:53:05.035+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=3300 total_skipped=36836 progress=1.8486566428395368
+time=2026-01-02T11:53:07.967+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=77 processed=40200 success=40200 errors=0
+time=2026-01-02T11:53:12.992+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=77 processed=40300 success=40300 errors=0
+time=2026-01-02T11:53:17.988+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=77 processed=40400 success=40400 errors=0
+time=2026-01-02T11:53:22.974+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=77 processed=40500 success=40500 errors=0
+time=2026-01-02T11:53:27.961+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=77 processed=40600 success=40600 errors=0
+time=2026-01-02T11:53:32.956+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=77 processed=40700 success=40700 errors=0
+time=2026-01-02T11:53:37.971+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=77 processed=40800 success=40800 errors=0
+time=2026-01-02T11:53:42.997+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=77 processed=40900 success=40900 errors=0
+time=2026-01-02T11:53:48.017+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=77 processed=41000 success=41000 errors=0
+time=2026-01-02T11:53:52.958+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=77 processed=41100 success=41100 errors=0
+time=2026-01-02T11:53:58.016+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=25 processed=41200 success=41200 errors=0
+time=2026-01-02T11:54:02.893+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=3350 total_skipped=37929 progress=1.8766665919734689
+time=2026-01-02T11:54:03.387+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=50 processed=41300 success=41300 errors=0
+time=2026-01-02T11:54:07.978+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=50 processed=41400 success=41400 errors=0
+time=2026-01-02T11:54:13.101+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=28 processed=41500 success=41500 errors=0
+time=2026-01-02T11:54:18.071+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=12 processed=41600 success=41600 errors=0
+time=2026-01-02T11:54:23.068+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=12 processed=41700 success=41700 errors=0
+time=2026-01-02T11:54:28.130+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=4 processed=41800 success=41800 errors=0
+time=2026-01-02T11:54:33.169+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=50 processed=41900 success=41900 errors=0
+time=2026-01-02T11:54:38.157+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=50 processed=42000 success=42000 errors=0
+time=2026-01-02T11:54:43.101+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=88 processed=42100 success=42100 errors=0
+time=2026-01-02T11:54:48.093+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=12 processed=42200 success=42200 errors=0
+time=2026-01-02T11:54:53.137+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=88 processed=42300 success=42300 errors=0
+time=2026-01-02T11:54:58.076+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=12 processed=42400 success=42400 errors=0
+time=2026-01-02T11:55:01.048+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=3400 total_skipped=39046 progress=1.9046765411074011
+time=2026-01-02T11:55:03.436+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=24 processed=42500 success=42500 errors=0
+time=2026-01-02T11:55:04.049+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=3450 total_skipped=39060 progress=1.9326864902413337
+time=2026-01-02T11:55:08.387+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=21 processed=42600 success=42600 errors=0
+time=2026-01-02T11:55:13.049+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=21 processed=42700 success=42700 errors=0
+time=2026-01-02T11:55:18.068+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=21 processed=42800 success=42800 errors=0
+time=2026-01-02T11:55:23.147+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=25 processed=42900 success=42900 errors=0
+time=2026-01-02T11:55:28.128+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=25 processed=43000 success=43000 errors=0
+time=2026-01-02T11:55:33.063+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=25 processed=43100 success=43100 errors=0
+time=2026-01-02T11:55:38.142+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=21 processed=43200 success=43200 errors=0
+time=2026-01-02T11:55:43.056+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=21 processed=43300 success=43300 errors=0
+time=2026-01-02T11:55:48.056+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=21 processed=43400 success=43400 errors=0
+time=2026-01-02T11:55:53.109+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=88 processed=43500 success=43500 errors=0
+time=2026-01-02T11:55:58.052+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=88 processed=43600 success=43600 errors=0
+time=2026-01-02T11:56:03.276+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=3500 total_skipped=40159 progress=1.960696439375266
+time=2026-01-02T11:56:04.294+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=68 processed=43700 success=43700 errors=0
+time=2026-01-02T11:56:05.848+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=3550 total_skipped=40191 progress=1.9887063885091987
+time=2026-01-02T11:56:08.149+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=96 processed=43800 success=43800 errors=0
+time=2026-01-02T11:56:13.119+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=3 processed=43900 success=43900 errors=0
+time=2026-01-02T11:56:18.097+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=36 processed=44000 success=44000 errors=0
+time=2026-01-02T11:56:23.085+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=36 processed=44100 success=44100 errors=0
+time=2026-01-02T11:56:28.049+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=41 processed=44200 success=44200 errors=0
+time=2026-01-02T11:56:33.164+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=89 processed=44300 success=44300 errors=0
+time=2026-01-02T11:56:38.042+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=89 processed=44400 success=44400 errors=0
+time=2026-01-02T11:56:43.040+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=89 processed=44500 success=44500 errors=0
+time=2026-01-02T11:56:48.054+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=89 processed=44600 success=44600 errors=0
+time=2026-01-02T11:56:53.167+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=3 processed=44700 success=44700 errors=0
+time=2026-01-02T11:56:58.068+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=35 processed=44800 success=44800 errors=0
+time=2026-01-02T11:57:02.399+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=3600 total_skipped=41263 progress=2.016716337643131
+time=2026-01-02T11:57:03.922+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=41 processed=44900 success=44900 errors=0
+time=2026-01-02T11:57:05.297+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=3650 total_skipped=41279 progress=2.0447262867770633
+time=2026-01-02T11:57:08.045+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=41 processed=45000 success=45000 errors=0
+time=2026-01-02T11:57:13.092+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=36 processed=45100 success=45100 errors=0
+time=2026-01-02T11:57:18.105+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=84 processed=45200 success=45200 errors=0
+time=2026-01-02T11:57:23.067+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=84 processed=45300 success=45300 errors=0
+time=2026-01-02T11:57:28.037+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=84 processed=45400 success=45400 errors=0
+time=2026-01-02T11:57:33.060+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=84 processed=45500 success=45500 errors=0
+time=2026-01-02T11:57:38.043+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=84 processed=45600 success=45600 errors=0
+time=2026-01-02T11:57:43.035+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=84 processed=45700 success=45700 errors=0
+time=2026-01-02T11:57:48.062+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=84 processed=45800 success=45800 errors=0
+time=2026-01-02T11:57:53.035+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=84 processed=45900 success=45900 errors=0
+time=2026-01-02T11:57:58.064+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=84 processed=46000 success=46000 errors=0
+time=2026-01-02T11:58:02.799+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=3700 total_skipped=42370 progress=2.0727362359109955
+time=2026-01-02T11:58:03.557+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=55 processed=46100 success=46100 errors=0
+time=2026-01-02T11:58:08.180+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=3 processed=46200 success=46200 errors=0
+time=2026-01-02T11:58:08.398+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=3750 total_skipped=42449 progress=2.100746185044928
+time=2026-01-02T11:58:13.058+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=3 processed=46300 success=46300 errors=0
+time=2026-01-02T11:58:18.045+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=3 processed=46400 success=46400 errors=0
+time=2026-01-02T11:58:23.050+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=3 processed=46500 success=46500 errors=0
+time=2026-01-02T11:58:28.101+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=3 processed=46600 success=46600 errors=0
+time=2026-01-02T11:58:33.042+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=3 processed=46700 success=46700 errors=0
+time=2026-01-02T11:58:38.045+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=3 processed=46800 success=46800 errors=0
+time=2026-01-02T11:58:43.133+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=3 processed=46900 success=46900 errors=0
+time=2026-01-02T11:58:48.097+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=28 processed=47000 success=47000 errors=0
+time=2026-01-02T11:58:53.061+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=28 processed=47100 success=47100 errors=0
+time=2026-01-02T11:58:58.038+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=28 processed=47200 success=47200 errors=0
+time=2026-01-02T11:59:02.954+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=3800 total_skipped=43477 progress=2.1287561341788606
+time=2026-01-02T11:59:03.434+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=46 processed=47300 success=47300 errors=0
+time=2026-01-02T11:59:08.147+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=20 processed=47400 success=47400 errors=0
+time=2026-01-02T11:59:11.406+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=3850 total_skipped=43610 progress=2.156766083312793
+time=2026-01-02T11:59:13.157+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=98 processed=47500 success=47500 errors=0
+time=2026-01-02T11:59:18.094+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=31 processed=47600 success=47600 errors=0
+time=2026-01-02T11:59:23.141+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=47 processed=47700 success=47700 errors=0
+time=2026-01-02T11:59:28.044+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=47 processed=47800 success=47800 errors=0
+time=2026-01-02T11:59:33.068+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=98 processed=47900 success=47900 errors=0
+time=2026-01-02T11:59:38.098+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=1 processed=48000 success=48000 errors=0
+time=2026-01-02T11:59:43.041+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=1 processed=48100 success=48100 errors=0
+time=2026-01-02T11:59:48.000+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=47 processed=48200 success=48200 errors=0
+time=2026-01-02T11:59:52.996+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=1 processed=48300 success=48300 errors=0
+time=2026-01-02T11:59:57.957+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=1 processed=48400 success=48400 errors=0
+time=2026-01-02T12:00:03.242+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=3900 total_skipped=44565 progress=2.184776032446725
+time=2026-01-02T12:00:03.910+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=34 processed=48500 success=48500 errors=0
+time=2026-01-02T12:00:08.041+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=82 processed=48600 success=48600 errors=0
+time=2026-01-02T12:00:13.017+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=4 processed=48700 success=48700 errors=0
+time=2026-01-02T12:00:18.063+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=47 processed=48800 success=48800 errors=0
+time=2026-01-02T12:00:23.021+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=18 processed=48900 success=48900 errors=0
+time=2026-01-02T12:00:28.075+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=26 processed=49000 success=49000 errors=0
+time=2026-01-02T12:00:33.020+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=21 processed=49100 success=49100 errors=0
+time=2026-01-02T12:00:38.009+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=26 processed=49200 success=49200 errors=0
+time=2026-01-02T12:00:42.975+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=36 processed=49300 success=49300 errors=0
+time=2026-01-02T12:00:47.954+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=36 processed=49400 success=49400 errors=0
+time=2026-01-02T12:00:52.977+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=36 processed=49500 success=49500 errors=0
+time=2026-01-02T12:00:58.002+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=26 processed=49600 success=49600 errors=0
+time=2026-01-02T12:01:01.187+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=3950 total_skipped=45692 progress=2.2127859815806574
+time=2026-01-02T12:01:03.193+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=4000 total_skipped=45693 progress=2.2407959307145897
+time=2026-01-02T12:01:03.211+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=47 processed=49700 success=49700 errors=0
+time=2026-01-02T12:01:08.024+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=21 processed=49800 success=49800 errors=0
+time=2026-01-02T12:01:12.974+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=21 processed=49900 success=49900 errors=0
+time=2026-01-02T12:01:17.959+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=21 processed=50000 success=50000 errors=0
+time=2026-01-02T12:01:23.004+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=21 processed=50100 success=50100 errors=0
+time=2026-01-02T12:01:27.999+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=36 processed=50200 success=50200 errors=0
+time=2026-01-02T12:01:32.974+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=36 processed=50300 success=50300 errors=0
+time=2026-01-02T12:01:38.000+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=18 processed=50400 success=50400 errors=0
+time=2026-01-02T12:01:43.068+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=18 processed=50500 success=50500 errors=0
+time=2026-01-02T12:01:48.023+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=26 processed=50600 success=50600 errors=0
+time=2026-01-02T12:01:53.015+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=60 processed=50700 success=50700 errors=0
+time=2026-01-02T12:01:57.977+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=60 processed=50800 success=50800 errors=0
+time=2026-01-02T12:02:01.625+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=4050 total_skipped=46805 progress=2.2688058798485224
+time=2026-01-02T12:02:03.493+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=80 processed=50900 success=50900 errors=0
+time=2026-01-02T12:02:04.154+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=4100 total_skipped=46817 progress=2.2968158289824547
+time=2026-01-02T12:02:07.989+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=80 processed=51000 success=51000 errors=0
+time=2026-01-02T12:02:12.968+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=80 processed=51100 success=51100 errors=0
+time=2026-01-02T12:02:18.008+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=67 processed=51200 success=51200 errors=0
+time=2026-01-02T12:02:22.971+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=67 processed=51300 success=51300 errors=0
+time=2026-01-02T12:02:28.050+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=80 processed=51400 success=51400 errors=0
+time=2026-01-02T12:02:32.980+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=80 processed=51500 success=51500 errors=0
+time=2026-01-02T12:02:38.029+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=80 processed=51600 success=51600 errors=0
+time=2026-01-02T12:02:42.952+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=80 processed=51700 success=51700 errors=0
+time=2026-01-02T12:02:47.958+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=80 processed=51800 success=51800 errors=0
+time=2026-01-02T12:02:52.977+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=80 processed=51900 success=51900 errors=0
+time=2026-01-02T12:02:57.956+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=80 processed=52000 success=52000 errors=0
+time=2026-01-02T12:03:01.344+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=4150 total_skipped=47908 progress=2.324825778116387
+time=2026-01-02T12:03:03.161+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=67 processed=52100 success=52100 errors=0
+time=2026-01-02T12:03:04.445+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=4200 total_skipped=47922 progress=2.3528357272503193
+time=2026-01-02T12:03:07.982+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=67 processed=52200 success=52200 errors=0
+time=2026-01-02T12:03:12.964+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=36 processed=52300 success=52300 errors=0
+time=2026-01-02T12:03:18.164+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=18 processed=52400 success=52400 errors=0
+time=2026-01-02T12:03:22.996+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=18 processed=52500 success=52500 errors=0
+time=2026-01-02T12:03:27.974+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=18 processed=52600 success=52600 errors=0
+time=2026-01-02T12:03:32.976+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=18 processed=52700 success=52700 errors=0
+time=2026-01-02T12:03:38.032+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=18 processed=52800 success=52800 errors=0
+time=2026-01-02T12:03:43.003+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=38 processed=52900 success=52900 errors=0
+time=2026-01-02T12:03:48.023+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=38 processed=53000 success=53000 errors=0
+time=2026-01-02T12:03:53.133+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=24 processed=53100 success=53100 errors=0
+time=2026-01-02T12:03:57.977+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=38 processed=53200 success=53200 errors=0
+time=2026-01-02T12:04:01.422+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=4250 total_skipped=49007 progress=2.3808456763842516
+time=2026-01-02T12:04:03.524+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=33 processed=53300 success=53300 errors=0
+time=2026-01-02T12:04:04.085+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=4300 total_skipped=49012 progress=2.4088556255181843
+time=2026-01-02T12:04:08.024+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=17 processed=53400 success=53400 errors=0
+time=2026-01-02T12:04:13.074+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=83 processed=53500 success=53500 errors=0
+time=2026-01-02T12:04:18.036+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=18 processed=53600 success=53600 errors=0
+time=2026-01-02T12:04:23.068+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=67 processed=53700 success=53700 errors=0
+time=2026-01-02T12:04:28.060+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=38 processed=53800 success=53800 errors=0
+time=2026-01-02T12:04:33.201+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=95 processed=53900 success=53900 errors=0
+time=2026-01-02T12:04:38.114+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=30 processed=54000 success=54000 errors=0
+time=2026-01-02T12:04:43.159+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=61 processed=54100 success=54100 errors=0
+time=2026-01-02T12:04:48.137+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=44 processed=54200 success=54200 errors=0
+time=2026-01-02T12:04:53.177+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=34 processed=54300 success=54300 errors=0
+time=2026-01-02T12:04:58.108+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=30 processed=54400 success=54400 errors=0
+time=2026-01-02T12:05:02.630+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=4350 total_skipped=50121 progress=2.436865574652116
+time=2026-01-02T12:05:03.600+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=93 processed=54500 success=54500 errors=0
+time=2026-01-02T12:05:06.147+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=4400 total_skipped=50155 progress=2.464875523786049
+time=2026-01-02T12:05:08.154+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=55 processed=54600 success=54600 errors=0
+time=2026-01-02T12:05:13.111+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=61 processed=54700 success=54700 errors=0
+time=2026-01-02T12:05:18.117+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=46 processed=54800 success=54800 errors=0
+time=2026-01-02T12:05:23.140+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=83 processed=54900 success=54900 errors=0
+time=2026-01-02T12:05:28.060+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=46 processed=55000 success=55000 errors=0
+time=2026-01-02T12:05:33.050+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=46 processed=55100 success=55100 errors=0
+time=2026-01-02T12:05:38.046+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=46 processed=55200 success=55200 errors=0
+time=2026-01-02T12:12:16.449+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=64 processed=55300 success=55300 errors=0
+time=2026-01-02T12:12:17.241+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=4450 total_skipped=50858 progress=2.492885472919981
+time=2026-01-02T12:12:19.187+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=58 processed=55400 success=55400 errors=0
+time=2026-01-02T12:12:20.468+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=4500 total_skipped=50934 progress=2.5208954220539135
+time=2026-01-02T12:12:23.281+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=33 processed=55500 success=55500 errors=0
+time=2026-01-02T12:12:28.283+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=93 processed=55600 success=55600 errors=0
+time=2026-01-02T12:12:33.298+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=10 processed=55700 success=55700 errors=0
+time=2026-01-02T12:12:38.227+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=10 processed=55800 success=55800 errors=0
+time=2026-01-02T12:12:43.256+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=10 processed=55900 success=55900 errors=0
+time=2026-01-02T12:12:48.247+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=10 processed=56000 success=56000 errors=0
+time=2026-01-02T12:12:53.234+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=10 processed=56100 success=56100 errors=0
+time=2026-01-02T12:12:58.257+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=10 processed=56200 success=56200 errors=0
+time=2026-01-02T12:13:02.302+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=4550 total_skipped=51719 progress=2.548905371187846
+time=2026-01-02T12:13:03.399+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=10 processed=56300 success=56300 errors=0
+time=2026-01-02T12:13:08.306+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=24 processed=56400 success=56400 errors=0
+time=2026-01-02T12:13:13.297+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=76 processed=56500 success=56500 errors=0
+time=2026-01-02T12:13:18.296+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=90 processed=56600 success=56600 errors=0
+time=2026-01-02T12:13:23.285+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=92 processed=56700 success=56700 errors=0
+time=2026-01-02T12:13:28.279+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=68 processed=56800 success=56800 errors=0
+time=2026-01-02T12:13:33.231+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=68 processed=56900 success=56900 errors=0
+time=2026-01-02T12:13:38.240+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=68 processed=57000 success=57000 errors=0
+time=2026-01-02T12:13:43.258+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=68 processed=57100 success=57100 errors=0
+time=2026-01-02T12:13:48.259+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=68 processed=57200 success=57200 errors=0
+time=2026-01-02T12:13:53.360+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=68 processed=57300 success=57300 errors=0
+time=2026-01-02T12:13:58.232+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=98 processed=57400 success=57400 errors=0
+time=2026-01-02T12:13:59.955+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=4600 total_skipped=52824 progress=2.576915320321778
+time=2026-01-02T12:14:02.699+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=4650 total_skipped=52831 progress=2.604925269455711
+time=2026-01-02T12:14:03.538+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=8 processed=57500 success=57500 errors=0
+time=2026-01-02T12:14:08.245+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=8 processed=57600 success=57600 errors=0
+time=2026-01-02T12:14:10.532+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=4700 total_skipped=52941 progress=2.632935218589643
+time=2026-01-02T12:14:13.293+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=8 processed=57700 success=57700 errors=0
+time=2026-01-02T12:14:18.329+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=78 processed=57800 success=57800 errors=0
+time=2026-01-02T12:14:23.379+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=57 processed=57900 success=57900 errors=0
+time=2026-01-02T12:14:28.330+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=68 processed=58000 success=58000 errors=0
+time=2026-01-02T12:14:33.299+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=59 processed=58100 success=58100 errors=0
+time=2026-01-02T12:14:38.280+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=1 processed=58200 success=58200 errors=0
+time=2026-01-02T12:14:43.301+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=68 processed=58300 success=58300 errors=0
+time=2026-01-02T12:14:48.416+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=22 processed=58400 success=58400 errors=0
+time=2026-01-02T12:14:53.434+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=55 processed=58500 success=58500 errors=0
+time=2026-01-02T12:14:58.302+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=2 processed=58600 success=58600 errors=0
+time=2026-01-02T12:15:02.416+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=4750 total_skipped=53922 progress=2.6609451677235754
+time=2026-01-02T12:15:03.458+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=69 processed=58700 success=58700 errors=0
+time=2026-01-02T12:15:08.350+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=69 processed=58800 success=58800 errors=0
+time=2026-01-02T12:15:13.327+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=58 processed=58900 success=58900 errors=0
+time=2026-01-02T12:15:18.434+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=88 processed=59000 success=59000 errors=0
+time=2026-01-02T12:15:23.418+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=88 processed=59100 success=59100 errors=0
+time=2026-01-02T12:15:28.436+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=36 processed=59200 success=59200 errors=0
+time=2026-01-02T12:15:33.448+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=58 processed=59300 success=59300 errors=0
+time=2026-01-02T12:15:38.299+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=32 processed=59400 success=59400 errors=0
+time=2026-01-02T12:15:43.545+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=56 processed=59500 success=59500 errors=0
+time=2026-01-02T12:15:48.412+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=2 processed=59600 success=59600 errors=0
+time=2026-01-02T12:15:53.281+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=2 processed=59700 success=59700 errors=0
+time=2026-01-02T12:15:58.286+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=79 processed=59800 success=59800 errors=0
+time=2026-01-02T12:15:59.725+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=4800 total_skipped=55021 progress=2.6889551168575077
+time=2026-01-02T12:16:03.849+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=89 processed=59900 success=59900 errors=0
+time=2026-01-02T12:16:03.998+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=4850 total_skipped=55026 progress=2.71696506599144
+time=2026-01-02T12:16:08.238+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=89 processed=60000 success=60000 errors=0
+time=2026-01-02T12:16:13.244+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=89 processed=60100 success=60100 errors=0
+time=2026-01-02T12:16:18.236+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=89 processed=60200 success=60200 errors=0
+time=2026-01-02T12:16:23.297+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=89 processed=60300 success=60300 errors=0
+time=2026-01-02T12:16:28.231+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=89 processed=60400 success=60400 errors=0
+time=2026-01-02T12:16:33.274+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=89 processed=60500 success=60500 errors=0
+time=2026-01-02T12:16:38.254+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=89 processed=60600 success=60600 errors=0
+time=2026-01-02T12:16:43.251+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=89 processed=60700 success=60700 errors=0
+time=2026-01-02T12:16:48.244+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=89 processed=60800 success=60800 errors=0
+time=2026-01-02T12:16:53.232+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=89 processed=60900 success=60900 errors=0
+time=2026-01-02T12:16:58.270+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=1 processed=61000 success=61000 errors=0
+time=2026-01-02T12:17:00.971+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=4900 total_skipped=56143 progress=2.7449750151253727
+time=2026-01-02T12:17:03.432+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=25 processed=61100 success=61100 errors=0
+time=2026-01-02T12:17:03.672+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=4950 total_skipped=56151 progress=2.772984964259305
+time=2026-01-02T12:17:08.232+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=25 processed=61200 success=61200 errors=0
+time=2026-01-02T12:17:13.297+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=25 processed=61300 success=61300 errors=0
+time=2026-01-02T12:17:18.233+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=25 processed=61400 success=61400 errors=0
+time=2026-01-02T12:17:23.231+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=25 processed=61500 success=61500 errors=0
+time=2026-01-02T12:17:28.256+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=25 processed=61600 success=61600 errors=0
+time=2026-01-02T12:17:33.232+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=25 processed=61700 success=61700 errors=0
+time=2026-01-02T12:17:38.330+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=25 processed=61800 success=61800 errors=0
+time=2026-01-02T12:17:43.382+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=1 processed=61900 success=61900 errors=0
+time=2026-01-02T12:17:48.417+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=80 processed=62000 success=62000 errors=0
+time=2026-01-02T12:17:53.318+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=80 processed=62100 success=62100 errors=0
+time=2026-01-02T12:17:58.316+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=80 processed=62200 success=62200 errors=0
+time=2026-01-02T12:18:02.021+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=5000 total_skipped=57259 progress=2.8009949133932373
+time=2026-01-02T12:18:03.611+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=48 processed=62300 success=62300 errors=0
+time=2026-01-02T12:18:06.221+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=5050 total_skipped=57298 progress=2.8290048625271695
+time=2026-01-02T12:18:08.316+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=48 processed=62400 success=62400 errors=0
+time=2026-01-02T12:18:13.332+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=48 processed=62500 success=62500 errors=0
+time=2026-01-02T12:18:18.318+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=48 processed=62600 success=62600 errors=0
+time=2026-01-02T12:18:23.322+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=48 processed=62700 success=62700 errors=0
+time=2026-01-02T12:18:28.315+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=48 processed=62800 success=62800 errors=0
+time=2026-01-02T12:18:33.316+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=48 processed=62900 success=62900 errors=0
+time=2026-01-02T12:18:38.324+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=48 processed=63000 success=63000 errors=0
+time=2026-01-02T12:18:43.316+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=48 processed=63100 success=63100 errors=0
+time=2026-01-02T12:18:48.329+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=48 processed=63200 success=63200 errors=0
+time=2026-01-02T12:18:53.318+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=48 processed=63300 success=63300 errors=0
+time=2026-01-02T12:18:58.389+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=47 processed=63400 success=63400 errors=0
+time=2026-01-02T12:19:01.979+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=5100 total_skipped=58357 progress=2.857014811661102
+time=2026-01-02T12:19:03.592+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=8 processed=63500 success=63500 errors=0
+time=2026-01-02T12:19:06.371+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=5150 total_skipped=58395 progress=2.8850247607950346
+time=2026-01-02T12:19:08.489+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=10 processed=63600 success=63600 errors=0
+time=2026-01-02T12:19:13.372+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=8 processed=63700 success=63700 errors=0
+time=2026-01-02T12:19:18.367+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=68 processed=63800 success=63800 errors=0
+time=2026-01-02T12:19:23.366+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=38 processed=63900 success=63900 errors=0
+time=2026-01-02T12:19:28.368+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=38 processed=64000 success=64000 errors=0
+time=2026-01-02T12:19:33.349+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=38 processed=64100 success=64100 errors=0
+time=2026-01-02T12:19:38.405+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=41 processed=64200 success=64200 errors=0
+time=2026-01-02T12:19:43.318+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=41 processed=64300 success=64300 errors=0
+time=2026-01-02T12:19:48.366+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=17 processed=64400 success=64400 errors=0
+time=2026-01-02T12:19:53.375+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=1 processed=64500 success=64500 errors=0
+time=2026-01-02T12:19:58.382+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=17 processed=64600 success=64600 errors=0
+time=2026-01-02T12:20:02.672+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=5200 total_skipped=59466 progress=2.913034709928967
+time=2026-01-02T12:20:03.853+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=37 processed=64700 success=64700 errors=0
+time=2026-01-02T12:20:08.422+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=38 processed=64800 success=64800 errors=0
+time=2026-01-02T12:20:13.338+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=38 processed=64900 success=64900 errors=0
+time=2026-01-02T12:20:18.386+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=32 processed=65000 success=65000 errors=0
+time=2026-01-02T12:20:23.329+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=32 processed=65100 success=65100 errors=0
+time=2026-01-02T12:20:28.326+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=32 processed=65200 success=65200 errors=0
+time=2026-01-02T12:20:33.374+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=73 processed=65300 success=65300 errors=0
+time=2026-01-02T12:20:38.376+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=38 processed=65400 success=65400 errors=0
+time=2026-01-02T12:20:43.375+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=72 processed=65500 success=65500 errors=0
+time=2026-01-02T12:20:48.371+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=20 processed=65600 success=65600 errors=0
+time=2026-01-02T12:20:53.356+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=20 processed=65700 success=65700 errors=0
+time=2026-01-02T12:20:58.354+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=20 processed=65800 success=65800 errors=0
+time=2026-01-02T12:21:00.064+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=5250 total_skipped=60571 progress=2.941044659062899
+time=2026-01-02T12:21:03.259+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=5300 total_skipped=60573 progress=2.9690546081968314
+time=2026-01-02T12:21:03.977+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=4 processed=65900 success=65900 errors=0
+time=2026-01-02T12:21:08.326+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=4 processed=66000 success=66000 errors=0
+time=2026-01-02T12:21:13.353+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=4 processed=66100 success=66100 errors=0
+time=2026-01-02T12:21:18.413+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=97 processed=66200 success=66200 errors=0
+time=2026-01-02T12:21:23.339+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=97 processed=66300 success=66300 errors=0
+time=2026-01-02T12:21:28.326+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=97 processed=66400 success=66400 errors=0
+time=2026-01-02T12:21:33.415+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=71 processed=66500 success=66500 errors=0
+time=2026-01-02T12:21:38.405+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=71 processed=66600 success=66600 errors=0
+time=2026-01-02T12:21:43.315+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=71 processed=66700 success=66700 errors=0
+time=2026-01-02T12:21:48.316+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=71 processed=66800 success=66800 errors=0
+time=2026-01-02T12:21:53.422+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=71 processed=66900 success=66900 errors=0
+time=2026-01-02T12:21:58.315+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=71 processed=67000 success=67000 errors=0
+time=2026-01-02T12:22:00.414+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=5350 total_skipped=61676 progress=2.9970645573307637
+time=2026-01-02T12:22:03.326+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=5400 total_skipped=61686 progress=3.0250745064646964
+time=2026-01-02T12:22:03.482+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=46 processed=67100 success=67100 errors=0
+time=2026-01-02T12:22:08.529+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=64 processed=67200 success=67200 errors=0
+time=2026-01-02T12:22:13.382+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=93 processed=67300 success=67300 errors=0
+time=2026-01-02T12:22:18.358+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=93 processed=67400 success=67400 errors=0
+time=2026-01-02T12:22:23.417+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=94 processed=67500 success=67500 errors=0
+time=2026-01-02T12:22:28.307+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=4 processed=67600 success=67600 errors=0
+time=2026-01-02T12:22:33.233+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=4 processed=67700 success=67700 errors=0
+time=2026-01-02T12:22:38.280+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=4 processed=67800 success=67800 errors=0
+time=2026-01-02T12:22:43.260+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=4 processed=67900 success=67900 errors=0
+time=2026-01-02T12:22:48.271+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=4 processed=68000 success=68000 errors=0
+time=2026-01-02T12:22:53.282+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=4 processed=68100 success=68100 errors=0
+time=2026-01-02T12:22:58.252+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=4 processed=68200 success=68200 errors=0
+time=2026-01-02T12:23:00.937+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=5450 total_skipped=62783 progress=3.0530844555986287
+time=2026-01-02T12:23:03.273+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=5500 total_skipped=62788 progress=3.081094404732561
+time=2026-01-02T12:23:03.330+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=93 processed=68300 success=68300 errors=0
+time=2026-01-02T12:23:08.347+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=51 processed=68400 success=68400 errors=0
+time=2026-01-02T12:23:13.268+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=51 processed=68500 success=68500 errors=0
+time=2026-01-02T12:23:18.288+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=51 processed=68600 success=68600 errors=0
+time=2026-01-02T12:23:23.235+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=51 processed=68700 success=68700 errors=0
+time=2026-01-02T12:23:28.238+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=51 processed=68800 success=68800 errors=0
+time=2026-01-02T12:23:33.254+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=51 processed=68900 success=68900 errors=0
+time=2026-01-02T12:23:38.259+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=51 processed=69000 success=69000 errors=0
+time=2026-01-02T12:23:43.263+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=51 processed=69100 success=69100 errors=0
+time=2026-01-02T12:23:48.308+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=51 processed=69200 success=69200 errors=0
+time=2026-01-02T12:23:53.234+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=51 processed=69300 success=69300 errors=0
+time=2026-01-02T12:23:58.246+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=51 processed=69400 success=69400 errors=0
+time=2026-01-02T12:24:00.912+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=5550 total_skipped=63888 progress=3.1091043538664933
+time=2026-01-02T12:24:04.102+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=50 processed=69500 success=69500 errors=0
+time=2026-01-02T12:24:04.430+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=5600 total_skipped=63894 progress=3.137114303000426
+time=2026-01-02T12:24:09.067+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=42 processed=69600 success=69600 errors=0
+time=2026-01-02T12:24:14.088+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=44 processed=69700 success=69700 errors=0
+time=2026-01-02T12:24:18.998+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=44 processed=69800 success=69800 errors=0
+time=2026-01-02T12:24:24.067+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=59 processed=69900 success=69900 errors=0
+time=2026-01-02T12:24:29.130+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=30 processed=70000 success=70000 errors=0
+time=2026-01-02T12:24:34.021+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=27 processed=70100 success=70100 errors=0
+time=2026-01-02T12:24:39.051+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=98 processed=70200 success=70200 errors=0
+time=2026-01-02T12:24:43.972+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=59 processed=70300 success=70300 errors=0
+time=2026-01-02T12:24:49.027+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=24 processed=70400 success=70400 errors=0
+time=2026-01-02T12:24:53.988+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=30 processed=70500 success=70500 errors=0
+time=2026-01-02T12:24:58.797+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=7 processed=70600 success=70600 errors=0
+time=2026-01-02T12:25:02.249+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=5650 total_skipped=64998 progress=3.1651242521343583
+time=2026-01-02T12:25:03.715+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=92 processed=70700 success=70700 errors=0
+time=2026-01-02T12:25:08.339+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=55 processed=70800 success=70800 errors=0
+time=2026-01-02T12:25:13.344+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=55 processed=70900 success=70900 errors=0
+time=2026-01-02T12:25:18.343+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=55 processed=71000 success=71000 errors=0
+time=2026-01-02T12:25:23.242+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=55 processed=71100 success=71100 errors=0
+time=2026-01-02T12:25:28.234+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=55 processed=71200 success=71200 errors=0
+time=2026-01-02T12:25:33.274+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=14 processed=71300 success=71300 errors=0
+time=2026-01-02T12:25:38.274+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=14 processed=71400 success=71400 errors=0
+time=2026-01-02T12:25:43.249+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=14 processed=71500 success=71500 errors=0
+time=2026-01-02T12:25:48.291+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=14 processed=71600 success=71600 errors=0
+time=2026-01-02T12:25:53.292+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=14 processed=71700 success=71700 errors=0
+time=2026-01-02T12:25:58.270+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=14 processed=71800 success=71800 errors=0
+time=2026-01-02T12:26:00.139+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=5700 total_skipped=66123 progress=3.1931342012682906
+time=2026-01-02T12:26:03.233+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=5750 total_skipped=66125 progress=3.221144150402223
+time=2026-01-02T12:26:03.538+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=7 processed=71900 success=71900 errors=0
+time=2026-01-02T12:26:08.304+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=14 processed=72000 success=72000 errors=0
+time=2026-01-02T12:26:13.243+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=14 processed=72100 success=72100 errors=0
+time=2026-01-02T12:26:18.261+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=14 processed=72200 success=72200 errors=0
+time=2026-01-02T12:26:23.272+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=14 processed=72300 success=72300 errors=0
+time=2026-01-02T12:26:28.259+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=14 processed=72400 success=72400 errors=0
+time=2026-01-02T12:26:33.228+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=14 processed=72500 success=72500 errors=0
+time=2026-01-02T12:26:38.253+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=14 processed=72600 success=72600 errors=0
+time=2026-01-02T12:26:48.239+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=55 processed=72800 success=72800 errors=0
+time=2026-01-02T12:26:53.250+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=55 processed=72900 success=72900 errors=0
+time=2026-01-02T12:26:58.262+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=55 processed=73000 success=73000 errors=0
+time=2026-01-02T12:27:00.326+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=5800 total_skipped=67227 progress=3.2491540995361547
+time=2026-01-02T12:27:04.185+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=7 processed=73100 success=73100 errors=0
+time=2026-01-02T12:27:04.234+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=5850 total_skipped=67232 progress=3.277164048670088
+time=2026-01-02T12:27:08.252+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=7 processed=73200 success=73200 errors=0
+time=2026-01-02T12:41:21.422+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=36 processed=73300 success=73300 errors=0
+time=2026-01-02T12:41:23.754+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=5900 total_skipped=67346 progress=3.30517399780402
+time=2026-01-02T12:41:24.116+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=5950 total_skipped=67441 progress=3.3331839469379525
+time=2026-01-02T12:41:24.202+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=19 processed=73400 success=73400 errors=0
+time=2026-01-02T12:41:28.027+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=1 processed=73500 success=73500 errors=0
+time=2026-01-02T12:41:32.937+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=90 processed=73600 success=73600 errors=0
+time=2026-01-02T12:41:38.029+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=84 processed=73700 success=73700 errors=0
+time=2026-01-02T12:41:42.963+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=13 processed=73800 success=73800 errors=0
+time=2026-01-02T12:41:47.997+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=3 processed=73900 success=73900 errors=0
+time=2026-01-02T12:41:52.991+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=21 processed=74000 success=74000 errors=0
+time=2026-01-02T12:41:58.061+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=40 processed=74100 success=74100 errors=0
+time=2026-01-02T12:42:01.149+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=6000 total_skipped=68152 progress=3.3611938960718843
+time=2026-01-02T12:42:03.599+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=94 processed=74200 success=74200 errors=0
+time=2026-01-02T12:42:04.859+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=6050 total_skipped=68185 progress=3.3892038452058166
+time=2026-01-02T12:42:08.127+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=4 processed=74300 success=74300 errors=0
+time=2026-01-02T12:42:13.177+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=40 processed=74400 success=74400 errors=0
+time=2026-01-02T12:42:18.206+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=55 processed=74500 success=74500 errors=0
+time=2026-01-02T12:42:23.147+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=62 processed=74600 success=74600 errors=0
+time=2026-01-02T12:42:28.117+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=19 processed=74700 success=74700 errors=0
+time=2026-01-02T12:42:33.150+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=89 processed=74800 success=74800 errors=0
+time=2026-01-02T12:42:38.525+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=7 processed=74900 success=74900 errors=0
+time=2026-01-02T12:42:43.200+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=21 processed=75000 success=75000 errors=0
+time=2026-01-02T12:42:48.274+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=55 processed=75100 success=75100 errors=0
+time=2026-01-02T12:42:53.290+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=38 processed=75200 success=75200 errors=0
+time=2026-01-02T12:42:58.300+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=89 processed=75300 success=75300 errors=0
+time=2026-01-02T12:43:02.841+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=6100 total_skipped=69272 progress=3.41721379433975
+time=2026-01-02T12:43:03.741+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=0 processed=75400 success=75400 errors=0
+time=2026-01-02T12:43:07.695+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=6150 total_skipped=69329 progress=3.445223743473682
+time=2026-01-02T12:43:08.539+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=15 processed=75500 success=75500 errors=0
+time=2026-01-02T12:43:12.950+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=15 processed=75600 success=75600 errors=0
+time=2026-01-02T12:43:17.891+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=15 processed=75700 success=75700 errors=0
+time=2026-01-02T12:43:22.907+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=15 processed=75800 success=75800 errors=0
+time=2026-01-02T12:43:27.874+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=15 processed=75900 success=75900 errors=0
+time=2026-01-02T12:43:32.900+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=15 processed=76000 success=76000 errors=0
+time=2026-01-02T12:43:37.879+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=15 processed=76100 success=76100 errors=0
+time=2026-01-02T12:43:42.901+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=15 processed=76200 success=76200 errors=0
+time=2026-01-02T12:43:47.903+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=15 processed=76300 success=76300 errors=0
+time=2026-01-02T12:43:52.937+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=51 processed=76400 success=76400 errors=0
+time=2026-01-02T12:43:57.919+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=51 processed=76500 success=76500 errors=0
+time=2026-01-02T12:44:02.076+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=6200 total_skipped=70368 progress=3.4732336926076144
+time=2026-01-02T12:44:03.151+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=64 processed=76600 success=76600 errors=0
+time=2026-01-02T12:44:05.618+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=6250 total_skipped=70396 progress=3.5012436417415462
+time=2026-01-02T12:44:07.982+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=80 processed=76700 success=76700 errors=0
+time=2026-01-02T12:44:13.064+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=91 processed=76800 success=76800 errors=0
+time=2026-01-02T12:44:18.060+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=28 processed=76900 success=76900 errors=0
+time=2026-01-02T12:44:22.988+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=59 processed=77000 success=77000 errors=0
+time=2026-01-02T12:44:27.982+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=17 processed=77100 success=77100 errors=0
+time=2026-01-02T12:44:32.957+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=56 processed=77200 success=77200 errors=0
+time=2026-01-02T12:44:37.880+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=56 processed=77300 success=77300 errors=0
+time=2026-01-02T12:44:42.921+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=56 processed=77400 success=77400 errors=0
+time=2026-01-02T12:44:47.914+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=56 processed=77500 success=77500 errors=0
+time=2026-01-02T12:44:53.075+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=56 processed=77600 success=77600 errors=0
+time=2026-01-02T12:44:57.883+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=56 processed=77700 success=77700 errors=0
+time=2026-01-02T12:45:02.328+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=6300 total_skipped=71475 progress=3.5292535908754785
+time=2026-01-02T12:45:03.366+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=58 processed=77800 success=77800 errors=0
+time=2026-01-02T12:45:07.907+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=58 processed=77900 success=77900 errors=0
+time=2026-01-02T12:45:12.904+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=58 processed=78000 success=78000 errors=0
+time=2026-01-02T12:45:17.950+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=6 processed=78100 success=78100 errors=0
+time=2026-01-02T12:45:22.918+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=6 processed=78200 success=78200 errors=0
+time=2026-01-02T12:45:27.881+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=6 processed=78300 success=78300 errors=0
+time=2026-01-02T12:45:32.890+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=6 processed=78400 success=78400 errors=0
+time=2026-01-02T12:45:37.906+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=6 processed=78500 success=78500 errors=0
+time=2026-01-02T12:45:42.873+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=6 processed=78600 success=78600 errors=0
+time=2026-01-02T12:45:47.942+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=29 processed=78700 success=78700 errors=0
+time=2026-01-02T12:45:52.877+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=29 processed=78800 success=78800 errors=0
+time=2026-01-02T12:45:57.911+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=39 processed=78900 success=78900 errors=0
+time=2026-01-02T12:46:01.358+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=6350 total_skipped=72592 progress=3.5572635400094117
+time=2026-01-02T12:46:03.284+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=7 processed=79000 success=79000 errors=0
+time=2026-01-02T12:46:03.536+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=6400 total_skipped=72596 progress=3.585273489143344
+time=2026-01-02T12:46:07.897+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=7 processed=79100 success=79100 errors=0
+time=2026-01-02T12:46:12.908+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=7 processed=79200 success=79200 errors=0
+time=2026-01-02T12:46:17.903+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=7 processed=79300 success=79300 errors=0
+time=2026-01-02T12:46:22.919+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=7 processed=79400 success=79400 errors=0
+time=2026-01-02T12:46:27.917+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=7 processed=79500 success=79500 errors=0
+time=2026-01-02T12:46:32.905+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=7 processed=79600 success=79600 errors=0
+time=2026-01-02T12:46:37.898+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=7 processed=79700 success=79700 errors=0
+time=2026-01-02T12:46:42.923+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=7 processed=79800 success=79800 errors=0
+time=2026-01-02T12:46:47.905+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=7 processed=79900 success=79900 errors=0
+time=2026-01-02T12:46:52.901+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=7 processed=80000 success=80000 errors=0
+time=2026-01-02T12:46:57.882+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=7 processed=80100 success=80100 errors=0
+time=2026-01-02T12:47:02.378+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=6450 total_skipped=73716 progress=3.613283438277276
+time=2026-01-02T12:47:03.101+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=82 processed=80200 success=80200 errors=0
+time=2026-01-02T12:47:07.542+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=6500 total_skipped=73787 progress=3.641293387411208
+time=2026-01-02T12:47:07.968+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=82 processed=80300 success=80300 errors=0
+time=2026-01-02T12:47:12.902+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=82 processed=80400 success=80400 errors=0
+time=2026-01-02T12:47:17.896+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=82 processed=80500 success=80500 errors=0
+time=2026-01-02T12:47:22.900+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=82 processed=80600 success=80600 errors=0
+time=2026-01-02T12:47:27.891+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=82 processed=80700 success=80700 errors=0
+time=2026-01-02T12:47:32.892+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=82 processed=80800 success=80800 errors=0
+time=2026-01-02T12:47:37.878+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=82 processed=80900 success=80900 errors=0
+time=2026-01-02T12:47:42.881+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=82 processed=81000 success=81000 errors=0
+time=2026-01-02T12:47:47.905+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=82 processed=81100 success=81100 errors=0
+time=2026-01-02T12:47:52.901+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=10 processed=81200 success=81200 errors=0
+time=2026-01-02T12:47:57.883+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=10 processed=81300 success=81300 errors=0
+time=2026-01-02T12:48:02.691+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=6550 total_skipped=74813 progress=3.6693033365451404
+time=2026-01-02T12:48:03.224+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=66 processed=81400 success=81400 errors=0
+time=2026-01-02T12:48:07.940+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=54 processed=81500 success=81500 errors=0
+time=2026-01-02T12:48:12.905+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=54 processed=81600 success=81600 errors=0
+time=2026-01-02T12:48:18.040+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=54 processed=81700 success=81700 errors=0
+time=2026-01-02T12:48:22.929+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=54 processed=81800 success=81800 errors=0
+time=2026-01-02T12:48:27.887+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=54 processed=81900 success=81900 errors=0
+time=2026-01-02T12:48:32.891+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=54 processed=82000 success=82000 errors=0
+time=2026-01-02T12:48:37.880+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=54 processed=82100 success=82100 errors=0
+time=2026-01-02T12:48:42.883+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=54 processed=82200 success=82200 errors=0
+time=2026-01-02T12:48:47.881+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=54 processed=82300 success=82300 errors=0
+time=2026-01-02T12:48:52.929+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=54 processed=82400 success=82400 errors=0
+time=2026-01-02T12:48:57.899+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=54 processed=82500 success=82500 errors=0
+time=2026-01-02T12:49:00.977+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=6600 total_skipped=75947 progress=3.6973132856790736
+time=2026-01-02T12:49:03.193+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=66 processed=82600 success=82600 errors=0
+time=2026-01-02T12:49:03.453+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=6650 total_skipped=75950 progress=3.725323234813006
+time=2026-01-02T12:49:07.910+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=66 processed=82700 success=82700 errors=0
+time=2026-01-02T12:49:12.883+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=66 processed=82800 success=82800 errors=0
+time=2026-01-02T12:49:17.895+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=66 processed=82900 success=82900 errors=0
+time=2026-01-02T12:49:22.927+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=32 processed=83000 success=83000 errors=0
+time=2026-01-02T12:49:27.877+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=32 processed=83100 success=83100 errors=0
+time=2026-01-02T12:49:32.911+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=32 processed=83200 success=83200 errors=0
+time=2026-01-02T12:49:37.897+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=32 processed=83300 success=83300 errors=0
+time=2026-01-02T12:49:42.895+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=32 processed=83400 success=83400 errors=0
+time=2026-01-02T12:49:47.907+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=32 processed=83500 success=83500 errors=0
+time=2026-01-02T12:49:52.971+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=66 processed=83600 success=83600 errors=0
+time=2026-01-02T12:49:57.953+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=32 processed=83700 success=83700 errors=0
+time=2026-01-02T12:50:01.744+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=6700 total_skipped=77060 progress=3.7533331839469377
+time=2026-01-02T12:50:03.673+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=73 processed=83800 success=83800 errors=0
+time=2026-01-02T12:50:04.658+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=6750 total_skipped=77080 progress=3.78134313308087
+time=2026-01-02T12:50:07.898+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=73 processed=83900 success=83900 errors=0
+time=2026-01-02T12:50:12.908+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=73 processed=84000 success=84000 errors=0
+time=2026-01-02T12:50:17.909+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=84 processed=84100 success=84100 errors=0
+time=2026-01-02T12:50:22.980+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=96 processed=84200 success=84200 errors=0
+time=2026-01-02T12:50:27.895+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=96 processed=84300 success=84300 errors=0
+time=2026-01-02T12:50:32.902+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=96 processed=84400 success=84400 errors=0
+time=2026-01-02T12:50:37.906+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=96 processed=84500 success=84500 errors=0
+time=2026-01-02T12:50:42.884+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=96 processed=84600 success=84600 errors=0
+time=2026-01-02T12:50:48.045+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=53 processed=84700 success=84700 errors=0
+time=2026-01-02T12:50:52.949+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=53 processed=84800 success=84800 errors=0
+time=2026-01-02T12:50:57.967+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=74 processed=84900 success=84900 errors=0
+time=2026-01-02T12:51:02.787+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=6800 total_skipped=78181 progress=3.8093530822148023
+time=2026-01-02T12:51:03.430+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=48 processed=85000 success=85000 errors=0
+time=2026-01-02T12:51:12.959+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=45 processed=85200 success=85200 errors=0
+time=2026-01-02T12:51:18.030+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=93 processed=85300 success=85300 errors=0
+time=2026-01-02T12:51:23.002+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=72 processed=85400 success=85400 errors=0
+time=2026-01-02T12:51:27.986+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=74 processed=85500 success=85500 errors=0
+time=2026-01-02T12:51:33.060+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=48 processed=85600 success=85600 errors=0
+time=2026-01-02T12:51:37.962+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=39 processed=85700 success=85700 errors=0
+time=2026-01-02T12:51:42.918+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=39 processed=85800 success=85800 errors=0
+time=2026-01-02T12:51:48.005+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=93 processed=85900 success=85900 errors=0
+time=2026-01-02T12:51:53.023+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=48 processed=86000 success=86000 errors=0
+time=2026-01-02T12:51:57.911+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=93 processed=86100 success=86100 errors=0
+time=2026-01-02T12:52:00.227+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=6850 total_skipped=79282 progress=3.8373630313487355
+time=2026-01-02T12:52:03.415+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:282 msg=批量保存成功 count=50 skipped_in_batch=0 total_saved=6900 total_skipped=79284 progress=3.8653729804826673
+time=2026-01-02T12:52:03.501+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=44 processed=86200 success=86200 errors=0
+time=2026-01-02T12:52:07.946+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=45 processed=86300 success=86300 errors=0
+time=2026-01-02T13:14:27.501+08:00 level=ERROR source=D:/collect/cmd/tracker/commands/query_qysy.go:268 msg=批量保存失败 error="批量保存失败 [0] address=0x7ab9d12f35de442a5c88687883691fb387e8e4aa user_equity=400.505439 total_loss=0.000000 profit_loss_ratio=0.000000 fee_ratio=0.000000 avg_trade_count_7d=0.000000: failed to connect to `user=postgres database=tracker`:\n\t[::1]:15432 (localhost): dial error: dial tcp [::1]:15432: connectex: No connection could be made because the target machine actively refused it.\n\t127.0.0.1:15432 (localhost): dial error: dial tcp 127.0.0.1:15432: connectex: No connection could be made because the target machine actively refused it." count=50
+time=2026-01-02T13:14:27.639+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=77 processed=86400 success=86400 errors=0
+time=2026-01-02T13:14:29.145+08:00 level=ERROR source=D:/collect/cmd/tracker/commands/query_qysy.go:268 msg=批量保存失败 error="批量保存失败 [0] address=0x7b142fe0e0cdffb83f66b20b33d66036123595c8 user_equity=87.951669 total_loss=314.771384 profit_loss_ratio=0.085610 fee_ratio=0.033605 avg_trade_count_7d=0.000000: failed to connect to `user=postgres database=tracker`:\n\t[::1]:15432 (localhost): dial error: dial tcp [::1]:15432: connectex: No connection could be made because the target machine actively refused it.\n\t127.0.0.1:15432 (localhost): dial error: dial tcp 127.0.0.1:15432: connectex: No connection could be made because the target machine actively refused it." count=50
+time=2026-01-02T13:14:30.526+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=23 processed=86500 success=86500 errors=0
+time=2026-01-02T13:14:34.919+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=23 processed=86600 success=86600 errors=0
+time=2026-01-02T13:14:39.705+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=35 processed=86700 success=86700 errors=0
+time=2026-01-02T13:14:44.702+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=55 processed=86800 success=86800 errors=0
+time=2026-01-02T13:14:49.734+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=55 processed=86900 success=86900 errors=0
+time=2026-01-02T13:14:54.819+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=93 processed=87000 success=87000 errors=0
+time=2026-01-02T13:15:00.393+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=37 processed=87100 success=87100 errors=0
+time=2026-01-02T13:15:01.514+08:00 level=ERROR source=D:/collect/cmd/tracker/commands/query_qysy.go:268 msg=批量保存失败 error="批量保存失败 [0] address=0x7b0fb47373e6966f5876fd2b4beb155b736bd0fc user_equity=3.270168 total_loss=3294.163412 profit_loss_ratio=3.623152 fee_ratio=0.018317 avg_trade_count_7d=0.000000: failed to connect to `user=postgres database=tracker`:\n\t[::1]:15432 (localhost): dial error: dial tcp [::1]:15432: connectex: No connection could be made because the target machine actively refused it.\n\t127.0.0.1:15432 (localhost): dial error: dial tcp 127.0.0.1:15432: connectex: No connection could be made because the target machine actively refused it." count=50
+time=2026-01-02T13:15:04.963+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=30 processed=87200 success=87200 errors=0
+time=2026-01-02T13:15:05.438+08:00 level=ERROR source=D:/collect/cmd/tracker/commands/query_qysy.go:268 msg=批量保存失败 error="批量保存失败 [0] address=0x7c213b79b330dcd3afa72792817caceaff2936d6 user_equity=0.008992 total_loss=303.975264 profit_loss_ratio=0.800645 fee_ratio=0.043137 avg_trade_count_7d=0.000000: failed to connect to `user=postgres database=tracker`:\n\t[::1]:15432 (localhost): dial error: dial tcp [::1]:15432: connectex: No connection could be made because the target machine actively refused it.\n\t127.0.0.1:15432 (localhost): dial error: dial tcp 127.0.0.1:15432: connectex: No connection could be made because the target machine actively refused it." count=50
+time=2026-01-02T13:15:09.856+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=87 processed=87300 success=87300 errors=0
+time=2026-01-02T13:15:14.862+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=63 processed=87400 success=87400 errors=0
+time=2026-01-02T13:15:19.836+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=20 processed=87500 success=87500 errors=0
+time=2026-01-02T13:15:24.816+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=82 processed=87600 success=87600 errors=0
+time=2026-01-02T13:15:29.780+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=42 processed=87700 success=87700 errors=0
+time=2026-01-02T13:15:34.780+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=87 processed=87800 success=87800 errors=0
+time=2026-01-02T13:15:39.896+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=42 processed=87900 success=87900 errors=0
+time=2026-01-02T13:15:44.827+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=27 processed=88000 success=88000 errors=0
+time=2026-01-02T13:15:49.681+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=27 processed=88100 success=88100 errors=0
+time=2026-01-02T13:15:54.703+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=90 processed=88200 success=88200 errors=0
+time=2026-01-02T13:16:00.253+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=81 processed=88300 success=88300 errors=0
+time=2026-01-02T13:16:04.242+08:00 level=ERROR source=D:/collect/cmd/tracker/commands/query_qysy.go:268 msg=批量保存失败 error="批量保存失败 [0] address=0x7c4530f47d6f87f7d4213a232bd60e724c3bb2eb user_equity=58.633570 total_loss=514.862450 profit_loss_ratio=0.218481 fee_ratio=22.414316 avg_trade_count_7d=0.571429: failed to connect to `user=postgres database=tracker`:\n\t[::1]:15432 (localhost): dial error: dial tcp [::1]:15432: connectex: No connection could be made because the target machine actively refused it.\n\t127.0.0.1:15432 (localhost): dial error: dial tcp 127.0.0.1:15432: connectex: No connection could be made because the target machine actively refused it." count=50
+time=2026-01-02T13:16:05.416+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=50 processed=88400 success=88400 errors=0
+time=2026-01-02T13:16:09.666+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=50 processed=88500 success=88500 errors=0
+time=2026-01-02T13:16:14.766+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=65 processed=88600 success=88600 errors=0
+time=2026-01-02T13:16:19.662+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=65 processed=88700 success=88700 errors=0
+time=2026-01-02T13:16:24.661+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=65 processed=88800 success=88800 errors=0
+time=2026-01-02T13:16:29.709+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=71 processed=88900 success=88900 errors=0
+time=2026-01-02T13:16:34.716+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=51 processed=89000 success=89000 errors=0
+time=2026-01-02T13:16:39.780+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=29 processed=89100 success=89100 errors=0
+time=2026-01-02T13:16:44.640+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=29 processed=89200 success=89200 errors=0
+time=2026-01-02T13:16:49.788+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=65 processed=89300 success=89300 errors=0
+time=2026-01-02T13:16:54.726+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=71 processed=89400 success=89400 errors=0
+time=2026-01-02T13:17:00.218+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=88 processed=89500 success=89500 errors=0
+time=2026-01-02T13:17:01.131+08:00 level=ERROR source=D:/collect/cmd/tracker/commands/query_qysy.go:268 msg=批量保存失败 error="批量保存失败 [0] address=0x7dde5d9f9872fc80cb8e79b2aa969b3806945f22 user_equity=6854.202055 total_loss=37080.592305 profit_loss_ratio=0.258627 fee_ratio=0.023820 avg_trade_count_7d=11.142857: failed to connect to `user=postgres database=tracker`:\n\t[::1]:15432 (localhost): dial error: dial tcp [::1]:15432: connectex: No connection could be made because the target machine actively refused it.\n\t127.0.0.1:15432 (localhost): dial error: dial tcp 127.0.0.1:15432: connectex: No connection could be made because the target machine actively refused it." count=50
+time=2026-01-02T13:17:04.372+08:00 level=ERROR source=D:/collect/cmd/tracker/commands/query_qysy.go:268 msg=批量保存失败 error="批量保存失败 [0] address=0x7f9196e86aa1277473c27f84bb6a3e1d408431ea user_equity=203.296591 total_loss=2196.806294 profit_loss_ratio=0.559474 fee_ratio=0.013657 avg_trade_count_7d=0.000000: failed to connect to `user=postgres database=tracker`:\n\t[::1]:15432 (localhost): dial error: dial tcp [::1]:15432: connectex: No connection could be made because the target machine actively refused it.\n\t127.0.0.1:15432 (localhost): dial error: dial tcp 127.0.0.1:15432: connectex: No connection could be made because the target machine actively refused it." count=50
+time=2026-01-02T13:17:04.995+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=88 processed=89600 success=89600 errors=0
+time=2026-01-02T13:17:09.811+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=2 processed=89700 success=89700 errors=0
+time=2026-01-02T13:17:14.660+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=2 processed=89800 success=89800 errors=0
+time=2026-01-02T13:17:19.681+08:00 level=INFO source=D:/collect/cmd/tracker/commands/query_qysy.go:207 msg=处理进度 worker=6 processed=89900 success=89900 errors=0
+time=2026-01-02T13:25:02.043+08:00 level=ERROR source=D:/collect/pkg/utils/utils.go:14 msg=数据库连接失败 error="failed to connect to `user=postgres database=tracker`:\n\t[::1]:15432 (localhost): dial error: dial tcp [::1]:15432: connectex: No connection could be made because the target machine actively refused it.\n\t127.0.0.1:15432 (localhost): dial error: dial tcp 127.0.0.1:15432: connectex: No connection could be made because the target machine actively refused it."
+time=2026-01-02T13:27:08.206+08:00 level=ERROR source=D:/collect/pkg/utils/utils.go:14 msg=数据库连接失败 error="failed to connect to `user=postgres database=tracker`:\n\t[::1]:15432 (localhost): dial error: dial tcp [::1]:15432: connectex: No connection could be made because the target machine actively refused it.\n\t127.0.0.1:15432 (localhost): dial error: dial tcp 127.0.0.1:15432: connectex: No connection could be made because the target machine actively refused it."
+time=2026-01-02T13:27:10.930+08:00 level=ERROR source=D:/collect/pkg/utils/utils.go:14 msg=数据库连接失败 error="failed to connect to `user=postgres database=tracker`:\n\t[::1]:15432 (localhost): dial error: dial tcp [::1]:15432: connectex: No connection could be made because the target machine actively refused it.\n\t127.0.0.1:15432 (localhost): dial error: dial tcp 127.0.0.1:15432: connectex: No connection could be made because the target machine actively refused it."
+time=2026-01-02T13:27:12.350+08:00 level=ERROR source=D:/collect/pkg/utils/utils.go:14 msg=数据库连接失败 error="failed to connect to `user=postgres database=tracker`:\n\t[::1]:15432 (localhost): dial error: dial tcp [::1]:15432: connectex: No connection could be made because the target machine actively refused it.\n\t127.0.0.1:15432 (localhost): dial error: dial tcp 127.0.0.1:15432: connectex: No connection could be made because the target machine actively refused it."
+time=2026-01-02T13:27:16.370+08:00 level=ERROR source=D:/collect/pkg/utils/utils.go:14 msg=数据库连接失败 error="failed to connect to `user=postgres database=tracker`:\n\t[::1]:15432 (localhost): dial error: dial tcp [::1]:15432: connectex: No connection could be made because the target machine actively refused it.\n\t127.0.0.1:15432 (localhost): dial error: dial tcp 127.0.0.1:15432: connectex: No connection could be made because the target machine actively refused it."
+time=2026-01-02T13:27:18.532+08:00 level=ERROR source=D:/collect/pkg/utils/utils.go:14 msg=数据库连接失败 error="failed to connect to `user=postgres database=tracker`:\n\t[::1]:15432 (localhost): dial error: dial tcp [::1]:15432: connectex: No connection could be made because the target machine actively refused it.\n\t127.0.0.1:15432 (localhost): dial error: dial tcp 127.0.0.1:15432: connectex: No connection could be made because the target machine actively refused it."
+time=2026-01-02T13:27:46.526+08:00 level=ERROR source=D:/collect/pkg/utils/utils.go:14 msg=数据库连接失败 error="failed to connect to `user=postgres database=tracker`:\n\t[::1]:15432 (localhost): dial error: dial tcp [::1]:15432: connectex: No connection could be made because the target machine actively refused it.\n\t127.0.0.1:15432 (localhost): dial error: dial tcp 127.0.0.1:15432: connectex: No connection could be made because the target machine actively refused it."
+time=2026-01-02T13:34:26.956+08:00 level=ERROR source=D:/collect/pkg/utils/utils.go:14 msg=数据库连接失败 error="failed to connect to `user=postgres database=tracker`:\n\t[::1]:15432 (localhost): dial error: dial tcp [::1]:15432: connectex: No connection could be made because the target machine actively refused it.\n\t127.0.0.1:15432 (localhost): dial error: dial tcp 127.0.0.1:15432: connectex: No connection could be made because the target machine actively refused it."
+time=2026-01-02T13:48:15.264+08:00 level=ERROR source=D:/collect/pkg/utils/utils.go:14 msg=数据库连接失败 error="failed to connect to `user=postgres database=tracker`:\n\t[::1]:15432 (localhost): dial error: dial tcp [::1]:15432: connectex: No connection could be made because the target machine actively refused it.\n\t127.0.0.1:15432 (localhost): dial error: dial tcp 127.0.0.1:15432: connectex: No connection could be made because the target machine actively refused it."
+time=2026-01-02T13:49:40.110+08:00 level=ERROR source=D:/collect/pkg/utils/utils.go:14 msg=数据库连接失败 error="failed to connect to `user=postgres database=tracker`:\n\t[::1]:15432 (localhost): dial error: dial tcp [::1]:15432: connectex: No connection could be made because the target machine actively refused it.\n\t127.0.0.1:15432 (localhost): dial error: dial tcp 127.0.0.1:15432: connectex: No connection could be made because the target machine actively refused it."
+time=2026-01-02T14:06:23.799+08:00 level=ERROR source=D:/collect/pkg/utils/utils.go:14 msg=数据库连接失败 error="failed to connect to `user=postgres database=tracker`:\n\t[::1]:15432 (localhost): dial error: dial tcp [::1]:15432: connectex: No connection could be made because the target machine actively refused it.\n\t127.0.0.1:15432 (localhost): dial error: dial tcp 127.0.0.1:15432: connectex: No connection could be made because the target machine actively refused it."
+time=2026-01-02T17:10:23.961+08:00 level=ERROR source=D:/collect/pkg/utils/utils.go:14 msg=数据库连接失败 error="failed to connect to `user=postgres database=tracker`:\n\t[::1]:15432 (localhost): dial error: dial tcp [::1]:15432: connectex: No connection could be made because the target machine actively refused it.\n\t127.0.0.1:15432 (localhost): dial error: dial tcp 127.0.0.1:15432: connectex: No connection could be made because the target machine actively refused it."

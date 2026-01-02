@@ -38,8 +38,8 @@ func init() {
 }
 
 const (
-	maxConcurrency = 100  // 最大并发数
-	batchSize      = 50   // 批量保存大小
+	maxConcurrency = 400  // 最大并发数
+	batchSize      = 100  // 批量保存大小
 	retryCount     = 3    // 重试次数
 	retryDelay     = 2 * time.Second // 重试延迟
 	rateLimit      = 200  // 速率限制：每10秒200个请求
@@ -250,11 +250,11 @@ func saveResults(resultCh <-chan *dao.UserQysy, total int) {
 	var skippedCount int
 
 	for result := range resultCh {
-		// 用户权益为0的数据不添加到保存列表
-		if result.UserEquity == 0 {
+		// 只有当用户权益为0且用户损益(累计亏损)也为0时，才不添加到保存列表
+		if result.UserEquity == 0 && result.TotalLoss == 0 {
 			skippedCount++
 			if skippedCount%100 == 0 {
-				slog.Debug("跳过权益为0的数据", "address", result.Address, "skipped", skippedCount)
+				slog.Debug("跳过权益和亏损都为0的数据", "address", result.Address, "skipped", skippedCount)
 			}
 			continue
 		}
@@ -267,10 +267,10 @@ func saveResults(resultCh <-chan *dao.UserQysy, total int) {
 			if err := dao.BatchSaveUserQysy(results); err != nil {
 				slog.Error("批量保存失败", "error", err, "count", beforeCount)
 			} else {
-				// 统计实际保存的数量（BatchSaveUserQysy 会过滤掉 user_equity = 0 的数据）
+				// 统计实际保存的数量（BatchSaveUserQysy 会过滤掉 user_equity = 0 且 total_loss = 0 的数据）
 				actualSaved := 0
 				for _, r := range results {
-					if r.UserEquity > 0 {
+					if !(r.UserEquity == 0 && r.TotalLoss == 0) {
 						actualSaved++
 					}
 				}
@@ -291,10 +291,10 @@ func saveResults(resultCh <-chan *dao.UserQysy, total int) {
 		if err := dao.BatchSaveUserQysy(results); err != nil {
 			slog.Error("保存剩余数据失败", "error", err, "count", beforeCount)
 		} else {
-			// 统计实际保存的数量
+			// 统计实际保存的数量（BatchSaveUserQysy 会过滤掉 user_equity = 0 且 total_loss = 0 的数据）
 			actualSaved := 0
 			for _, r := range results {
-				if r.UserEquity > 0 {
+				if !(r.UserEquity == 0 && r.TotalLoss == 0) {
 					actualSaved++
 				}
 			}
