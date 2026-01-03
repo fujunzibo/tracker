@@ -183,7 +183,7 @@ func worker(
 		}
 
 		// 查询用户数据（带重试）
-		data, err := queryUserDataWithRetry(ctx, client, addr.Address, addr.TotalEquity, logger)
+		data, err := queryUserDataWithRetry(ctx, client, addr.Address, addr.TotalEquity, addr.PrepPnl, logger)
 		atomic.AddInt64(processedCount, 1)
 
 		if err != nil {
@@ -213,7 +213,7 @@ func worker(
 }
 
 // queryUserDataWithRetry 带重试的查询用户数据
-func queryUserDataWithRetry(ctx context.Context, client *hyper.Client, address string, totalEquity float64, logger *slog.Logger) (*dao.UserQysy, error) {
+func queryUserDataWithRetry(ctx context.Context, client *hyper.Client, address string, totalEquity float64, prepPnl float64, logger *slog.Logger) (*dao.UserQysy, error) {
 	var lastErr error
 	for attempt := 0; attempt < retryCount; attempt++ {
 		if attempt > 0 {
@@ -226,7 +226,7 @@ func queryUserDataWithRetry(ctx context.Context, client *hyper.Client, address s
 			logger.Debug("重试查询", "address", address, "attempt", attempt+1)
 		}
 
-		data, err := queryUserData(client, address, totalEquity)
+		data, err := queryUserData(client, address, totalEquity, prepPnl)
 		if err == nil {
 			return data, nil
 		}
@@ -325,7 +325,7 @@ func collectErrors(errorCh <-chan error) {
 
 // queryUserData 查询单个用户的数据
 // 优先使用 API 查询，如果 API 返回 null 或失败，则使用数据库中的 total_equity 和 hyper_fills 中的值
-func queryUserData(client *hyper.Client, address string, totalEquity float64) (*dao.UserQysy, error) {
+func queryUserData(client *hyper.Client, address string, totalEquity float64, prepPnl float64) (*dao.UserQysy, error) {
 	data := &dao.UserQysy{
 		Address: address,
 		UpdatedAt: time.Now(),
@@ -479,9 +479,22 @@ func queryUserData(client *hyper.Client, address string, totalEquity float64) (*
 	
 	// 3. 如果 API 获取交易记录失败或返回 null，从数据库计算
 	if !apiFillsSuccess {
-		dbData, err := dao.CalculateUserQysyFromDB(address, totalEquity)
+		dbData, err := dao.CalculateUserQysyFromDB(address, totalEquity, prepPnl)
 		if err != nil {
-			// 数据库查询失败，返回已有数据（只有 user_equity）
+			// 数据库查询失败，根据 prep_pnl 计算 total_loss
+			const maxEquity = 9999999999999999999999999999.999999999999
+			var calculatedLoss float64
+			if prepPnl < 0 {
+				// 如果 prep_pnl < 0（亏损），则 total_loss = -(prep_pnl)
+				calculatedLoss = -prepPnl
+			} else {
+				// 如果 prep_pnl > 0（盈利），则 total_loss = 0
+				calculatedLoss = 0
+			}
+			if calculatedLoss > maxEquity {
+				calculatedLoss = maxEquity
+			}
+			data.TotalLoss = calculatedLoss
 			return data, nil
 		}
 		// 使用数据库计算的值

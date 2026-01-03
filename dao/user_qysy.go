@@ -147,6 +147,7 @@ func BatchSaveUserQysy(dataList []*UserQysy) error {
 type AddressWithEquity struct {
 	Address     string
 	TotalEquity float64
+	PrepPnl     float64 // 合约盈亏
 }
 
 // GetAllAddresses 获取所有地址
@@ -180,7 +181,7 @@ func GetAllAddresses() ([]string, error) {
 
 // GetAllAddressesWithEquity 获取所有地址及其权益
 func GetAllAddressesWithEquity() ([]AddressWithEquity, error) {
-	query := fmt.Sprintf(`SELECT address, total_equity FROM %s ORDER BY address`, TableAddress)
+	query := fmt.Sprintf(`SELECT address, total_equity, prep_pnl FROM %s ORDER BY address`, TableAddress)
 	
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
@@ -194,7 +195,7 @@ func GetAllAddressesWithEquity() ([]AddressWithEquity, error) {
 	var addresses []AddressWithEquity
 	for rows.Next() {
 		var addr AddressWithEquity
-		if err := rows.Scan(&addr.Address, &addr.TotalEquity); err != nil {
+		if err := rows.Scan(&addr.Address, &addr.TotalEquity, &addr.PrepPnl); err != nil {
 			return nil, fmt.Errorf("扫描地址失败: %w", err)
 		}
 		addresses = append(addresses, addr)
@@ -208,7 +209,7 @@ func GetAllAddressesWithEquity() ([]AddressWithEquity, error) {
 }
 
 // CalculateUserQysyFromDB 从数据库 hyper_fills 表计算用户权益损益数据（备用方案）
-func CalculateUserQysyFromDB(address string, totalEquity float64) (*UserQysy, error) {
+func CalculateUserQysyFromDB(address string, totalEquity float64, prepPnl float64) (*UserQysy, error) {
 	data := &UserQysy{
 		Address:    address,
 		UserEquity: totalEquity,
@@ -242,8 +243,20 @@ func CalculateUserQysyFromDB(address string, totalEquity float64) (*UserQysy, er
 
 	err := db.QueryRow(ctx, query, address, sevenDaysAgo).Scan(&totalLoss, &totalProfit, &totalFee, &tradeCount7d)
 	if err != nil {
-		// 如果没有交易记录，返回默认值
+		// 如果没有交易记录，根据 prep_pnl 计算 total_loss
 		if err == pgx.ErrNoRows {
+			var calculatedLoss float64
+			if prepPnl < 0 {
+				// 如果 prep_pnl < 0（亏损），则 total_loss = -(prep_pnl)
+				calculatedLoss = -prepPnl
+			} else {
+				// 如果 prep_pnl > 0（盈利），则 total_loss = 0
+				calculatedLoss = 0
+			}
+			if calculatedLoss > maxEquity {
+				calculatedLoss = maxEquity
+			}
+			data.TotalLoss = calculatedLoss
 			return data, nil
 		}
 		return nil, fmt.Errorf("查询交易记录失败: %w", err)
@@ -261,7 +274,23 @@ func CalculateUserQysyFromDB(address string, totalEquity float64) (*UserQysy, er
 	}
 
 	// 1. 用户损益(累计亏损)
-	data.TotalLoss = totalLoss
+	// 如果从 hyper_fills 计算出的 total_loss 为 0，则根据 prep_pnl 计算
+	if totalLoss == 0 {
+		var calculatedLoss float64
+		if prepPnl < 0 {
+			// 如果 prep_pnl < 0（亏损），则 total_loss = -(prep_pnl)
+			calculatedLoss = -prepPnl
+		} else {
+			// 如果 prep_pnl > 0（盈利），则 total_loss = 0
+			calculatedLoss = 0
+		}
+		if calculatedLoss > maxEquity {
+			calculatedLoss = maxEquity
+		}
+		data.TotalLoss = calculatedLoss
+	} else {
+		data.TotalLoss = totalLoss
+	}
 
 	// 2. 整体盈亏比(所有盈利订单累计/所有亏损订单累计)
 	if totalLoss > 0 {
