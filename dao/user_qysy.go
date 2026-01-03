@@ -143,6 +143,12 @@ func BatchSaveUserQysy(dataList []*UserQysy) error {
 	return nil
 }
 
+// AddressWithEquity 地址和权益信息
+type AddressWithEquity struct {
+	Address     string
+	TotalEquity float64
+}
+
 // GetAllAddresses 获取所有地址
 func GetAllAddresses() ([]string, error) {
 	query := fmt.Sprintf(`SELECT DISTINCT address FROM %s ORDER BY address`, TableAddress)
@@ -170,4 +176,130 @@ func GetAllAddresses() ([]string, error) {
 	}
 	
 	return addresses, nil
+}
+
+// GetAllAddressesWithEquity 获取所有地址及其权益
+func GetAllAddressesWithEquity() ([]AddressWithEquity, error) {
+	query := fmt.Sprintf(`SELECT address, total_equity FROM %s ORDER BY address`, TableAddress)
+	
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+	
+	rows, err := db.Query(ctx, query)
+	if err != nil {
+		return nil, fmt.Errorf("查询地址失败: %w", err)
+	}
+	defer rows.Close()
+	
+	var addresses []AddressWithEquity
+	for rows.Next() {
+		var addr AddressWithEquity
+		if err := rows.Scan(&addr.Address, &addr.TotalEquity); err != nil {
+			return nil, fmt.Errorf("扫描地址失败: %w", err)
+		}
+		addresses = append(addresses, addr)
+	}
+	
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("遍历地址失败: %w", err)
+	}
+	
+	return addresses, nil
+}
+
+// CalculateUserQysyFromDB 从数据库 hyper_fills 表计算用户权益损益数据（备用方案）
+func CalculateUserQysyFromDB(address string, totalEquity float64) (*UserQysy, error) {
+	data := &UserQysy{
+		Address:    address,
+		UserEquity: totalEquity,
+		UpdatedAt:  time.Now(),
+	}
+
+	// 计算7天前的时间
+	sevenDaysAgo := time.Now().AddDate(0, 0, -7)
+
+	// NUMERIC(32, 12) 最大值为 9999999999999999999999999999.999999999999
+	const maxEquity = 9999999999999999999999999999.999999999999
+	// NUMERIC(18, 6) 最大值为 999999999999.999999
+	const maxRatio = 999999999999.0
+
+	// 查询所有交易记录
+	query := fmt.Sprintf(`
+		SELECT 
+			COALESCE(SUM(CASE WHEN pnl < 0 THEN ABS(pnl) ELSE 0 END), 0) as total_loss,
+			COALESCE(SUM(CASE WHEN pnl > 0 THEN pnl ELSE 0 END), 0) as total_profit,
+			COALESCE(SUM(ABS(fee)), 0) as total_fee,
+			COUNT(*) FILTER (WHERE time >= $2) as trade_count_7d
+		FROM %s 
+		WHERE address = $1
+	`, TableFill)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	var totalLoss, totalProfit, totalFee float64
+	var tradeCount7d int
+
+	err := db.QueryRow(ctx, query, address, sevenDaysAgo).Scan(&totalLoss, &totalProfit, &totalFee, &tradeCount7d)
+	if err != nil {
+		// 如果没有交易记录，返回默认值
+		if err == pgx.ErrNoRows {
+			return data, nil
+		}
+		return nil, fmt.Errorf("查询交易记录失败: %w", err)
+	}
+
+	// 限制值不超过最大值
+	if totalLoss > maxEquity {
+		totalLoss = maxEquity
+	}
+	if totalProfit > maxEquity {
+		totalProfit = maxEquity
+	}
+	if totalFee > maxEquity {
+		totalFee = maxEquity
+	}
+
+	// 1. 用户损益(累计亏损)
+	data.TotalLoss = totalLoss
+
+	// 2. 整体盈亏比(所有盈利订单累计/所有亏损订单累计)
+	if totalLoss > 0 {
+		ratio := totalProfit / totalLoss
+		if ratio > maxRatio {
+			data.ProfitLossRatio = maxRatio
+		} else if ratio < 0 {
+			data.ProfitLossRatio = 0
+		} else {
+			data.ProfitLossRatio = ratio
+		}
+	} else if totalProfit > 0 {
+		// 如果只有盈利没有亏损，设为最大允许值
+		data.ProfitLossRatio = maxRatio
+	} else {
+		data.ProfitLossRatio = 0
+	}
+
+	// 3. 手续费占比(手续费累计/总亏损)
+	if totalLoss > 0 {
+		ratio := totalFee / totalLoss
+		if ratio > maxRatio {
+			data.FeeRatio = maxRatio
+		} else {
+			data.FeeRatio = ratio
+		}
+	} else {
+		data.FeeRatio = 0
+	}
+
+	// 4. 7日内平均交易次数
+	const maxCount = 999999999999.999999
+	avgCount := float64(tradeCount7d) / 7.0
+	if avgCount > maxCount {
+		data.AvgTradeCount7d = maxCount
+	} else {
+		data.AvgTradeCount7d = avgCount
+	}
+
+	return data, nil
 }

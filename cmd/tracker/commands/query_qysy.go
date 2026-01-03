@@ -39,10 +39,10 @@ func init() {
 
 const (
 	maxConcurrency = 400  // 最大并发数
-	batchSize      = 100  // 批量保存大小
+	batchSize      = 400  // 批量保存大小
 	retryCount     = 3    // 重试次数
 	retryDelay     = 2 * time.Second // 重试延迟
-	rateLimit      = 200  // 速率限制：每10秒200个请求
+	rateLimit      = 1000 // 速率限制：每10秒1000个请求
 )
 
 func runQueryQysy() {
@@ -73,13 +73,13 @@ func runQueryQysy() {
 	}
 	slog.Info("表创建/检查完成")
 
-	// 获取所有地址
-	addresses, err := dao.GetAllAddresses()
+	// 获取所有地址及其权益
+	addressesWithEquity, err := dao.GetAllAddressesWithEquity()
 	if err != nil {
 		slog.Error("获取地址列表失败", "error", err)
 		exitWithError(err)
 	}
-	total := len(addresses)
+	total := len(addressesWithEquity)
 	slog.Info("获取到地址列表", "count", total)
 
 	if total == 0 {
@@ -94,7 +94,7 @@ func runQueryQysy() {
 	rateLimiter := utils.NewRateLimiter(rateLimit)
 
 	// 创建 Worker Pool
-	addressCh := make(chan string, maxConcurrency)
+	addressCh := make(chan dao.AddressWithEquity, maxConcurrency)
 	resultCh := make(chan *dao.UserQysy, maxConcurrency*2)
 	errorCh := make(chan error, maxConcurrency)
 
@@ -135,8 +135,8 @@ func runQueryQysy() {
 	startTime := time.Now()
 	go func() {
 		defer close(addressCh)
-		for _, address := range addresses {
-			addressCh <- address
+		for _, addr := range addressesWithEquity {
+			addressCh <- addr
 		}
 	}()
 
@@ -164,7 +164,7 @@ func worker(
 	ctx context.Context,
 	client *hyper.Client,
 	rateLimiter *utils.RateLimiter,
-	addressCh <-chan string,
+	addressCh <-chan dao.AddressWithEquity,
 	resultCh chan<- *dao.UserQysy,
 	errorCh chan<- error,
 	workerID int,
@@ -173,7 +173,7 @@ func worker(
 	logger := slog.With("worker", workerID)
 	defer utils.Recovery(logger)
 
-	for address := range addressCh {
+	for addr := range addressCh {
 		// 等待速率限制
 		if err := rateLimiter.Wait(ctx); err != nil {
 			if err == context.Canceled {
@@ -183,12 +183,12 @@ func worker(
 		}
 
 		// 查询用户数据（带重试）
-		data, err := queryUserDataWithRetry(ctx, client, address, logger)
+		data, err := queryUserDataWithRetry(ctx, client, addr.Address, addr.TotalEquity, logger)
 		atomic.AddInt64(processedCount, 1)
 
 		if err != nil {
 			atomic.AddInt64(errorCount, 1)
-			logger.Error("查询用户数据失败", "address", address, "error", err)
+			logger.Error("查询用户数据失败", "address", addr.Address, "error", err)
 			errorCh <- err
 			continue
 		}
@@ -197,7 +197,7 @@ func worker(
 		
 		// 调试：输出前几个地址的权益值
 		if atomic.LoadInt64(successCount) <= 5 {
-			logger.Info("查询结果", "address", address, "user_equity", data.UserEquity, "total_loss", data.TotalLoss)
+			logger.Info("查询结果", "address", addr.Address, "user_equity", data.UserEquity, "total_loss", data.TotalLoss)
 		}
 		
 		resultCh <- data
@@ -213,7 +213,7 @@ func worker(
 }
 
 // queryUserDataWithRetry 带重试的查询用户数据
-func queryUserDataWithRetry(ctx context.Context, client *hyper.Client, address string, logger *slog.Logger) (*dao.UserQysy, error) {
+func queryUserDataWithRetry(ctx context.Context, client *hyper.Client, address string, totalEquity float64, logger *slog.Logger) (*dao.UserQysy, error) {
 	var lastErr error
 	for attempt := 0; attempt < retryCount; attempt++ {
 		if attempt > 0 {
@@ -226,7 +226,7 @@ func queryUserDataWithRetry(ctx context.Context, client *hyper.Client, address s
 			logger.Debug("重试查询", "address", address, "attempt", attempt+1)
 		}
 
-		data, err := queryUserData(client, address)
+		data, err := queryUserData(client, address, totalEquity)
 		if err == nil {
 			return data, nil
 		}
@@ -324,159 +324,171 @@ func collectErrors(errorCh <-chan error) {
 }
 
 // queryUserData 查询单个用户的数据
-func queryUserData(client *hyper.Client, address string) (*dao.UserQysy, error) {
+// 优先使用 API 查询，如果 API 返回 null 或失败，则使用数据库中的 total_equity 和 hyper_fills 中的值
+func queryUserData(client *hyper.Client, address string, totalEquity float64) (*dao.UserQysy, error) {
 	data := &dao.UserQysy{
 		Address: address,
 		UpdatedAt: time.Now(),
 	}
 	
-	// 1. 查询用户权益（账户价值）- 使用 CrossMarginSummary.AccountValue
+	// 1. 优先尝试从 API 获取用户权益（账户价值）
 	summary, err := client.GetUserAccountSummary(address)
-	if err != nil {
-		if err == hyper.ErrNull {
-			// 用户不存在或没有数据，返回默认值
-			return data, nil
+	apiSuccess := false
+	if err == nil {
+		// API 成功，获取账户价值
+		const maxEquity = 9999999999999999999999999999.999999999999
+		if summary.CrossMarginSummary.AccountValue != nil {
+			accountValue, err := summary.CrossMarginSummary.AccountValue.Float64()
+			if err == nil && accountValue > 0 {
+				if accountValue > maxEquity {
+					data.UserEquity = maxEquity
+				} else {
+					data.UserEquity = accountValue
+				}
+				apiSuccess = true
+			}
 		}
-		return nil, err
-	}
-	
-	// 获取账户价值（用户权益）- 优先使用 CrossMarginSummary.AccountValue，如果为空则使用 MarginSummary.AccountValue
-	// NUMERIC(32, 12) 最大值为 9999999999999999999999999999.999999999999
-	const maxEquity = 9999999999999999999999999999.999999999999
-	if summary.CrossMarginSummary.AccountValue != nil {
-		accountValue, err := summary.CrossMarginSummary.AccountValue.Float64()
-		if err == nil && accountValue > 0 {
-			if accountValue > maxEquity {
-				data.UserEquity = maxEquity
-			} else {
-				data.UserEquity = accountValue
+		
+		// 如果 CrossMarginSummary.AccountValue 为空或0，回退到 MarginSummary.AccountValue
+		if !apiSuccess && summary.MarginSummary.AccountValue != nil {
+			accountValue, err := summary.MarginSummary.AccountValue.Float64()
+			if err == nil && accountValue > 0 {
+				if accountValue > maxEquity {
+					data.UserEquity = maxEquity
+				} else {
+					data.UserEquity = accountValue
+				}
+				apiSuccess = true
 			}
 		}
 	}
 	
-	// 如果 CrossMarginSummary.AccountValue 为空或0，回退到 MarginSummary.AccountValue
-	if data.UserEquity == 0 && summary.MarginSummary.AccountValue != nil {
-		accountValue, err := summary.MarginSummary.AccountValue.Float64()
-		if err == nil && accountValue > 0 {
-			if accountValue > maxEquity {
-				data.UserEquity = maxEquity
-			} else {
-				data.UserEquity = accountValue
-			}
-		}
+	// 如果 API 失败或返回 null，使用数据库中的 total_equity
+	if !apiSuccess {
+		data.UserEquity = totalEquity
 	}
 	
-	// 2. 查询用户交易记录
+	// 2. 优先尝试从 API 获取用户交易记录
 	fills, err := client.GetUserFills(address)
-	if err != nil {
-		if err == hyper.ErrNull {
-			// 没有交易记录，返回已有数据
+	apiFillsSuccess := false
+	if err == nil {
+		apiFillsSuccess = true
+		
+		// 计算7天前的时间戳
+		sevenDaysAgo := time.Now().AddDate(0, 0, -7).UnixMilli()
+		
+		// NUMERIC(18, 6) 最大值为 999999999999.999999 (12位整数 + 6位小数)
+		// 但为了安全，使用稍小的值避免溢出
+		const maxRatio = 999999999999.0
+		const maxEquity = 9999999999999999999999999999.999999999999
+		
+		var (
+			totalProfit    float64 // 所有盈利订单累计
+			totalLoss      float64 // 所有亏损订单累计（总亏损）
+			totalFee       float64 // 手续费累计
+			tradeCount7d   int     // 7日内交易次数
+		)
+		
+		// 遍历所有交易记录
+		for _, fill := range fills {
+			// 获取已实现盈亏
+			closedPnl, err := fill.ClosedPnl.Float64()
+			if err != nil {
+				continue
+			}
+			
+			// 获取手续费
+			fee, err := fill.Fee.Float64()
+			if err == nil {
+				feeAbs := math.Abs(fee)
+				// 限制手续费累加不超过最大值
+				if totalFee + feeAbs > maxEquity {
+					totalFee = maxEquity
+				} else {
+					totalFee += feeAbs
+				}
+			}
+			
+			// 统计盈亏，限制累加值不超过最大值
+			if closedPnl > 0 {
+				if totalProfit + closedPnl > maxEquity {
+					totalProfit = maxEquity
+				} else {
+					totalProfit += closedPnl
+				}
+			} else if closedPnl < 0 {
+				lossAbs := math.Abs(closedPnl)
+				if totalLoss + lossAbs > maxEquity {
+					totalLoss = maxEquity
+				} else {
+					totalLoss += lossAbs
+				}
+			}
+			
+			// 统计7日内的交易次数
+			if fill.Time >= sevenDaysAgo {
+				tradeCount7d++
+			}
+		}
+		
+		// 2. 用户损益(累计亏损)
+		if totalLoss > maxEquity {
+			data.TotalLoss = maxEquity
+		} else {
+			data.TotalLoss = totalLoss
+		}
+		
+		// 3. 整体盈亏比(所有盈利订单累计/所有亏损订单累计)
+		if totalLoss > 0 {
+			ratio := totalProfit / totalLoss
+			if ratio > maxRatio {
+				data.ProfitLossRatio = maxRatio
+			} else if ratio < 0 {
+				data.ProfitLossRatio = 0
+			} else {
+				data.ProfitLossRatio = ratio
+			}
+		} else if totalProfit > 0 {
+			// 如果只有盈利没有亏损，设为最大允许值
+			data.ProfitLossRatio = maxRatio
+		} else {
+			data.ProfitLossRatio = 0
+		}
+		
+		// 4. 手续费占比(手续费累计/总亏损)
+		if totalLoss > 0 {
+			ratio := totalFee / totalLoss
+			if ratio > maxRatio {
+				data.FeeRatio = maxRatio
+			} else {
+				data.FeeRatio = ratio
+			}
+		} else {
+			data.FeeRatio = 0
+		}
+		
+		// 5. 7日内平均交易次数
+		const maxCount = 999999999999.999999
+		avgCount := float64(tradeCount7d) / 7.0
+		if avgCount > maxCount {
+			data.AvgTradeCount7d = maxCount
+		} else {
+			data.AvgTradeCount7d = avgCount
+		}
+	}
+	
+	// 3. 如果 API 获取交易记录失败或返回 null，从数据库计算
+	if !apiFillsSuccess {
+		dbData, err := dao.CalculateUserQysyFromDB(address, totalEquity)
+		if err != nil {
+			// 数据库查询失败，返回已有数据（只有 user_equity）
 			return data, nil
 		}
-		return nil, err
-	}
-	
-	// 计算7天前的时间戳
-	sevenDaysAgo := time.Now().AddDate(0, 0, -7).UnixMilli()
-	
-	// NUMERIC(18, 6) 最大值为 999999999999.999999 (12位整数 + 6位小数)
-	// 但为了安全，使用稍小的值避免溢出
-	const maxRatio = 999999999999.0
-	
-	var (
-		totalProfit    float64 // 所有盈利订单累计
-		totalLoss      float64 // 所有亏损订单累计（总亏损）
-		totalFee       float64 // 手续费累计
-		tradeCount7d   int     // 7日内交易次数
-	)
-	
-	// 遍历所有交易记录
-	for _, fill := range fills {
-		// 获取已实现盈亏
-		closedPnl, err := fill.ClosedPnl.Float64()
-		if err != nil {
-			continue
-		}
-		
-		// 获取手续费
-		fee, err := fill.Fee.Float64()
-		if err == nil {
-			feeAbs := math.Abs(fee)
-			// 限制手续费累加不超过最大值
-			if totalFee + feeAbs > maxEquity {
-				totalFee = maxEquity
-			} else {
-				totalFee += feeAbs
-			}
-		}
-		
-		// 统计盈亏，限制累加值不超过最大值
-		if closedPnl > 0 {
-			if totalProfit + closedPnl > maxEquity {
-				totalProfit = maxEquity
-			} else {
-				totalProfit += closedPnl
-			}
-		} else if closedPnl < 0 {
-			lossAbs := math.Abs(closedPnl)
-			if totalLoss + lossAbs > maxEquity {
-				totalLoss = maxEquity
-			} else {
-				totalLoss += lossAbs
-			}
-		}
-		
-		// 统计7日内的交易次数
-		if fill.Time >= sevenDaysAgo {
-			tradeCount7d++
-		}
-	}
-	
-	// 2. 用户损益(累计亏损)
-	if totalLoss > maxEquity {
-		data.TotalLoss = maxEquity
-	} else {
-		data.TotalLoss = totalLoss
-	}
-	
-	// 3. 整体盈亏比(所有盈利订单累计/所有亏损订单累计)
-	// NUMERIC(18, 6) 最大值为 999999999999.999999，但为了安全使用 999999999999.0
-	if totalLoss > 0 {
-		ratio := totalProfit / totalLoss
-		if ratio > maxRatio {
-			data.ProfitLossRatio = maxRatio
-		} else if ratio < 0 {
-			data.ProfitLossRatio = 0
-		} else {
-			data.ProfitLossRatio = ratio
-		}
-	} else if totalProfit > 0 {
-		// 如果只有盈利没有亏损，设为最大允许值
-		data.ProfitLossRatio = maxRatio
-	} else {
-		data.ProfitLossRatio = 0
-	}
-	
-	// 4. 手续费占比(手续费累计/总亏损)
-	if totalLoss > 0 {
-		ratio := totalFee / totalLoss
-		if ratio > maxRatio {
-			data.FeeRatio = maxRatio
-		} else {
-			data.FeeRatio = ratio
-		}
-	} else {
-		data.FeeRatio = 0
-	}
-	
-	// 5. 7日内平均交易次数
-	// NUMERIC(18, 6) 最大值为 999999999999.999999
-	const maxCount = 999999999999.999999
-	avgCount := float64(tradeCount7d) / 7.0
-	if avgCount > maxCount {
-		data.AvgTradeCount7d = maxCount
-	} else {
-		data.AvgTradeCount7d = avgCount
+		// 使用数据库计算的值
+		data.TotalLoss = dbData.TotalLoss
+		data.ProfitLossRatio = dbData.ProfitLossRatio
+		data.FeeRatio = dbData.FeeRatio
+		data.AvgTradeCount7d = dbData.AvgTradeCount7d
 	}
 	
 	return data, nil
