@@ -275,3 +275,16 @@ summary AS (
     FROM hyper_fills GROUP BY address
 )
 SELECT S.address, T.r7::NUMERIC/7 AS r7, T.r15::NUMERIC/15 AS r15, T.r30::NUMERIC/30 AS r30, avg_value, pnl_per_value_1, pnl_per_value_2, fee_per_pnl, num FROM summary S LEFT JOIN times T ON S.address=T.address;
+
+-- 用户账户数据表
+CREATE TABLE IF NOT EXISTS tb_user_account (
+    address VARCHAR(42) NOT NULL PRIMARY KEY,
+    total_equity NUMERIC(32, 12) NOT NULL DEFAULT 0,
+    available_balance NUMERIC(32, 12) NOT NULL DEFAULT 0,
+    used_margin NUMERIC(32, 12) NOT NULL DEFAULT 0,
+    total_pnl NUMERIC(32, 12) NOT NULL DEFAULT 0,
+    total_fee NUMERIC(32, 12) NOT NULL DEFAULT 0,
+    trade_count_7d INT NOT NULL DEFAULT 0,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+CREATE INDEX IF NOT EXISTS idx_user_account_updated_at ON tb_user_account (updated_at);

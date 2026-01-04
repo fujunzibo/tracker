@@ -25,6 +25,7 @@ const (
 	TableFollowIncome        = "follow_income"
 	TableFollowUserDailyStat = "follow_user_daily_stat"
 	TableUserQysy            = "tb_user_qysy"
+	TableUserAccount         = "tb_user_account"
 
 	CMMNextTimeVar   = "cmm_next_time"
 	HyperNextTimeVar = "hyper_next_time"
