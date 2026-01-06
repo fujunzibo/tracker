@@ -17,9 +17,17 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var (
+	marketFillsCoin      string
+	marketFillsStartTime int64
+	marketFillsEndTime   int64
+	marketFillsTimeWindow time.Duration
+	marketFillsMaxPerRequest int
+)
+
 var queryAccountCmd = &cobra.Command{
 	Use:   "query-account",
-	Short: "查询用户账户数据",
+	Short: "查询用户账户数据或市场交易记录",
 	Long: `从数据库读取钱包地址，通过 Hyperliquid API 查询以下数据并保存到 tb_user_account 表：
   1. 用户总权益 (total_equity) - 从 CrossMarginSummary.AccountValue 获取
   2. 可用余额 (available_balance) - 从 Withdrawable 获取
@@ -30,21 +38,35 @@ var queryAccountCmd = &cobra.Command{
 
 如果 API 失败，将使用 QuickNode RPC 作为备用数据源。
 
+使用 --get-market-fills 标志可以查询市场交易记录（所有用户的交易）。
+
 使用示例：
-  tracker query-account --config etc/tracker.yaml`,
+  tracker query-account --config etc/tracker.yaml
+  tracker query-account --get-market-fills --coin BTC --config etc/tracker.yaml`,
 	Run: func(cmd *cobra.Command, args []string) {
-		runQueryAccount()
+		if marketFillsCoin != "" {
+			runGetAllMarketFills()
+		} else {
+			runQueryAccount()
+		}
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(queryAccountCmd)
+	
+	// 市场交易记录查询标志
+	queryAccountCmd.Flags().StringVar(&marketFillsCoin, "get-market-fills", "", "查询市场交易记录，指定币种（如 BTC, ETH）")
+	queryAccountCmd.Flags().Int64Var(&marketFillsStartTime, "market-start-time", 0, "市场数据查询起始时间戳（毫秒），0 表示从最早开始")
+	queryAccountCmd.Flags().Int64Var(&marketFillsEndTime, "market-end-time", 0, "市场数据查询结束时间戳（毫秒），0 表示到当前时间")
+	queryAccountCmd.Flags().DurationVar(&marketFillsTimeWindow, "market-time-window", time.Hour, "市场数据查询时间窗口（每次查询的时间段）")
+	queryAccountCmd.Flags().IntVar(&marketFillsMaxPerRequest, "market-max-per-request", 1000, "市场数据每次请求的最大记录数")
 }
 
 const (
 	accountMaxConcurrency = 400  // 最大并发数
 	accountBatchSize     = 400   // 批量保存大小
-	accountRetryCount    = 3     // 重试次数
+	accountRetryCount    = 5     // 重试次数（包括首次尝试，总共5次，即再重试4次）
 	accountRetryDelay    = 2 * time.Second // 重试延迟
 	accountRateLimit     = 1000  // 速率限制：每10秒1000个请求
 )
@@ -105,15 +127,27 @@ func runQueryAccount() {
 	if cfg.Follow.RpcUrl != "" {
 		rpcClient = rpc.NewClient(cfg.Follow.RpcUrl, cfg.Network.LocalAddrs, cfg.Network.Proxies)
 		
-		// TODO: 设置 Hyperliquid 合约地址
-		// 获取合约地址后，取消下面的注释并填入实际地址
-		// rpc.SetHyperliquidContractAddress(
-		//     "0x...", // Clearinghouse 合约地址
-		//     "0x...", // Exchange 合约地址（可选）
-		// )
+		// 设置 Hyperliquid 合约地址（从配置文件读取，如果未配置则使用默认值）
+		// 默认已设置 Clearinghouse 地址：0x8549fD7FFC092F8366e416E129a622EC060104ea
+		clearinghouseAddr := cfg.Follow.ClearinghouseAddress
+		if clearinghouseAddr == "" {
+			// 使用默认地址
+			clearinghouseAddr = "0x8549fD7FFC092F8366e416E129a622EC060104ea"
+			slog.Info("使用默认 Hyperliquid Clearinghouse 合约地址", "address", clearinghouseAddr)
+		} else {
+			slog.Info("使用配置的 Hyperliquid Clearinghouse 合约地址", "address", clearinghouseAddr)
+		}
+		
+		rpc.SetHyperliquidContractAddress(
+			clearinghouseAddr,
+			cfg.Follow.ExchangeAddress,
+		)
+		
+		if cfg.Follow.ExchangeAddress != "" {
+			slog.Info("已设置 Hyperliquid Exchange 合约地址", "address", cfg.Follow.ExchangeAddress)
+		}
 		
 		slog.Info("QuickNode RPC 客户端已创建", "rpcUrl", cfg.Follow.RpcUrl)
-		slog.Info("提示：需要设置 Hyperliquid 合约地址才能使用链上数据获取功能")
 	} else {
 		slog.Warn("未配置 QuickNode RPC URL，链上数据获取功能将不可用")
 	}
@@ -217,7 +251,7 @@ func accountWorker(
 
 		if err != nil {
 			atomic.AddInt64(errorCount, 1)
-			logger.Error("查询用户账户数据失败", "address", address, "error", err)
+			logger.Error("查询用户账户数据失败", "address", addrInfo.Address, "error", err)
 			errorCh <- err
 			continue
 		}
@@ -249,7 +283,12 @@ func accountWorker(
 }
 
 // queryAccountDataWithRetry 带重试的查询用户账户数据
+// 对于 API 返回 null 的情况，会重试两次（总共尝试3次）
 func queryAccountDataWithRetry(ctx context.Context, client *hyper.Client, rpcClient *rpc.Client, address string, totalEquity float64, prepPnl float64, logger *slog.Logger) (*dao.UserAccount, error) {
+	var lastNullData *dao.UserAccount
+	nullRetryCount := 0
+	const maxNullRetries = 2 // API 返回 null 时，再重试2次（总共3次尝试）
+	
 	for attempt := 0; attempt < accountRetryCount; attempt++ {
 		if attempt > 0 {
 			// 重试前等待
@@ -263,26 +302,50 @@ func queryAccountDataWithRetry(ctx context.Context, client *hyper.Client, rpcCli
 
 		data, err := queryAccountData(client, address, totalEquity, prepPnl)
 		if err == nil {
+			// API 成功，返回数据
 			return data, nil
 		}
 
-		// 如果是 ErrNull，尝试从链上获取数据
+		// 如果是 ErrNull，记录并重试
 		if err == hyper.ErrNull {
-			logger.Debug("API 返回 null，尝试从链上获取数据", "address", address)
-			return queryAccountDataFromQuickNode(rpcClient, address, totalEquity, prepPnl, logger)
+			nullRetryCount++
+			lastNullData = data
+			
+			if nullRetryCount <= maxNullRetries {
+				logger.Debug("API 返回 null，重试中", 
+					"address", address, 
+					"null_retry", nullRetryCount,
+					"max_null_retries", maxNullRetries)
+				// 继续重试
+				continue
+			} else {
+				// 已经重试了 maxNullRetries 次，仍然返回 null
+				logger.Debug("API 返回 null，已重试多次，尝试从链上获取数据", 
+					"address", address,
+					"null_retry_count", nullRetryCount)
+				return queryAccountDataFromQuickNode(rpcClient, address, totalEquity, prepPnl, logger)
+			}
 		}
 
+		// 其他错误，继续重试
 		logger.Debug("查询失败", "address", address, "attempt", attempt+1, "error", err)
 	}
 
-	// 如果所有重试都失败，尝试使用 QuickNode RPC 作为备用
+	// 如果所有重试都失败（非 null 错误），尝试使用 QuickNode RPC 作为备用
+	if lastNullData != nil {
+		// 如果最后一次是 null，使用链上获取
+		logger.Debug("API 查询失败（null），尝试使用 QuickNode RPC", "address", address)
+		return queryAccountDataFromQuickNode(rpcClient, address, totalEquity, prepPnl, logger)
+	}
+	
+	// 其他错误，也尝试链上获取
 	logger.Debug("API 查询失败，尝试使用 QuickNode RPC", "address", address)
 	return queryAccountDataFromQuickNode(rpcClient, address, totalEquity, prepPnl, logger)
 }
 
 // queryAccountData 查询单个用户的账户数据
 // 优先使用 Hyperliquid API 查询
-func queryAccountData(client *hyper.Client, address string) (*dao.UserAccount, error) {
+func queryAccountData(client *hyper.Client, address string, totalEquity float64, prepPnl float64) (*dao.UserAccount, error) {
 	data := &dao.UserAccount{
 		Address:   address,
 		UpdatedAt: time.Now(),
@@ -292,33 +355,87 @@ func queryAccountData(client *hyper.Client, address string) (*dao.UserAccount, e
 
 	// 1. 获取账户摘要
 	summary, err := client.GetUserAccountSummary(address)
+	apiSummarySuccess := false
 	if err != nil {
 		if err == hyper.ErrNull {
-			// API 返回 null，返回错误让调用者从链上获取数据
+			// API 返回 null，返回错误让调用者重试
 			return data, hyper.ErrNull
 		}
+		// 其他错误，也返回错误让调用者重试
 		return nil, err
-	}
-
-	// 2. 提取总权益 (total_equity)
-	if summary.CrossMarginSummary.AccountValue != nil {
-		accountValue, err := summary.CrossMarginSummary.AccountValue.Float64()
-		if err == nil {
-			if accountValue > maxValue {
-				data.TotalEquity = maxValue
+	} else {
+		// API 成功，提取总权益 (total_equity)
+		// 注意：不要限制 accountValue > 0，因为即使是 0 也应该记录
+		if summary.CrossMarginSummary.AccountValue != nil {
+			accountValue, err := summary.CrossMarginSummary.AccountValue.Float64()
+			if err == nil {
+				// 移除 accountValue > 0 的限制，允许 0 值
+				if accountValue > maxValue {
+					data.TotalEquity = maxValue
+				} else if accountValue < -maxValue {
+					data.TotalEquity = -maxValue
+				} else {
+					data.TotalEquity = accountValue
+				}
+				apiSummarySuccess = true
 			} else {
-				data.TotalEquity = accountValue
+				// 提取失败，记录日志（仅前几个）
+				// 这里不记录太多日志，避免影响性能
 			}
 		}
-	} else if summary.MarginSummary.AccountValue != nil {
-		// 回退到 MarginSummary
-		accountValue, err := summary.MarginSummary.AccountValue.Float64()
-		if err == nil {
-			if accountValue > maxValue {
-				data.TotalEquity = maxValue
-			} else {
-				data.TotalEquity = accountValue
+		
+		if !apiSummarySuccess && summary.MarginSummary.AccountValue != nil {
+			// 回退到 MarginSummary
+			accountValue, err := summary.MarginSummary.AccountValue.Float64()
+			if err == nil {
+				// 移除 accountValue > 0 的限制，允许 0 值
+				if accountValue > maxValue {
+					data.TotalEquity = maxValue
+				} else if accountValue < -maxValue {
+					data.TotalEquity = -maxValue
+				} else {
+					data.TotalEquity = accountValue
+				}
+				apiSummarySuccess = true
 			}
+		}
+		
+		// 如果 API 没有获取到 total_equity，尝试使用 Withdrawable 或其他字段
+		if !apiSummarySuccess {
+			// 尝试使用 Withdrawable + UsedMargin 估算
+			if summary.Withdrawable != nil {
+				withdrawable, err := summary.Withdrawable.Float64()
+				if err == nil {
+					// 移除 withdrawable > 0 的限制
+					var usedMargin float64
+					if summary.CrossMarginSummary.TotalMarginUsed != nil {
+						marginUsed, err := summary.CrossMarginSummary.TotalMarginUsed.Float64()
+						if err == nil {
+							usedMargin = marginUsed
+						}
+					} else if summary.MarginSummary.TotalMarginUsed != nil {
+						marginUsed, err := summary.MarginSummary.TotalMarginUsed.Float64()
+						if err == nil {
+							usedMargin = marginUsed
+						}
+					}
+					estimatedEquity := withdrawable + usedMargin
+					// 移除 estimatedEquity > 0 的限制
+					if estimatedEquity > maxValue {
+						data.TotalEquity = maxValue
+					} else if estimatedEquity < -maxValue {
+						data.TotalEquity = -maxValue
+					} else {
+						data.TotalEquity = estimatedEquity
+					}
+					apiSummarySuccess = true
+				}
+			}
+		}
+		
+		// 如果仍然没有获取到 total_equity，使用传入的 totalEquity（来自数据库）
+		if !apiSummarySuccess && totalEquity != 0 {
+			data.TotalEquity = totalEquity
 		}
 	}
 
@@ -357,12 +474,27 @@ func queryAccountData(client *hyper.Client, address string) (*dao.UserAccount, e
 	}
 
 	// 5. 获取交易记录，计算累计盈亏和累计手续费
+	// 注意：如果 GetUserFills 返回 null，也需要重试，所以这里不处理 null 错误
+	// null 错误会在 queryAccountDataWithRetry 中统一处理
 	fills, err := client.GetUserFills(address)
 	if err != nil {
-		// 如果获取交易记录失败，不影响其他字段，继续返回已有数据
-		return data, nil
+		if err == hyper.ErrNull {
+			// API 返回 null，返回错误让调用者重试
+			// 但在返回之前，如果 TotalEquity > 0，应该使用 prepPnl 作为 TotalPnl 的估算值
+			// 这样即使 GetUserFills 失败，只要 TotalEquity > 0，记录也不会被过滤掉
+			if data.TotalEquity != 0 && prepPnl != 0 {
+				data.TotalPnl = prepPnl
+			}
+			return data, hyper.ErrNull
+		}
+		// 其他错误，返回错误让调用者重试
+		// 同样，如果 TotalEquity > 0，使用 prepPnl 作为 TotalPnl 的估算值
+		if data.TotalEquity != 0 && prepPnl != 0 {
+			data.TotalPnl = prepPnl
+		}
+		return nil, err
 	}
-
+	
 	// 计算7天前的时间戳
 	sevenDaysAgo := time.Now().AddDate(0, 0, -7).UnixMilli()
 
@@ -418,15 +550,21 @@ func queryAccountData(client *hyper.Client, address string) (*dao.UserAccount, e
 
 // queryAccountDataFromQuickNode 从 QuickNode RPC 查询账户数据（备用方案）
 // 从链上获取交易数据并计算 total_pnl 和 total_fee
-func queryAccountDataFromQuickNode(rpcClient *rpc.Client, address string, logger *slog.Logger) (*dao.UserAccount, error) {
+// 注意：不使用数据库作为备用数据源
+func queryAccountDataFromQuickNode(rpcClient *rpc.Client, address string, totalEquity float64, prepPnl float64, logger *slog.Logger) (*dao.UserAccount, error) {
 	data := &dao.UserAccount{
-		Address:   address,
-		UpdatedAt: time.Now(),
+		Address:     address,
+		TotalEquity: totalEquity, // 使用传入的 totalEquity
+		UpdatedAt:   time.Now(),
 	}
 
-	// 如果 RPC 客户端未配置，返回空数据
+	// 如果 RPC 客户端未配置，返回数据（使用传入的 totalEquity 和 prepPnl）
 	if rpcClient == nil {
 		logger.Debug("QuickNode RPC 客户端未配置，无法从链上获取数据", "address", address)
+		// 如果 TotalEquity > 0，使用 prepPnl 作为 TotalPnl 的估算值
+		if data.TotalEquity != 0 && prepPnl != 0 {
+			data.TotalPnl = prepPnl
+		}
 		return data, nil
 	}
 
@@ -434,6 +572,10 @@ func queryAccountDataFromQuickNode(rpcClient *rpc.Client, address string, logger
 	latestBlock, err := rpcClient.GetBlockNumber()
 	if err != nil {
 		logger.Debug("获取最新区块号失败", "error", err, "address", address)
+		// 如果 TotalEquity > 0，使用 prepPnl 作为 TotalPnl 的估算值
+		if data.TotalEquity != 0 && prepPnl != 0 {
+			data.TotalPnl = prepPnl
+		}
 		return data, nil
 	}
 
@@ -448,7 +590,10 @@ func queryAccountDataFromQuickNode(rpcClient *rpc.Client, address string, logger
 	fills, err := rpcClient.QueryUserFillsFromChain(address, fromBlock, latestBlock, logger)
 	if err != nil {
 		logger.Debug("从链上查询交易记录失败", "error", err, "address", address)
-		// 即使查询失败，也返回空数据而不是错误
+		// 链上查询失败，如果 TotalEquity > 0，使用 prepPnl 作为 TotalPnl 的估算值
+		if data.TotalEquity != 0 && prepPnl != 0 {
+			data.TotalPnl = prepPnl
+		}
 		return data, nil
 	}
 
@@ -589,4 +734,75 @@ func collectAccountErrors(errorCh <-chan error) {
 			slog.Warn("错误详情", "error", errMsg, "count", count)
 		}
 	}
+}
+
+// runGetAllMarketFills 查询市场所有交易记录
+func runGetAllMarketFills() {
+	// 加载配置
+	cfg, err := config.LoadConfig(GetConfigFile())
+	if err != nil {
+		exitWithError(err)
+	}
+
+	// 初始化日志
+	log.Setup(&cfg.Log)
+
+	// 初始化数据库
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	err = dao.InitDB(ctx, cfg.DSN)
+	if err != nil {
+		slog.Error("初始化数据库连接失败", "error", err)
+		exitWithError(err)
+	}
+
+	// 创建 Hyperliquid 客户端
+	client := hyper.WithLocalAddrsAndProxies(cfg.Network.LocalAddrs, cfg.Network.Proxies)
+
+	slog.Info("开始查询市场交易记录",
+		"coin", marketFillsCoin,
+		"start_time", marketFillsStartTime,
+		"end_time", marketFillsEndTime,
+		"time_window", marketFillsTimeWindow,
+		"max_per_request", marketFillsMaxPerRequest)
+
+	// 查询市场交易记录
+	startTime := time.Now()
+	fills, err := client.GetAllMarketFills(
+		marketFillsCoin,
+		marketFillsStartTime,
+		marketFillsEndTime,
+		marketFillsTimeWindow,
+		marketFillsMaxPerRequest,
+	)
+	if err != nil {
+		slog.Error("查询市场交易记录失败", "error", err)
+		exitWithError(err)
+	}
+
+	duration := time.Since(startTime)
+	slog.Info("查询市场交易记录完成",
+		"coin", marketFillsCoin,
+		"total_fills", len(fills),
+		"duration", duration)
+
+	if len(fills) == 0 {
+		slog.Info("没有查询到市场交易记录")
+		return
+	}
+
+	// 转换数据格式并保存到数据库
+	// 注意：市场交易记录没有 address 字段，需要特殊处理
+	// 这里我们只输出统计信息，不保存到 hyper_fills 表（因为该表需要 address）
+	slog.Info("市场交易记录统计",
+		"coin", marketFillsCoin,
+		"total_count", len(fills),
+		"first_time", fills[0].Time,
+		"last_time", fills[len(fills)-1].Time)
+
+	// 如果需要保存市场数据，可以创建一个新的表或修改现有表结构
+	// 目前先输出到日志，用户可以根据需要决定如何处理这些数据
+	slog.Info("提示：市场交易记录已查询完成，当前版本仅输出统计信息")
+	slog.Info("如需保存市场数据，请创建专门的市场交易记录表")
 }

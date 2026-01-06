@@ -133,21 +133,23 @@ func (c *OkxConfig) Preset() {
 
 // FollowConfig 跟单配置
 type FollowConfig struct {
-	RpcUrl         string   `json:"rpcUrl" yaml:"rpcUrl"`
-	AddressSets    []int    `json:"addressSets" yaml:"addressSets"`
-	ExcludeCoins   []string `json:"excludeCoins" yaml:"excludeCoins"`
-	FollowRatio    int      `json:"followRatio" yaml:"followRatio"`
-	Leverage       int64    `json:"leverage" yaml:"leverage"`
-	MinFollowValue float64  `json:"minFollowValue" yaml:"minFollowValue"`
-	MaxFollowValue float64  `json:"maxFollowValue" yaml:"maxFollowValue"`
-	TimeDiff       int64    `json:"timeDiff" yaml:"timeDiff"`
-	MergeInterval  int64    `json:"mergeInterval" yaml:"mergeInterval"`
-	PerWsUserCount int      `json:"perWsUserCount" yaml:"perWsUserCount"`
-	MsgIODir       string   `json:"msgIODir" yaml:"msgIODir"`
-	MarketDataUrl  string   `json:"marketDataUrl" yaml:"marketDataUrl"`
-	Listen         string   `json:"listen" yaml:"listen"`
-	AutoStart      bool     `json:"autoStart" yaml:"autoStart"`
-	CopyPosition   bool     `json:"copyPosition" yaml:"copyPosition"`
+	RpcUrl                    string   `json:"rpcUrl" yaml:"rpcUrl"`
+	ClearinghouseAddress      string   `json:"clearinghouseAddress" yaml:"clearinghouseAddress"` // Hyperliquid Clearinghouse 合约地址
+	ExchangeAddress           string   `json:"exchangeAddress" yaml:"exchangeAddress"`          // Hyperliquid Exchange 合约地址（可选）
+	AddressSets               []int    `json:"addressSets" yaml:"addressSets"`
+	ExcludeCoins              []string `json:"excludeCoins" yaml:"excludeCoins"`
+	FollowRatio               int      `json:"followRatio" yaml:"followRatio"`
+	Leverage                  int64    `json:"leverage" yaml:"leverage"`
+	MinFollowValue            float64  `json:"minFollowValue" yaml:"minFollowValue"`
+	MaxFollowValue            float64  `json:"maxFollowValue" yaml:"maxFollowValue"`
+	TimeDiff                  int64    `json:"timeDiff" yaml:"timeDiff"`
+	MergeInterval             int64    `json:"mergeInterval" yaml:"mergeInterval"`
+	PerWsUserCount            int      `json:"perWsUserCount" yaml:"perWsUserCount"`
+	MsgIODir                  string   `json:"msgIODir" yaml:"msgIODir"`
+	MarketDataUrl             string   `json:"marketDataUrl" yaml:"marketDataUrl"`
+	Listen                    string   `json:"listen" yaml:"listen"`
+	AutoStart                 bool     `json:"autoStart" yaml:"autoStart"`
+	CopyPosition              bool     `json:"copyPosition" yaml:"copyPosition"`
 }
 
 func (c *FollowConfig) Preset() {

@@ -53,7 +53,9 @@ collect:
 
 # 跟单配置（可选）
 follow:
-  rpcUrl: ""               # RPC URL
+  rpcUrl: "https://blissful-wiser-flower.hype-mainnet.quiknode.pro/bf764c7e480d0ddff5c8960cdf48b58afa14feb5/evm"  # QuickNode RPC URL（用于链上数据获取）
+  # clearinghouseAddress: "" # Hyperliquid Clearinghouse 合约地址（可选，默认已设置为 0x8549fD7FFC092F8366e416E129a622EC060104ea）
+  # exchangeAddress: ""      # Hyperliquid Exchange 合约地址（可选）
   addressSets: []          # 地址集合ID列表
   excludeCoins: []         # 排除的币种
   followRatio: 1           # 跟单比例

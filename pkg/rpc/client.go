@@ -246,15 +246,13 @@ func AddressToTopic(address string) string {
 	return "0x" + address
 }
 
-// Hyperliquid 合约地址（需要根据实际情况填入）
-// 这些是占位符，需要替换为实际的合约地址
+// Hyperliquid 合约地址
 var (
 	// HyperliquidClearinghouseAddress Hyperliquid 清算所合约地址
-	// TODO: 需要填入实际的合约地址
-	HyperliquidClearinghouseAddress = ""
+	// 默认地址：0x8549fD7FFC092F8366e416E129a622EC060104ea
+	HyperliquidClearinghouseAddress = "0x8549fD7FFC092F8366e416E129a622EC060104ea"
 	
-	// HyperliquidExchangeAddress Hyperliquid 交易所合约地址
-	// TODO: 需要填入实际的合约地址
+	// HyperliquidExchangeAddress Hyperliquid 交易所合约地址（可选）
 	HyperliquidExchangeAddress = ""
 )
 
@@ -314,32 +312,55 @@ func (c *Client) QueryUserFillsFromChain(userAddress string, fromBlock, toBlock 
 	// 3. 解析事件日志
 	var fills []ChainFill
 	for _, log := range logs {
-		// 解析事件数据
-		// 注意：这需要根据 Hyperliquid 的实际事件结构来解析
-		// 当前是示例实现，需要根据实际事件定义调整
-		
-		// 假设事件结构：Fill(address indexed user, string coin, uint256 price, uint256 size, int256 closedPnl, uint256 fee, uint256 time)
-		// Topics[0] = 事件签名
-		// Topics[1] = user 地址
-		// Data = coin, price, size, closedPnl, fee, time
-		
+		// 验证事件签名
 		if len(log.Topics) < 2 {
+			logger.Debug("事件日志 Topics 数量不足", "topics_count", len(log.Topics), "address", userAddress)
 			continue
 		}
 		
-		// 解析 Data 字段（需要根据实际事件结构解码）
-		// 这里只是示例，实际需要根据 ABI 解码
-		fill := ChainFill{
-			// TODO: 从 log.Data 解析 closedPnl, fee, time
-			// 需要使用 ABI 解码工具
-			ClosedPnl: 0, // 需要从 log.Data 解析
-			Fee:       0, // 需要从 log.Data 解析
-			Time:      0, // 需要从 log.Data 解析
+		// 验证事件签名是否匹配
+		expectedSig := GetFillEventSignature()
+		if log.Topics[0] != expectedSig {
+			logger.Debug("事件签名不匹配", 
+				"expected", expectedSig, 
+				"actual", log.Topics[0],
+				"address", userAddress)
+			continue
 		}
 		
-		// 暂时跳过，等待实现完整的解析逻辑
-		_ = fill
-		_ = log
+		// 验证用户地址是否匹配（Topics[1] 应该是用户地址）
+		userTopic := AddressToTopic(userAddress)
+		if log.Topics[1] != userTopic {
+			logger.Debug("用户地址不匹配", 
+				"expected", userTopic,
+				"actual", log.Topics[1],
+				"address", userAddress)
+			continue
+		}
+		
+		// 解析 Data 字段
+		if log.Data == "" {
+			logger.Debug("事件日志 Data 为空", "address", userAddress)
+			continue
+		}
+		
+		eventData, err := DecodeFillEvent(log.Data)
+		if err != nil {
+			logger.Debug("解析事件数据失败", 
+				"error", err, 
+				"address", userAddress,
+				"data", log.Data[:min(100, len(log.Data))])
+			continue
+		}
+		
+		// 转换为 ChainFill
+		fill := ChainFill{
+			Time:      eventData.Time,
+			ClosedPnl: eventData.ClosedPnl,
+			Fee:       eventData.Fee,
+		}
+		
+		fills = append(fills, fill)
 	}
 
 	logger.Debug("从链上查询到交易记录", "address", userAddress, "count", len(fills), "logs_count", len(logs))

@@ -8,6 +8,8 @@ import (
 	"hyper-tracker/pkg/utils"
 	"io"
 	"log/slog"
+	"math"
+	"math/rand"
 	"net/http"
 	"strconv"
 	"time"
@@ -38,7 +40,20 @@ func WithLocalAddrsAndProxies(addrs []string, proxies []string) *Client {
 	return NewClient(DefaultRpcURL, addrs, proxies)
 }
 
+// postJson 发送 POST JSON 请求，支持指数退避重试
 func (c *Client) postJson(fullUrl string, params H) ([]byte, error) {
+	return c.postJsonWithRetry(fullUrl, params, 0)
+}
+
+// postJsonWithRetry 带指数退避重试的 POST JSON 请求
+func (c *Client) postJsonWithRetry(fullUrl string, params H, retryCount int) ([]byte, error) {
+	const (
+		maxRetries     = 2              // 最大重试次数（总共尝试3次：初始1次 + 重试2次）
+		baseDelay      = time.Second    // 基础延迟时间：1秒
+		maxDelay       = 10 * time.Second      // 最大延迟时间：10秒
+		jitterPercent  = 0.1            // 随机抖动百分比（±10%）
+	)
+
 	data, err := json.Marshal(params)
 	if err != nil {
 		return nil, fmt.Errorf("json marshal: %w", err)
@@ -56,6 +71,43 @@ func (c *Client) postJson(fullUrl string, params H) ([]byte, error) {
 		return nil, fmt.Errorf("http do: %w", err)
 	}
 	defer resp.Body.Close()
+	
+	// 检查是否是 429 Too Many Requests 错误
+	if resp.StatusCode == http.StatusTooManyRequests {
+		if retryCount >= maxRetries {
+			return nil, fmt.Errorf("达到最大重试次数 (%d)，仍然收到 429 错误", maxRetries)
+		}
+		
+		// 计算指数退避延迟时间
+		delay := time.Duration(float64(baseDelay) * math.Pow(2, float64(retryCount)))
+		if delay > maxDelay {
+			delay = maxDelay
+		}
+		
+		// 添加随机抖动，避免多个客户端同时重试
+		jitter := time.Duration(float64(delay) * jitterPercent * (rand.Float64()*2 - 1)) // -10% 到 +10%
+		delay = delay + jitter
+		if delay < 0 {
+			delay = baseDelay
+		}
+		
+		slog.Warn("收到 429 错误，进行指数退避重试",
+			"url", fullUrl,
+			"retry_count", retryCount+1,
+			"max_retries", maxRetries,
+			"delay", delay)
+		
+		// 等待后重试
+		time.Sleep(delay)
+		return c.postJsonWithRetry(fullUrl, params, retryCount+1)
+	}
+	
+	// 检查其他 HTTP 错误状态码
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		body, _ := io.ReadAll(resp.Body)
+		return nil, fmt.Errorf("HTTP %d: %s", resp.StatusCode, string(body))
+	}
+	
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, fmt.Errorf("read body: %w", err)
@@ -351,4 +403,154 @@ func (c *Client) GetUserAccountSummary(user string) (*AccountSummary, error) {
 		return nil, fmt.Errorf("json unmarshal: %w", err)
 	}
 	return &summary, nil
+}
+
+// MarketFill 市场交易记录
+type MarketFill struct {
+	Coin          string  `json:"coin"`          // 币种
+	Price         Value   `json:"px"`            // 价格
+	Size          Value   `json:"sz"`            // 仓位大小
+	Side          string  `json:"side"`          // 方向 (A: Ask, B: Bid)
+	Time          int64   `json:"time"`          // 时间戳（毫秒）
+	Hash          string  `json:"hash"`          // 交易哈希
+	ClosedPnl     Value   `json:"closedPnl"`     // 已实现盈亏
+	Fee           Value   `json:"fee"`           // 手续费
+	StartPosition Value   `json:"startPosition"` // 起始仓位
+	Direction     string  `json:"dir"`           // 方向
+	OrderID       int64   `json:"oid"`           // 订单ID
+	TradeID       int64   `json:"tid"`           // 交易ID
+}
+
+// GetMarketFills 获取市场交易记录
+// coin: 币种名称，如 "BTC", "ETH" 等
+// startTime: 起始时间戳（毫秒），如果为 0 则从最早开始
+// endTime: 结束时间戳（毫秒），如果为 0 则到当前时间
+// 注意：API 可能对单次查询返回的数据量有限制（例如 1000 条），需要分批查询
+func (c *Client) GetMarketFills(coin string, startTime, endTime int64) ([]MarketFill, error) {
+	fullUrl := c.rpcURL + "/info"
+	params := H{
+		"type": "marketFills",
+		"coin": coin,
+	}
+	
+	// 如果指定了时间范围，添加时间参数
+	if startTime > 0 {
+		params["startTime"] = startTime
+	}
+	if endTime > 0 {
+		params["endTime"] = endTime
+	}
+	
+	body, err := c.postJson(fullUrl, params)
+	if err != nil {
+		return nil, err
+	}
+	if len(body) == 4 && string(body) == "null" {
+		return nil, ErrNull
+	}
+	var fills []MarketFill
+	err = json.Unmarshal(body, &fills)
+	if err != nil {
+		printData("GetMarketFills "+coin+": ", body)
+		return nil, fmt.Errorf("json unmarshal: %w", err)
+	}
+	return fills, nil
+}
+
+// GetAllMarketFills 分批获取市场所有交易记录
+// coin: 币种名称，如 "BTC", "ETH" 等
+// startTime: 起始时间戳（毫秒），如果为 0 则从最早开始
+// endTime: 结束时间戳（毫秒），如果为 0 则到当前时间
+// timeWindow: 每次查询的时间窗口（毫秒），建议设置为 1 小时或更短，避免单次查询数据量过大
+// maxFillsPerRequest: 每次请求的最大记录数，如果返回的记录数达到此值，说明需要缩小时间窗口
+func (c *Client) GetAllMarketFills(coin string, startTime, endTime int64, timeWindow time.Duration, maxFillsPerRequest int) ([]MarketFill, error) {
+	if timeWindow <= 0 {
+		timeWindow = time.Hour // 默认 1 小时
+	}
+	if maxFillsPerRequest <= 0 {
+		maxFillsPerRequest = 1000 // 默认 1000 条
+	}
+	
+	var allFills []MarketFill
+	currentStart := startTime
+	if endTime == 0 {
+		endTime = time.Now().UnixMilli()
+	}
+	
+	windowMs := timeWindow.Milliseconds()
+	
+	slog.Info("开始分批查询市场交易记录",
+		"coin", coin,
+		"start_time", startTime,
+		"end_time", endTime,
+		"time_window", timeWindow,
+		"max_fills_per_request", maxFillsPerRequest)
+	
+	for currentStart < endTime {
+		currentEnd := currentStart + windowMs
+		if currentEnd > endTime {
+			currentEnd = endTime
+		}
+		
+		slog.Debug("查询市场交易记录",
+			"coin", coin,
+			"start_time", currentStart,
+			"end_time", currentEnd,
+			"collected_count", len(allFills))
+		
+		fills, err := c.GetMarketFills(coin, currentStart, currentEnd)
+		if err != nil {
+			if err == ErrNull {
+				// 返回 null 表示该时间段没有数据，继续下一个时间段
+				slog.Debug("该时间段没有数据", "coin", coin, "start_time", currentStart, "end_time", currentEnd)
+				currentStart = currentEnd
+				continue
+			}
+			return nil, fmt.Errorf("查询市场交易记录失败 [%d-%d]: %w", currentStart, currentEnd, err)
+		}
+		
+		// 如果返回的记录数达到最大值，说明需要缩小时间窗口
+		if len(fills) >= maxFillsPerRequest {
+			// 将时间窗口缩小一半
+			newWindow := windowMs / 2
+			if newWindow < 1000 { // 最小 1 秒
+				newWindow = 1000
+			}
+			slog.Warn("返回记录数达到最大值，缩小时间窗口",
+				"coin", coin,
+				"fills_count", len(fills),
+				"old_window_ms", windowMs,
+				"new_window_ms", newWindow)
+			windowMs = newWindow
+			// 不更新 currentStart，重新查询当前时间段
+			continue
+		}
+		
+		allFills = append(allFills, fills...)
+		
+		// 如果返回的记录数为 0，说明该时间段没有数据，可以跳过更大的时间窗口
+		if len(fills) == 0 {
+			currentStart = currentEnd
+		} else {
+			// 使用最后一条记录的时间作为下一个时间段的起始时间
+			// 这样可以避免数据遗漏，但可能会有少量重复（需要在调用方去重）
+			lastTime := fills[len(fills)-1].Time
+			if lastTime > currentStart {
+				currentStart = lastTime + 1 // +1 避免重复
+			} else {
+				currentStart = currentEnd
+			}
+		}
+		
+		// 添加小延迟，避免请求过于频繁
+		time.Sleep(100 * time.Millisecond)
+	}
+	
+	slog.Info("分批查询完成",
+		"coin", coin,
+		"total_fills", len(allFills),
+		"start_time", startTime,
+		"end_time", endTime)
+	
+	return allFills, nil
 }
