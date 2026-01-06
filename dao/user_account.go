@@ -18,6 +18,7 @@ type UserAccount struct {
 	TotalFee         float64   `db:"total_fee"`          // 累计手续费
 	TradeCount7d     int       `db:"trade_count_7d"`     // 7日内累计交易次数
 	UpdatedAt        time.Time `db:"updated_at"`         // 更新时间
+	Source           string    `db:"-"`                  // 数据来源：API 或 QuickNode（不保存到数据库，仅用于日志）
 }
 
 // CreateUserAccountTable 创建用户账户表

@@ -2,6 +2,7 @@ package commands
 
 import (
 	"context"
+	"fmt"
 	"hyper-tracker/dao"
 	"hyper-tracker/internal/config"
 	"hyper-tracker/pkg/hyper"
@@ -64,11 +65,12 @@ func init() {
 }
 
 const (
-	accountMaxConcurrency = 400  // 最大并发数
-	accountBatchSize     = 400   // 批量保存大小
+	accountMaxConcurrency = 100  // 最大并发数（降低以减少429错误）
+	accountBatchSize     = 200   // 批量保存大小
 	accountRetryCount    = 5     // 重试次数（包括首次尝试，总共5次，即再重试4次）
 	accountRetryDelay    = 2 * time.Second // 重试延迟
-	accountRateLimit     = 1000  // 速率限制：每10秒1000个请求
+	accountRateLimit     = 300   // 速率限制：每10秒300个请求（降低以减少429错误，约30请求/秒）
+	accountWorkerDelay   = 50 * time.Millisecond // Worker启动延迟，避免同时启动
 )
 
 func runQueryAccount() {
@@ -168,11 +170,15 @@ func runQueryAccount() {
 		wg             sync.WaitGroup
 	)
 
-	// 启动 Worker Goroutines
+	// 启动 Worker Goroutines（错开启动时间，避免同时发起大量请求）
 	for i := 0; i < accountMaxConcurrency; i++ {
 		wg.Add(1)
 		go func(workerID int) {
 			defer wg.Done()
+			// 错开启动时间，避免所有Worker同时启动导致429错误
+			if workerID > 0 {
+				time.Sleep(accountWorkerDelay * time.Duration(workerID))
+			}
 			accountWorker(ctx, client, rpcClient, rateLimiter, addressCh, resultCh, errorCh, workerID, &processedCount, &successCount, &errorCount)
 		}(i)
 	}
@@ -237,7 +243,7 @@ func accountWorker(
 	defer utils.Recovery(logger)
 
 	for addrInfo := range addressCh {
-		// 等待速率限制
+		// 等待速率限制（确保不超过API限制）
 		if err := rateLimiter.Wait(ctx); err != nil {
 			if err == context.Canceled {
 				return
@@ -303,6 +309,7 @@ func queryAccountDataWithRetry(ctx context.Context, client *hyper.Client, rpcCli
 		data, err := queryAccountData(client, address, totalEquity, prepPnl)
 		if err == nil {
 			// API 成功，返回数据
+			logger.Info("成功从 Hyperliquid API 获取数据", "address", address, "source", "API")
 			return data, nil
 		}
 
@@ -320,10 +327,17 @@ func queryAccountDataWithRetry(ctx context.Context, client *hyper.Client, rpcCli
 				continue
 			} else {
 				// 已经重试了 maxNullRetries 次，仍然返回 null
-				logger.Debug("API 返回 null，已重试多次，尝试从链上获取数据", 
+				logger.Warn("API 返回 null，已重试多次，尝试从 QuickNode 获取数据", 
 					"address", address,
-					"null_retry_count", nullRetryCount)
-				return queryAccountDataFromQuickNode(rpcClient, address, totalEquity, prepPnl, logger)
+					"null_retry_count", nullRetryCount,
+					"max_null_retries", maxNullRetries)
+				quickNodeData, quickNodeErr := queryAccountDataFromQuickNode(rpcClient, address, totalEquity, prepPnl, logger)
+				if quickNodeErr == nil {
+					logger.Info("成功从 QuickNode 获取数据（API 返回 null）", "address", address)
+					return quickNodeData, nil
+				}
+				logger.Error("从 QuickNode 获取数据失败（API 也返回 null）", "address", address, "error", quickNodeErr)
+				return nil, fmt.Errorf("API 返回 null 且 QuickNode 获取失败: %w", quickNodeErr)
 			}
 		}
 
@@ -334,13 +348,25 @@ func queryAccountDataWithRetry(ctx context.Context, client *hyper.Client, rpcCli
 	// 如果所有重试都失败（非 null 错误），尝试使用 QuickNode RPC 作为备用
 	if lastNullData != nil {
 		// 如果最后一次是 null，使用链上获取
-		logger.Debug("API 查询失败（null），尝试使用 QuickNode RPC", "address", address)
-		return queryAccountDataFromQuickNode(rpcClient, address, totalEquity, prepPnl, logger)
+		logger.Warn("API 查询失败（null），尝试使用 QuickNode RPC", "address", address)
+		quickNodeData, quickNodeErr := queryAccountDataFromQuickNode(rpcClient, address, totalEquity, prepPnl, logger)
+		if quickNodeErr == nil {
+			logger.Info("成功从 QuickNode 获取数据（API 返回 null）", "address", address)
+			return quickNodeData, nil
+		}
+		logger.Error("从 QuickNode 获取数据失败（API 也返回 null）", "address", address, "error", quickNodeErr)
+		return nil, fmt.Errorf("API 返回 null 且 QuickNode 获取失败: %w", quickNodeErr)
 	}
 	
 	// 其他错误，也尝试链上获取
-	logger.Debug("API 查询失败，尝试使用 QuickNode RPC", "address", address)
-	return queryAccountDataFromQuickNode(rpcClient, address, totalEquity, prepPnl, logger)
+	logger.Warn("API 查询失败，尝试使用 QuickNode RPC", "address", address)
+	quickNodeData, quickNodeErr := queryAccountDataFromQuickNode(rpcClient, address, totalEquity, prepPnl, logger)
+	if quickNodeErr == nil {
+		logger.Info("成功从 QuickNode 获取数据（API 查询失败）", "address", address)
+		return quickNodeData, nil
+	}
+	logger.Error("从 QuickNode 获取数据失败（API 也失败）", "address", address, "error", quickNodeErr)
+	return nil, fmt.Errorf("API 查询失败且 QuickNode 获取失败: %w", quickNodeErr)
 }
 
 // queryAccountData 查询单个用户的账户数据
@@ -433,9 +459,11 @@ func queryAccountData(client *hyper.Client, address string, totalEquity float64,
 			}
 		}
 		
-		// 如果仍然没有获取到 total_equity，使用传入的 totalEquity（来自数据库）
-		if !apiSummarySuccess && totalEquity != 0 {
-			data.TotalEquity = totalEquity
+		// 如果仍然没有获取到 total_equity，不可以使用数据库数据
+		// 所有数据必须来自 API 或 QuickNode RPC
+		if !apiSummarySuccess {
+			// 不设置 totalEquity，保持为 0
+			// 后续如果 API 返回 null，会尝试从 QuickNode 获取
 		}
 	}
 
@@ -480,18 +508,11 @@ func queryAccountData(client *hyper.Client, address string, totalEquity float64,
 	if err != nil {
 		if err == hyper.ErrNull {
 			// API 返回 null，返回错误让调用者重试
-			// 但在返回之前，如果 TotalEquity > 0，应该使用 prepPnl 作为 TotalPnl 的估算值
-			// 这样即使 GetUserFills 失败，只要 TotalEquity > 0，记录也不会被过滤掉
-			if data.TotalEquity != 0 && prepPnl != 0 {
-				data.TotalPnl = prepPnl
-			}
+			// 不使用数据库数据（prepPnl），所有数据必须来自 API 或 QuickNode
 			return data, hyper.ErrNull
 		}
 		// 其他错误，返回错误让调用者重试
-		// 同样，如果 TotalEquity > 0，使用 prepPnl 作为 TotalPnl 的估算值
-		if data.TotalEquity != 0 && prepPnl != 0 {
-			data.TotalPnl = prepPnl
-		}
+		// 不使用数据库数据，所有数据必须来自 API 或 QuickNode
 		return nil, err
 	}
 	
@@ -545,39 +566,79 @@ func queryAccountData(client *hyper.Client, address string, totalEquity float64,
 
 	data.TradeCount7d = tradeCount7d
 
+	// 标记数据来源为 QuickNode
+	data.Source = "QuickNode"
+
+	return data, nil
+}
+
+// 注意：这个函数在 queryAccountDataFromQuickNode 内部，logger 已经定义
+func calculateAccountDataFromFills(fills []rpc.ChainFill, logger *slog.Logger) (totalPnl, totalFee float64, tradeCount7d int) {
+	const maxValue = 9999999999999999999999999999.999999999999
+	sevenDaysAgo := time.Now().AddDate(0, 0, -7).UnixMilli()
+
+	for _, fill := range fills {
+		totalPnl += fill.ClosedPnl
+		if fill.Fee < 0 {
+			totalFee += -fill.Fee
+		} else {
+			totalFee += fill.Fee
+		}
+
+		// 统计7日内的交易次数
+		if fill.Time >= sevenDaysAgo {
+			tradeCount7d++
+		}
+	}
+
+	// 限制数值范围
+	if totalPnl > maxValue {
+		totalPnl = maxValue
+	} else if totalPnl < -maxValue {
+		totalPnl = -maxValue
+	}
+
+	if totalFee > maxValue {
+		totalFee = maxValue
+	}
+
+	logger.Info("成功从 QuickNode 计算账户数据",
+		"address", address,
+		"total_pnl", data.TotalPnl,
+		"total_fee", data.TotalFee,
+		"trade_count_7d", data.TradeCount7d,
+		"fills_count", len(fills))
+
 	return data, nil
 }
 
 // queryAccountDataFromQuickNode 从 QuickNode RPC 查询账户数据（备用方案）
 // 从链上获取交易数据并计算 total_pnl 和 total_fee
-// 注意：不使用数据库作为备用数据源
+// 注意：不使用数据库作为备用数据源，所有数据必须来自 API 或 QuickNode RPC
 func queryAccountDataFromQuickNode(rpcClient *rpc.Client, address string, totalEquity float64, prepPnl float64, logger *slog.Logger) (*dao.UserAccount, error) {
+	logger.Info("尝试从 QuickNode RPC 获取数据", "address", address)
+	
 	data := &dao.UserAccount{
 		Address:     address,
-		TotalEquity: totalEquity, // 使用传入的 totalEquity
+		TotalEquity: 0, // 不从数据库获取，初始化为 0
 		UpdatedAt:   time.Now(),
+		Source:      "QuickNode", // 标记数据来源
 	}
 
-	// 如果 RPC 客户端未配置，返回数据（使用传入的 totalEquity 和 prepPnl）
+	// 如果 RPC 客户端未配置，返回空数据（不使用数据库数据）
 	if rpcClient == nil {
-		logger.Debug("QuickNode RPC 客户端未配置，无法从链上获取数据", "address", address)
-		// 如果 TotalEquity > 0，使用 prepPnl 作为 TotalPnl 的估算值
-		if data.TotalEquity != 0 && prepPnl != 0 {
-			data.TotalPnl = prepPnl
-		}
-		return data, nil
+		logger.Warn("QuickNode RPC 客户端未配置，无法从链上获取数据", "address", address)
+		return data, fmt.Errorf("QuickNode RPC 客户端未配置")
 	}
 
 	// 1. 获取最新区块号
+	logger.Debug("从 QuickNode 获取最新区块号", "address", address)
 	latestBlock, err := rpcClient.GetBlockNumber()
 	if err != nil {
-		logger.Debug("获取最新区块号失败", "error", err, "address", address)
-		// 如果 TotalEquity > 0，使用 prepPnl 作为 TotalPnl 的估算值
-		if data.TotalEquity != 0 && prepPnl != 0 {
-			data.TotalPnl = prepPnl
-		}
-		return data, nil
+		logger.Warn("从 QuickNode 获取最新区块号失败", "error", err, "address", address)
+		return data, fmt.Errorf("获取最新区块号失败: %w", err)
 	}
+	logger.Info("成功从 QuickNode 获取最新区块号", "address", address, "block", latestBlock.String())
 
 	// 2. 计算查询范围（从最早到最新，或者最近一定数量的区块）
 	// 为了性能，可以只查询最近的区块，比如最近 10000 个区块
@@ -585,17 +646,17 @@ func queryAccountDataFromQuickNode(rpcClient *rpc.Client, address string, totalE
 	if latestBlock.Cmp(big.NewInt(10000)) > 0 {
 		fromBlock.Sub(latestBlock, big.NewInt(10000))
 	}
+	logger.Debug("计算查询区块范围", "address", address, "from_block", fromBlock.String(), "to_block", latestBlock.String())
 
 	// 3. 从链上查询交易记录
+	logger.Info("从 QuickNode 查询链上交易记录", "address", address, "from_block", fromBlock.String(), "to_block", latestBlock.String())
 	fills, err := rpcClient.QueryUserFillsFromChain(address, fromBlock, latestBlock, logger)
 	if err != nil {
-		logger.Debug("从链上查询交易记录失败", "error", err, "address", address)
-		// 链上查询失败，如果 TotalEquity > 0，使用 prepPnl 作为 TotalPnl 的估算值
-		if data.TotalEquity != 0 && prepPnl != 0 {
-			data.TotalPnl = prepPnl
-		}
-		return data, nil
+		logger.Warn("从 QuickNode 查询链上交易记录失败", "error", err, "address", address)
+		return data, fmt.Errorf("查询链上交易记录失败: %w", err)
 	}
+	
+	logger.Info("成功从 QuickNode 获取链上交易记录", "address", address, "fills_count", len(fills))
 
 	// 4. 计算累计盈亏和累计手续费
 	const maxValue = 9999999999999999999999999999.999999999999
@@ -638,7 +699,10 @@ func queryAccountDataFromQuickNode(rpcClient *rpc.Client, address string, totalE
 
 	data.TradeCount7d = tradeCount7d
 
-	logger.Debug("从链上获取数据完成",
+	// 标记数据来源为 QuickNode
+	data.Source = "QuickNode"
+
+	logger.Info("成功从 QuickNode 计算账户数据",
 		"address", address,
 		"total_pnl", data.TotalPnl,
 		"total_fee", data.TotalFee,
