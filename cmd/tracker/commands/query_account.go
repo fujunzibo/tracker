@@ -11,6 +11,7 @@ import (
 	"hyper-tracker/pkg/utils"
 	"log/slog"
 	"math/big"
+	"strings"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -25,6 +26,9 @@ var (
 	marketFillsTimeWindow    time.Duration
 	marketFillsMaxPerRequest int
 	localIP                  string // 指定使用的本地IP地址
+	blockRange               int64 // 从链上获取地址的区块范围（最近N个区块，0表示查询全部）
+	fromBlockNum             int64 // 手动指定起始区块号（0表示自动获取）
+	toBlockNum               int64 // 手动指定结束区块号（0表示自动获取或使用最新）
 )
 
 var queryAccountCmd = &cobra.Command{
@@ -63,8 +67,14 @@ func init() {
 	queryAccountCmd.Flags().Int64Var(&marketFillsEndTime, "market-end-time", 0, "市场数据查询结束时间戳（毫秒），0 表示到当前时间")
 	queryAccountCmd.Flags().DurationVar(&marketFillsTimeWindow, "market-time-window", time.Hour, "市场数据查询时间窗口（每次查询的时间段）")
 	queryAccountCmd.Flags().IntVar(&marketFillsMaxPerRequest, "market-max-per-request", 1000, "市场数据每次请求的最大记录数")
+	
 	// 本地IP地址配置
 	queryAccountCmd.Flags().StringVar(&localIP, "local-ip", "", "指定使用的本地IP地址（如果指定，将只使用此IP，忽略配置文件中的localAddrs）")
+	
+	// 区块范围配置
+	queryAccountCmd.Flags().Int64Var(&blockRange, "block-range", 0, "从链上获取地址的区块范围（最近N个区块，0表示查询全部历史。建议：10000-50000以减少请求数，避免超过每日限制）")
+	queryAccountCmd.Flags().Int64Var(&fromBlockNum, "from-block", 0, "手动指定起始区块号（0表示自动计算。如果遇到每日限制，可以手动指定以避免调用 GetBlockNumber）")
+	queryAccountCmd.Flags().Int64Var(&toBlockNum, "to-block", 0, "手动指定结束区块号（0表示使用最新区块。如果遇到每日限制，可以手动指定以避免调用 GetBlockNumber）")
 }
 
 const (
@@ -145,19 +155,70 @@ func runQueryAccount() {
 	
 	slog.Info("开始从链上获取所有地址...")
 	
-	// 从链上获取所有地址（可以指定区块范围，如果为 nil 则查询全部）
-	// 为了性能，可以只查询最近的区块，比如最近 10000 个区块
+	// 从链上获取所有地址
 	var fromBlock *big.Int = nil
 	var toBlock *big.Int = nil
 	
-	// 如果需要限制查询范围，可以取消下面的注释并设置区块号
-	// latestBlock, err := rpcClient.GetBlockNumber()
-	// if err == nil && latestBlock.Cmp(big.NewInt(10000)) > 0 {
-	// 	fromBlock = new(big.Int).Sub(latestBlock, big.NewInt(10000))
-	// }
+	// 获取最新区块号，用于估算请求数量
+	latestBlock, err := rpcClient.GetBlockNumber()
+	if err != nil {
+		// 检查是否是每日限制错误
+		if strings.Contains(err.Error(), "daily request limit") || strings.Contains(err.Error(), "-32003") {
+			slog.Error("QuickNode 已达到每日请求限制",
+				"error", err,
+				"tip", "请等待24小时后重试，或升级 QuickNode 账户，或使用 --block-range 参数限制查询范围以减少请求数")
+			exitWithError(fmt.Errorf("QuickNode 每日请求限制已到达: %w\n提示：可以使用 --block-range 参数限制查询范围（例如：--block-range 10000 只查询最近10000个区块）", err))
+		}
+		slog.Error("获取最新区块号失败", "error", err)
+		exitWithError(err)
+	}
+	
+	// 如果指定了区块范围，只查询最近的区块
+	if blockRange > 0 {
+		slog.Info("限制查询区块范围", "recent_blocks", blockRange)
+		if latestBlock.Cmp(big.NewInt(blockRange)) > 0 {
+			fromBlock = new(big.Int).Sub(latestBlock, big.NewInt(blockRange))
+			slog.Info("设置查询区块范围",
+				"from_block", fromBlock.String(),
+				"to_block", latestBlock.String(),
+				"block_range", blockRange)
+		}
+		toBlock = latestBlock
+	} else {
+		// 查询全部历史
+		// 估算请求数量：每5个区块需要1次请求（QuickNode限制）
+		totalBlocks := latestBlock.Int64()
+		estimatedRequests := totalBlocks / 5
+		if totalBlocks%5 != 0 {
+			estimatedRequests++
+		}
+		
+		slog.Warn("将查询全部历史数据",
+			"latest_block", latestBlock.String(),
+			"total_blocks", totalBlocks,
+			"estimated_requests", estimatedRequests,
+			"warning", fmt.Sprintf("这将需要约 %d 次 RPC 请求，可能超过 QuickNode 每日限制", estimatedRequests),
+			"tip", "如果遇到每日限制错误，建议使用 --block-range 参数分批查询（例如：--block-range 50000）")
+		
+		// 如果估算请求数超过 10000，给出强烈警告
+		if estimatedRequests > 10000 {
+			slog.Warn("⚠️  警告：查询全部历史将消耗大量请求",
+				"estimated_requests", estimatedRequests,
+				"recommendation", "强烈建议使用 --block-range 参数限制查询范围，例如：--block-range 50000")
+		}
+		
+		toBlock = latestBlock
+	}
 	
 	addresses, err := rpcClient.QueryAllAddressesFromChain(fromBlock, toBlock, slog.Default())
 	if err != nil {
+		// 检查是否是每日限制错误
+		if strings.Contains(err.Error(), "daily request limit") || strings.Contains(err.Error(), "-32003") {
+			slog.Error("QuickNode 已达到每日请求限制",
+				"error", err,
+				"tip", "请等待24小时后重试，或升级 QuickNode 账户，或使用 --block-range 参数限制查询范围以减少请求数")
+			exitWithError(fmt.Errorf("QuickNode 每日请求限制已到达: %w\n提示：可以使用 --block-range 参数限制查询范围（例如：--block-range 10000 只查询最近10000个区块）", err))
+		}
 		slog.Error("从链上获取地址列表失败", "error", err)
 		exitWithError(err)
 	}

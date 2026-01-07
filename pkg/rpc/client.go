@@ -144,36 +144,47 @@ func (c *Client) callWithRetry(method string, params []interface{}, retryCount i
 		return nil, fmt.Errorf("unmarshal response: %w, 响应内容: %s", err, string(body))
 	}
 
-	// 检查是否是 RPC 级别的 429 错误（-32007）
-	if rpcResp.Error != nil && rpcResp.Error.Code == -32007 {
-		// RPC 429 错误，进行指数退避重试
-		if retryCount >= maxRetries {
-			return nil, fmt.Errorf("达到最大重试次数 (%d)，仍然收到 429 错误，响应: %s", maxRetries, string(body))
+	// 检查是否是 RPC 级别的错误
+	if rpcResp.Error != nil {
+		// 检查是否是每日请求限制错误（-32003）
+		if rpcResp.Error.Code == -32003 {
+			return nil, fmt.Errorf("QuickNode 每日请求限制已到达: %s", rpcResp.Error.Message)
 		}
 		
-		// 计算指数退避延迟时间
-		delay := time.Duration(float64(baseDelay) * math.Pow(2, float64(retryCount)))
-		if delay > maxDelay {
-			delay = maxDelay
+		// 检查是否是速率限制错误（-32007）
+		if rpcResp.Error.Code == -32007 {
+			// RPC 429 错误，进行指数退避重试
+			if retryCount >= maxRetries {
+				return nil, fmt.Errorf("达到最大重试次数 (%d)，仍然收到 429 错误，响应: %s", maxRetries, string(body))
+			}
+			
+			// 计算指数退避延迟时间
+			delay := time.Duration(float64(baseDelay) * math.Pow(2, float64(retryCount)))
+			if delay > maxDelay {
+				delay = maxDelay
+			}
+			
+			// 添加随机抖动，避免多个客户端同时重试
+			jitter := time.Duration(float64(delay) * jitterPercent * (rand.Float64()*2 - 1)) // -20% 到 +20%
+			delay = delay + jitter
+			if delay < 0 {
+				delay = baseDelay
+			}
+			
+			slog.Warn("RPC 收到 429 错误（-32007），进行指数退避重试",
+				"method", method,
+				"retry_count", retryCount+1,
+				"max_retries", maxRetries,
+				"delay", delay,
+				"message", rpcResp.Error.Message)
+			
+			// 等待后重试
+			time.Sleep(delay)
+			return c.callWithRetry(method, params, retryCount+1)
 		}
 		
-		// 添加随机抖动，避免多个客户端同时重试
-		jitter := time.Duration(float64(delay) * jitterPercent * (rand.Float64()*2 - 1)) // -20% 到 +20%
-		delay = delay + jitter
-		if delay < 0 {
-			delay = baseDelay
-		}
-		
-		slog.Warn("RPC 收到 429 错误（-32007），进行指数退避重试",
-			"method", method,
-			"retry_count", retryCount+1,
-			"max_retries", maxRetries,
-			"delay", delay,
-			"message", rpcResp.Error.Message)
-		
-		// 等待后重试
-		time.Sleep(delay)
-		return c.callWithRetry(method, params, retryCount+1)
+		// 其他 RPC 错误，直接返回
+		return nil, fmt.Errorf("rpc error [%d]: %s", rpcResp.Error.Code, rpcResp.Error.Message)
 	}
 
 	// 检查 HTTP 状态码
