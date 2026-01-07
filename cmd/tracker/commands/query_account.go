@@ -19,11 +19,12 @@ import (
 )
 
 var (
-	marketFillsCoin      string
-	marketFillsStartTime int64
-	marketFillsEndTime   int64
-	marketFillsTimeWindow time.Duration
+	marketFillsCoin           string
+	marketFillsStartTime      int64
+	marketFillsEndTime       int64
+	marketFillsTimeWindow    time.Duration
 	marketFillsMaxPerRequest int
+	localIP                  string // 指定使用的本地IP地址
 )
 
 var queryAccountCmd = &cobra.Command{
@@ -62,15 +63,17 @@ func init() {
 	queryAccountCmd.Flags().Int64Var(&marketFillsEndTime, "market-end-time", 0, "市场数据查询结束时间戳（毫秒），0 表示到当前时间")
 	queryAccountCmd.Flags().DurationVar(&marketFillsTimeWindow, "market-time-window", time.Hour, "市场数据查询时间窗口（每次查询的时间段）")
 	queryAccountCmd.Flags().IntVar(&marketFillsMaxPerRequest, "market-max-per-request", 1000, "市场数据每次请求的最大记录数")
+	// 本地IP地址配置
+	queryAccountCmd.Flags().StringVar(&localIP, "local-ip", "", "指定使用的本地IP地址（如果指定，将只使用此IP，忽略配置文件中的localAddrs）")
 }
 
 const (
-	accountMaxConcurrency = 100  // 最大并发数（降低以减少429错误）
+	accountMaxConcurrency = 30   // 最大并发数（进一步降低以减少429错误）
 	accountBatchSize     = 200   // 批量保存大小
 	accountRetryCount    = 5     // 重试次数（包括首次尝试，总共5次，即再重试4次）
 	accountRetryDelay    = 2 * time.Second // 重试延迟
-	accountRateLimit     = 300   // 速率限制：每10秒300个请求（降低以减少429错误，约30请求/秒）
-	accountWorkerDelay   = 50 * time.Millisecond // Worker启动延迟，避免同时启动
+	accountRateLimit     = 150   // 速率限制：每10秒150个请求（进一步降低以减少429错误，约15请求/秒）
+	accountWorkerDelay   = 200 * time.Millisecond // Worker启动延迟，避免同时启动（增加到200ms）
 )
 
 func runQueryAccount() {
@@ -101,58 +104,90 @@ func runQueryAccount() {
 	}
 	slog.Info("表创建/检查完成")
 
-	// 获取所有地址及其权益（用于备用数据源）
-	addressesWithEquity, err := dao.GetAllAddressesWithEquity()
+	// 创建 QuickNode RPC 客户端（用于链上数据获取）
+	var rpcClient *rpc.Client
+	if cfg.Follow.RpcUrl == "" {
+		slog.Error("未配置 QuickNode RPC URL，无法从链上获取地址")
+		exitWithError(fmt.Errorf("必须配置 QuickNode RPC URL 才能从链上获取地址"))
+	}
+	
+	// 使用相同的 localAddrs 配置
+	var localAddrs []string
+	if localIP != "" {
+		localAddrs = []string{localIP}
+		slog.Info("使用指定的本地IP地址", "ip", localIP)
+	} else {
+		localAddrs = cfg.Network.LocalAddrs
+		if len(localAddrs) > 0 {
+			slog.Info("使用配置文件中的本地IP地址列表", "ips", localAddrs)
+		}
+	}
+	
+	rpcClient = rpc.NewClient(cfg.Follow.RpcUrl, localAddrs, cfg.Network.Proxies)
+	
+	// 设置 Hyperliquid 合约地址（从配置文件读取，如果未配置则使用默认值）
+	clearinghouseAddr := cfg.Follow.ClearinghouseAddress
+	if clearinghouseAddr == "" {
+		clearinghouseAddr = "0x8549fD7FFC092F8366e416E129a622EC060104ea"
+		slog.Info("使用默认 Hyperliquid Clearinghouse 合约地址", "address", clearinghouseAddr)
+	} else {
+		slog.Info("使用配置的 Hyperliquid Clearinghouse 合约地址", "address", clearinghouseAddr)
+	}
+	
+	rpc.SetHyperliquidContractAddress(
+		clearinghouseAddr,
+		cfg.Follow.ExchangeAddress,
+	)
+	
+	if cfg.Follow.ExchangeAddress != "" {
+		slog.Info("已设置 Hyperliquid Exchange 合约地址", "address", cfg.Follow.ExchangeAddress)
+	}
+	
+	slog.Info("开始从链上获取所有地址...")
+	
+	// 从链上获取所有地址（可以指定区块范围，如果为 nil 则查询全部）
+	// 为了性能，可以只查询最近的区块，比如最近 10000 个区块
+	var fromBlock *big.Int = nil
+	var toBlock *big.Int = nil
+	
+	// 如果需要限制查询范围，可以取消下面的注释并设置区块号
+	// latestBlock, err := rpcClient.GetBlockNumber()
+	// if err == nil && latestBlock.Cmp(big.NewInt(10000)) > 0 {
+	// 	fromBlock = new(big.Int).Sub(latestBlock, big.NewInt(10000))
+	// }
+	
+	addresses, err := rpcClient.QueryAllAddressesFromChain(fromBlock, toBlock, slog.Default())
 	if err != nil {
-		slog.Error("获取地址列表失败", "error", err)
+		slog.Error("从链上获取地址列表失败", "error", err)
 		exitWithError(err)
 	}
-	total := len(addressesWithEquity)
-	slog.Info("获取到地址列表", "count", total)
 	
-	// 创建地址到权益的映射，用于备用数据源
+	total := len(addresses)
+	slog.Info("从链上获取到地址列表", "count", total)
+	
+	if total == 0 {
+		slog.Info("没有地址需要处理")
+		return
+	}
+	
+	// 转换为 AddressWithEquity 格式（权益信息初始化为 0，因为从链上无法直接获取）
+	addressesWithEquity := make([]dao.AddressWithEquity, total)
+	for i, addr := range addresses {
+		addressesWithEquity[i] = dao.AddressWithEquity{
+			Address:     addr,
+			TotalEquity: 0,
+			PrepPnl:     0,
+		}
+	}
+	
+	// 创建地址到权益的映射（虽然权益为0，但保留接口兼容性）
 	addressEquityMap := make(map[string]dao.AddressWithEquity, total)
 	for _, addr := range addressesWithEquity {
 		addressEquityMap[addr.Address] = addr
 	}
 
-	if total == 0 {
-		slog.Info("没有地址需要处理")
-		return
-	}
-
 	// 创建 Hyperliquid 客户端
-	client := hyper.WithLocalAddrsAndProxies(cfg.Network.LocalAddrs, cfg.Network.Proxies)
-
-	// 创建 QuickNode RPC 客户端（用于链上数据获取）
-	var rpcClient *rpc.Client
-	if cfg.Follow.RpcUrl != "" {
-		rpcClient = rpc.NewClient(cfg.Follow.RpcUrl, cfg.Network.LocalAddrs, cfg.Network.Proxies)
-		
-		// 设置 Hyperliquid 合约地址（从配置文件读取，如果未配置则使用默认值）
-		// 默认已设置 Clearinghouse 地址：0x8549fD7FFC092F8366e416E129a622EC060104ea
-		clearinghouseAddr := cfg.Follow.ClearinghouseAddress
-		if clearinghouseAddr == "" {
-			// 使用默认地址
-			clearinghouseAddr = "0x8549fD7FFC092F8366e416E129a622EC060104ea"
-			slog.Info("使用默认 Hyperliquid Clearinghouse 合约地址", "address", clearinghouseAddr)
-		} else {
-			slog.Info("使用配置的 Hyperliquid Clearinghouse 合约地址", "address", clearinghouseAddr)
-		}
-		
-		rpc.SetHyperliquidContractAddress(
-			clearinghouseAddr,
-			cfg.Follow.ExchangeAddress,
-		)
-		
-		if cfg.Follow.ExchangeAddress != "" {
-			slog.Info("已设置 Hyperliquid Exchange 合约地址", "address", cfg.Follow.ExchangeAddress)
-		}
-		
-		slog.Info("QuickNode RPC 客户端已创建", "rpcUrl", cfg.Follow.RpcUrl)
-	} else {
-		slog.Warn("未配置 QuickNode RPC URL，链上数据获取功能将不可用")
-	}
+	client := hyper.WithLocalAddrsAndProxies(localAddrs, cfg.Network.Proxies)
 
 	// 创建速率限制器
 	rateLimiter := utils.NewRateLimiter(accountRateLimit)
@@ -572,8 +607,8 @@ func queryAccountData(client *hyper.Client, address string, totalEquity float64,
 	return data, nil
 }
 
-// 注意：这个函数在 queryAccountDataFromQuickNode 内部，logger 已经定义
-func calculateAccountDataFromFills(fills []rpc.ChainFill, logger *slog.Logger) (totalPnl, totalFee float64, tradeCount7d int) {
+// calculateAccountDataFromFills 从交易记录计算账户数据
+func calculateAccountDataFromFills(fills []rpc.ChainFill) (totalPnl, totalFee float64, tradeCount7d int) {
 	const maxValue = 9999999999999999999999999999.999999999999
 	sevenDaysAgo := time.Now().AddDate(0, 0, -7).UnixMilli()
 
@@ -602,14 +637,7 @@ func calculateAccountDataFromFills(fills []rpc.ChainFill, logger *slog.Logger) (
 		totalFee = maxValue
 	}
 
-	logger.Info("成功从 QuickNode 计算账户数据",
-		"address", address,
-		"total_pnl", data.TotalPnl,
-		"total_fee", data.TotalFee,
-		"trade_count_7d", data.TradeCount7d,
-		"fills_count", len(fills))
-
-	return data, nil
+	return totalPnl, totalFee, tradeCount7d
 }
 
 // queryAccountDataFromQuickNode 从 QuickNode RPC 查询账户数据（备用方案）
@@ -640,13 +668,15 @@ func queryAccountDataFromQuickNode(rpcClient *rpc.Client, address string, totalE
 	}
 	logger.Info("成功从 QuickNode 获取最新区块号", "address", address, "block", latestBlock.String())
 
-	// 2. 计算查询范围（从最早到最新，或者最近一定数量的区块）
-	// 为了性能，可以只查询最近的区块，比如最近 10000 个区块
+	// 2. 计算查询范围
+	// QuickNode 免费计划限制：每次查询最多 5 个区块
+	// QueryUserFillsFromChain 函数内部会自动分批查询
+	// 为了性能，可以只查询最近的区块，比如最近 1000 个区块（会分批查询）
 	fromBlock := big.NewInt(0)
-	if latestBlock.Cmp(big.NewInt(10000)) > 0 {
-		fromBlock.Sub(latestBlock, big.NewInt(10000))
+	if latestBlock.Cmp(big.NewInt(1000)) > 0 {
+		fromBlock.Sub(latestBlock, big.NewInt(1000))
 	}
-	logger.Debug("计算查询区块范围", "address", address, "from_block", fromBlock.String(), "to_block", latestBlock.String())
+	logger.Debug("计算查询区块范围", "address", address, "from_block", fromBlock.String(), "to_block", latestBlock.String(), "note", "将自动分批查询，每批最多5个区块")
 
 	// 3. 从链上查询交易记录
 	logger.Info("从 QuickNode 查询链上交易记录", "address", address, "from_block", fromBlock.String(), "to_block", latestBlock.String())

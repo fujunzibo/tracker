@@ -179,33 +179,14 @@ func GetAllAddresses() ([]string, error) {
 	return addresses, nil
 }
 
-// GetAllAddressesWithEquity 获取所有地址及其权益
+// GetAllAddressesWithEquity 从链上获取所有地址及其权益
+// 注意：现在从链上获取地址，不再从数据库任何表获取
+// 此函数现在返回一个空实现，实际地址获取在调用方通过 RPC 客户端完成
+// 保留此函数是为了保持接口兼容性
 func GetAllAddressesWithEquity() ([]AddressWithEquity, error) {
-	query := fmt.Sprintf(`SELECT address, total_equity, prep_pnl FROM %s ORDER BY address`, TableAddress)
-	
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-	defer cancel()
-	
-	rows, err := db.Query(ctx, query)
-	if err != nil {
-		return nil, fmt.Errorf("查询地址失败: %w", err)
-	}
-	defer rows.Close()
-	
-	var addresses []AddressWithEquity
-	for rows.Next() {
-		var addr AddressWithEquity
-		if err := rows.Scan(&addr.Address, &addr.TotalEquity, &addr.PrepPnl); err != nil {
-			return nil, fmt.Errorf("扫描地址失败: %w", err)
-		}
-		addresses = append(addresses, addr)
-	}
-	
-	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("遍历地址失败: %w", err)
-	}
-	
-	return addresses, nil
+	// 此函数已被废弃，不再从数据库获取地址
+	// 实际地址获取应该通过 RPC 客户端的 QueryAllAddressesFromChain 方法
+	return nil, fmt.Errorf("此函数已废弃，请使用 RPC 客户端的 QueryAllAddressesFromChain 方法从链上获取地址")
 }
 
 // CalculateUserQysyFromDB 从数据库 hyper_fills 表计算用户权益损益数据（备用方案）

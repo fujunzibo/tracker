@@ -2,6 +2,7 @@ package hyper
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -12,16 +13,33 @@ import (
 	"math/rand"
 	"net/http"
 	"strconv"
+	"sync"
 	"time"
 )
 
 const DefaultRpcURL = "https://api.hyperliquid.xyz"
+
+var (
+	// 全局 Hyperliquid API 速率限制器（所有 API 客户端共享）
+	// 为了安全，设置为 12 请求/秒（留有余量）
+	globalHyperRateLimiter *utils.RateLimiter
+	hyperRateLimiterOnce   sync.Once
+)
 
 type H = map[string]any
 
 type Client struct {
 	rpcURL string
 	client *utils.HttpClient
+}
+
+// getGlobalHyperRateLimiter 获取全局 Hyperliquid API 速率限制器
+func getGlobalHyperRateLimiter() *utils.RateLimiter {
+	hyperRateLimiterOnce.Do(func() {
+		// 设置为 12 请求/秒（每10秒120个请求）
+		globalHyperRateLimiter = utils.NewRateLimiter(120)
+	})
+	return globalHyperRateLimiter
 }
 
 func NewClient(rpcURL string, addrs []string, proxies []string) *Client {
@@ -53,6 +71,15 @@ func (c *Client) postJsonWithRetry(fullUrl string, params H, retryCount int) ([]
 		maxDelay       = 10 * time.Second      // 最大延迟时间：10秒
 		jitterPercent  = 0.1            // 随机抖动百分比（±10%）
 	)
+
+	// 等待全局速率限制（仅在首次请求时等待，重试时不等待，避免重复限制）
+	if retryCount == 0 {
+		rateLimiter := getGlobalHyperRateLimiter()
+		ctx := context.Background()
+		if err := rateLimiter.Wait(ctx); err != nil {
+			return nil, fmt.Errorf("速率限制等待失败: %w", err)
+		}
+	}
 
 	data, err := json.Marshal(params)
 	if err != nil {
