@@ -50,7 +50,7 @@ func init() {
 	rootCmd.AddCommand(indexChainCmd)
 
 	// 区块范围配置
-	indexChainCmd.Flags().Int64Var(&indexChainBlockRange, "block-range", 0, "从链上获取地址的区块范围（最近N个区块，0表示查询全部历史。建议：10000-50000以减少请求数）")
+	indexChainCmd.Flags().Int64Var(&indexChainBlockRange, "block-range", 0, "从链上获取地址的区块范围（最近N个区块，0或不指定表示查询全部历史。建议：10000-50000以减少请求数）")
 	indexChainCmd.Flags().Int64Var(&indexChainFromBlock, "from-block", 0, "手动指定起始区块号（0表示自动计算）")
 	indexChainCmd.Flags().Int64Var(&indexChainToBlock, "to-block", 0, "手动指定结束区块号（0表示使用最新区块）")
 	
@@ -118,13 +118,22 @@ func runIndexChain() {
 	slog.Info("已创建 QuickNode RPC 客户端", "url", cfg.Follow.RpcUrl)
 
 	// 创建 HyperEVM RPC 客户端（作为备用）
+	// 如果 hyperEvmRpcUrl 设置为 "disable"，则不创建 HyperEVM 客户端，只使用 QuickNode
 	var hyperEvmClient *rpc.Client
 	hyperEvmRpcUrl := cfg.Follow.HyperEvmRpcUrl
-	if hyperEvmRpcUrl == "" {
-		hyperEvmRpcUrl = "https://rpc.hyperliquid.xyz/evm"
-		slog.Info("使用默认 HyperEVM RPC URL", "url", hyperEvmRpcUrl)
+	if strings.ToLower(hyperEvmRpcUrl) == "disable" {
+		slog.Info("HyperEVM RPC 已禁用，将只使用 QuickNode RPC")
+		hyperEvmClient = nil
+	} else {
+		if hyperEvmRpcUrl == "" {
+			// 如果未配置，使用默认值（保持向后兼容）
+			hyperEvmRpcUrl = "https://rpc.hyperliquid.xyz/evm"
+			slog.Info("使用默认 HyperEVM RPC URL", "url", hyperEvmRpcUrl)
+		} else {
+			slog.Info("使用配置的 HyperEVM RPC URL", "url", hyperEvmRpcUrl)
+		}
+		hyperEvmClient = rpc.NewClient(hyperEvmRpcUrl, localAddrs, cfg.Network.Proxies)
 	}
-	hyperEvmClient = rpc.NewClient(hyperEvmRpcUrl, localAddrs, cfg.Network.Proxies)
 
 	// 设置 Hyperliquid 合约地址
 	clearinghouseAddr := cfg.Follow.ClearinghouseAddress
@@ -223,7 +232,7 @@ func runIndexChain() {
 				exitWithError(getBlockErr)
 			}
 
-			// 如果指定了区块范围，只查询最近的区块
+			// 如果指定了区块范围
 			if indexChainBlockRange > 0 {
 				slog.Info("限制查询区块范围", "recent_blocks", indexChainBlockRange)
 				if latestBlock.Cmp(big.NewInt(indexChainBlockRange)) > 0 {
@@ -232,56 +241,91 @@ func runIndexChain() {
 						"from_block", fromBlock.String(),
 						"to_block", latestBlock.String(),
 						"block_range", indexChainBlockRange)
+				} else {
+					fromBlock = big.NewInt(0)
 				}
 				toBlock = latestBlock
 			} else {
-				// 如果没有指定起始区块和区块范围，默认只查询最近 10000 个区块（避免范围太大）
+				// 如果没有指定起始区块和区块范围，默认查询全部历史（从区块0开始）
 				if fromBlock == nil {
-					defaultRange := int64(10000)
-					if latestBlock.Cmp(big.NewInt(defaultRange)) > 0 {
-						fromBlock = new(big.Int).Sub(latestBlock, big.NewInt(defaultRange))
-						slog.Info("未指定起始区块，默认查询最近 10000 个区块",
-							"from_block", fromBlock.String(),
-							"to_block", latestBlock.String(),
-							"tip", "如需查询全部历史，请使用 --from-block 0 或 --block-range 参数")
-					} else {
-						fromBlock = big.NewInt(0)
-					}
+					fromBlock = big.NewInt(0)
+					slog.Info("未指定起始区块和区块范围，查询全部历史",
+						"from_block", fromBlock.String(),
+						"to_block", latestBlock.String(),
+						"total_blocks", latestBlock.String(),
+						"tip", "如需限制查询范围，请使用 --block-range 参数（例如：--block-range 10000 只查询最近10000个区块）")
 				}
 				toBlock = latestBlock
 			}
 		}
 
-		// 如果指定了结束区块但没有指定起始区块，默认只查询最近 10000 个区块
+		// 如果指定了结束区块但没有指定起始区块，默认从区块0开始查询全部历史
 		if indexChainToBlock > 0 && fromBlock == nil {
-			defaultRange := int64(10000)
-			if toBlock.Cmp(big.NewInt(defaultRange)) > 0 {
-				fromBlock = new(big.Int).Sub(toBlock, big.NewInt(defaultRange))
-				slog.Info("指定了结束区块但未指定起始区块，默认查询最近 10000 个区块",
-					"from_block", fromBlock.String(),
-					"to_block", toBlock.String(),
-					"tip", "如需从区块 0 开始查询，请使用 --from-block 0")
-			} else {
-				fromBlock = big.NewInt(0)
-			}
+			fromBlock = big.NewInt(0)
+			slog.Info("指定了结束区块但未指定起始区块，从区块0开始查询全部历史",
+				"from_block", fromBlock.String(),
+				"to_block", toBlock.String(),
+				"tip", "如需限制查询范围，请使用 --block-range 参数")
 		}
 
 		// 优先使用 HyperEVM RPC 查询地址
 		var chainErr error
+		var collectedAddresses []string // 保存已收集到的地址
 		if hyperEvmClient != nil {
 			slog.Info("使用 HyperEVM RPC 查询地址（优先）", "rpc_url", hyperEvmRpcUrl)
 			addresses, chainErr = hyperEvmClient.QueryAllAddressesFromHyperEVM(fromBlock, toBlock, slog.Default())
 			if chainErr == nil {
 				slog.Info("成功通过 HyperEVM RPC 获取地址", "count", len(addresses), "source", "HyperEVM RPC")
 			} else {
-				slog.Warn("通过 HyperEVM RPC 获取地址失败，尝试使用 QuickNode RPC", "error", chainErr)
+				// 即使有错误，如果返回了地址，也要保留这些地址
+				if len(addresses) > 0 {
+					collectedAddresses = addresses
+					slog.Info("HyperEVM RPC 部分成功，已收集到地址", 
+						"count", len(addresses), 
+						"error", chainErr,
+						"tip", "将尝试使用 QuickNode RPC 继续查询")
+				} else {
+					slog.Warn("通过 HyperEVM RPC 获取地址失败，尝试使用 QuickNode RPC", "error", chainErr)
+				}
 				// 如果 HyperEVM RPC 失败，尝试 QuickNode RPC（作为备用）
 				if rpcClient != nil {
 					slog.Info("尝试使用 QuickNode RPC 查询地址（备用）", "rpc_url", cfg.Follow.RpcUrl)
-					addresses, chainErr = rpcClient.QueryAllAddressesFromChain(fromBlock, toBlock, slog.Default())
-					if chainErr == nil {
-						slog.Info("成功通过 QuickNode RPC 获取地址", "count", len(addresses), "source", "QuickNode RPC")
+					quickNodeAddresses, quickNodeErr := rpcClient.QueryAllAddressesFromChain(fromBlock, toBlock, slog.Default())
+					if quickNodeErr == nil {
+						// 合并已收集的地址和 QuickNode 返回的地址
+						addressMap := make(map[string]bool)
+						for _, addr := range collectedAddresses {
+							addressMap[addr] = true
+						}
+						for _, addr := range quickNodeAddresses {
+							addressMap[addr] = true
+						}
+						addresses = make([]string, 0, len(addressMap))
+						for addr := range addressMap {
+							addresses = append(addresses, addr)
+						}
+						slog.Info("成功通过 QuickNode RPC 获取地址", 
+							"count", len(addresses),
+							"hyperevm_collected", len(collectedAddresses),
+							"quicknode_collected", len(quickNodeAddresses),
+							"source", "QuickNode RPC + HyperEVM RPC")
+						chainErr = nil // 合并成功，清除错误
+					} else {
+						// QuickNode 也失败，但如果有已收集的地址，使用它们
+						if len(collectedAddresses) > 0 {
+							addresses = collectedAddresses
+							slog.Warn("QuickNode RPC 也失败，使用 HyperEVM RPC 已收集的地址",
+								"count", len(addresses),
+								"quicknode_error", quickNodeErr)
+							chainErr = nil // 有部分数据，不清除错误但继续处理
+						}
 					}
+				} else if len(collectedAddresses) > 0 {
+					// 没有 QuickNode RPC，但 HyperEVM 收集到了地址，使用它们
+					addresses = collectedAddresses
+					slog.Info("未配置 QuickNode RPC，使用 HyperEVM RPC 已收集的地址",
+						"count", len(addresses))
+					chainErr = nil // 有部分数据，继续处理
 				}
 			}
 		} else if rpcClient != nil {

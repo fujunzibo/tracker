@@ -1030,10 +1030,19 @@ func (c *Client) QueryAllAddressesFromHyperEVM(fromBlock, toBlock *big.Int, logg
 					"error", err,
 					"rpc_url", c.rpcURL,
 					"tip", "HyperEVM RPC 速率限制较严格，将回退到 QuickNode RPC")
-				// 对于 HyperEVM RPC，如果前3个批次都遇到 rate limited，直接返回错误
+				// 对于 HyperEVM RPC，如果前3个批次都遇到 rate limited，返回已收集到的地址并返回错误
 				// 让调用方知道 HyperEVM RPC 不可用，自动回退到 QuickNode RPC
+				// 但不要丢弃已收集到的地址
 				if batchCount <= 3 {
-					return nil, fmt.Errorf("HyperEVM RPC 速率限制: %w\n提示：程序将自动回退到 QuickNode RPC", err)
+					// 返回已收集到的地址，而不是 nil
+					addresses := make([]string, 0, len(addressSet))
+					for addr := range addressSet {
+						addresses = append(addresses, addr)
+					}
+					logger.Info("HyperEVM RPC 前3个批次遇到 rate limited，返回已收集的地址",
+						"collected_addresses", len(addresses),
+						"tip", "将回退到 QuickNode RPC 继续查询")
+					return addresses, fmt.Errorf("HyperEVM RPC 速率限制: %w\n提示：程序将自动回退到 QuickNode RPC", err)
 				}
 				// 继续尝试，但增加延迟
 				currentFrom.Add(currentTo, big.NewInt(1))
@@ -1050,11 +1059,20 @@ func (c *Client) QueryAllAddressesFromHyperEVM(fromBlock, toBlock *big.Int, logg
 					"error", err,
 					"rpc_url", c.rpcURL,
 					"tip", "HyperEVM RPC 可能不支持当前的查询方式或区块范围太大")
-				// 对于 HyperEVM RPC，如果前3个批次都失败，直接返回错误
+				// 对于 HyperEVM RPC，如果前3个批次都失败，返回已收集到的地址并返回错误
 				// 让调用方知道 HyperEVM RPC 不可用，自动回退到 QuickNode RPC
+				// 但不要丢弃已收集到的地址
 				if batchCount <= 3 {
 					// 前3个批次都失败，说明 HyperEVM RPC 不支持此查询方式
-					return nil, fmt.Errorf("HyperEVM RPC 不支持当前的查询方式: %w\n提示：程序将自动回退到 QuickNode RPC", err)
+					// 返回已收集到的地址，而不是 nil
+					addresses := make([]string, 0, len(addressSet))
+					for addr := range addressSet {
+						addresses = append(addresses, addr)
+					}
+					logger.Info("HyperEVM RPC 前3个批次遇到 Invalid params，返回已收集的地址",
+						"collected_addresses", len(addresses),
+						"tip", "将回退到 QuickNode RPC 继续查询")
+					return addresses, fmt.Errorf("HyperEVM RPC 不支持当前的查询方式: %w\n提示：程序将自动回退到 QuickNode RPC", err)
 				}
 				// 继续尝试，但记录警告
 				currentFrom.Add(currentTo, big.NewInt(1))
