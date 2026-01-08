@@ -37,14 +37,6 @@ func init() {
 	rootCmd.AddCommand(queryQysyCmd)
 }
 
-const (
-	maxConcurrency = 400  // 最大并发数
-	batchSize      = 400  // 批量保存大小
-	retryCount     = 3    // 重试次数
-	retryDelay     = 2 * time.Second // 重试延迟
-	rateLimit      = 1000 // 速率限制：每10秒1000个请求
-)
-
 func runQueryQysy() {
 	// 加载配置
 	cfg, err := config.LoadConfig(GetConfigFile())
@@ -54,6 +46,36 @@ func runQueryQysy() {
 
 	// 初始化日志
 	log.Setup(&cfg.Log)
+
+	// 获取配置参数（如果未配置则使用默认值）
+	qysyCfg := cfg.QueryQysy
+	maxConcurrency := qysyCfg.MaxConcurrency
+	if maxConcurrency <= 0 {
+		maxConcurrency = 400
+	}
+	batchSize := qysyCfg.BatchSize
+	if batchSize <= 0 {
+		batchSize = 400
+	}
+	retryCount := qysyCfg.RetryCount
+	if retryCount <= 0 {
+		retryCount = 3
+	}
+	retryDelay := time.Duration(qysyCfg.RetryDelay) * time.Second
+	if retryDelay <= 0 {
+		retryDelay = 2 * time.Second
+	}
+	rateLimit := qysyCfg.RateLimit
+	if rateLimit <= 0 {
+		rateLimit = 1000
+	}
+
+	slog.Info("使用配置参数",
+		"maxConcurrency", maxConcurrency,
+		"batchSize", batchSize,
+		"retryCount", retryCount,
+		"retryDelay", retryDelay,
+		"rateLimit", rateLimit)
 
 	// 初始化数据库
 	ctx, cancel := context.WithCancel(context.Background())
@@ -111,7 +133,7 @@ func runQueryQysy() {
 		wg.Add(1)
 		go func(workerID int) {
 			defer wg.Done()
-			worker(ctx, client, rateLimiter, addressCh, resultCh, errorCh, workerID, &processedCount, &successCount, &errorCount)
+			worker(ctx, client, rateLimiter, addressCh, resultCh, errorCh, workerID, &processedCount, &successCount, &errorCount, retryCount, retryDelay)
 		}(i)
 	}
 
@@ -120,7 +142,7 @@ func runQueryQysy() {
 	saveWg.Add(1)
 	go func() {
 		defer saveWg.Done()
-		saveResults(resultCh, total)
+		saveResults(resultCh, total, batchSize)
 	}()
 
 	// 启动错误收集 Goroutine
@@ -169,6 +191,8 @@ func worker(
 	errorCh chan<- error,
 	workerID int,
 	processedCount, successCount, errorCount *int64,
+	retryCount int,
+	retryDelay time.Duration,
 ) {
 	logger := slog.With("worker", workerID)
 	defer utils.Recovery(logger)
@@ -183,7 +207,7 @@ func worker(
 		}
 
 		// 查询用户数据（带重试）
-		data, err := queryUserDataWithRetry(ctx, client, addr.Address, addr.TotalEquity, addr.PrepPnl, logger)
+		data, err := queryUserDataWithRetry(ctx, client, addr.Address, addr.TotalEquity, addr.PrepPnl, logger, retryCount, retryDelay)
 		atomic.AddInt64(processedCount, 1)
 
 		if err != nil {
@@ -213,7 +237,7 @@ func worker(
 }
 
 // queryUserDataWithRetry 带重试的查询用户数据
-func queryUserDataWithRetry(ctx context.Context, client *hyper.Client, address string, totalEquity float64, prepPnl float64, logger *slog.Logger) (*dao.UserQysy, error) {
+func queryUserDataWithRetry(ctx context.Context, client *hyper.Client, address string, totalEquity float64, prepPnl float64, logger *slog.Logger, retryCount int, retryDelay time.Duration) (*dao.UserQysy, error) {
 	var lastErr error
 	for attempt := 0; attempt < retryCount; attempt++ {
 		if attempt > 0 {
@@ -244,7 +268,7 @@ func queryUserDataWithRetry(ctx context.Context, client *hyper.Client, address s
 }
 
 // saveResults 批量保存结果
-func saveResults(resultCh <-chan *dao.UserQysy, total int) {
+func saveResults(resultCh <-chan *dao.UserQysy, total int, batchSize int) {
 	var results []*dao.UserQysy
 	var savedCount int
 	var skippedCount int
@@ -365,7 +389,14 @@ func queryUserData(client *hyper.Client, address string, totalEquity float64, pr
 	
 	// 如果 API 失败或返回 null，使用数据库中的 total_equity
 	if !apiSuccess {
-		data.UserEquity = totalEquity
+		const maxEquity = 9999999999999999999999999999.999999999999
+		if totalEquity > maxEquity {
+			data.UserEquity = maxEquity
+		} else if totalEquity < 0 {
+			data.UserEquity = 0
+		} else {
+			data.UserEquity = totalEquity
+		}
 	}
 	
 	// 2. 优先尝试从 API 获取用户交易记录
@@ -497,11 +528,77 @@ func queryUserData(client *hyper.Client, address string, totalEquity float64, pr
 			data.TotalLoss = calculatedLoss
 			return data, nil
 		}
-		// 使用数据库计算的值
-		data.TotalLoss = dbData.TotalLoss
-		data.ProfitLossRatio = dbData.ProfitLossRatio
-		data.FeeRatio = dbData.FeeRatio
-		data.AvgTradeCount7d = dbData.AvgTradeCount7d
+		// 使用数据库计算的值，确保不超过最大值
+		const maxEquity = 9999999999999999999999999999.999999999999
+		const maxRatio = 999999999999.0
+		const maxCount = 999999999999.999999
+		
+		if dbData.TotalLoss > maxEquity {
+			data.TotalLoss = maxEquity
+		} else if dbData.TotalLoss < 0 {
+			data.TotalLoss = 0
+		} else {
+			data.TotalLoss = dbData.TotalLoss
+		}
+		
+		if dbData.ProfitLossRatio > maxRatio {
+			data.ProfitLossRatio = maxRatio
+		} else if dbData.ProfitLossRatio < 0 {
+			data.ProfitLossRatio = 0
+		} else {
+			data.ProfitLossRatio = dbData.ProfitLossRatio
+		}
+		
+		if dbData.FeeRatio > maxRatio {
+			data.FeeRatio = maxRatio
+		} else if dbData.FeeRatio < 0 {
+			data.FeeRatio = 0
+		} else {
+			data.FeeRatio = dbData.FeeRatio
+		}
+		
+		if dbData.AvgTradeCount7d > maxCount {
+			data.AvgTradeCount7d = maxCount
+		} else if dbData.AvgTradeCount7d < 0 {
+			data.AvgTradeCount7d = 0
+		} else {
+			data.AvgTradeCount7d = dbData.AvgTradeCount7d
+		}
+	}
+	
+	// 最终验证所有数值，确保不超过数据库字段的最大值
+	const maxEquity = 9999999999999999999999999999.999999999999
+	const maxRatio = 999999999999.0
+	const maxCount = 999999999999.999999
+	
+	if data.UserEquity > maxEquity {
+		data.UserEquity = maxEquity
+	} else if data.UserEquity < 0 {
+		data.UserEquity = 0
+	}
+	
+	if data.TotalLoss > maxEquity {
+		data.TotalLoss = maxEquity
+	} else if data.TotalLoss < 0 {
+		data.TotalLoss = 0
+	}
+	
+	if data.ProfitLossRatio > maxRatio {
+		data.ProfitLossRatio = maxRatio
+	} else if data.ProfitLossRatio < 0 {
+		data.ProfitLossRatio = 0
+	}
+	
+	if data.FeeRatio > maxRatio {
+		data.FeeRatio = maxRatio
+	} else if data.FeeRatio < 0 {
+		data.FeeRatio = 0
+	}
+	
+	if data.AvgTradeCount7d > maxCount {
+		data.AvgTradeCount7d = maxCount
+	} else if data.AvgTradeCount7d < 0 {
+		data.AvgTradeCount7d = 0
 	}
 	
 	return data, nil

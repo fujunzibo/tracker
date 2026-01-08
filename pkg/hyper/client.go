@@ -13,6 +13,7 @@ import (
 	"math/rand"
 	"net/http"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 )
@@ -446,6 +447,7 @@ type MarketFill struct {
 	Direction     string  `json:"dir"`           // 方向
 	OrderID       int64   `json:"oid"`           // 订单ID
 	TradeID       int64   `json:"tid"`           // 交易ID
+	User          string  `json:"user,omitempty"` // 用户地址（如果 API 返回）
 }
 
 // GetMarketFills 获取市场交易记录
@@ -580,4 +582,107 @@ func (c *Client) GetAllMarketFills(coin string, startTime, endTime int64, timeWi
 		"end_time", endTime)
 	
 	return allFills, nil
+}
+
+// GetAllAddressesFromMarketFills 通过 Hyperliquid Info API 的 marketFills 获取所有唯一的用户地址
+// 通过查询多个币种的市场交易记录，提取唯一的用户地址
+// coins: 要查询的币种列表，如果为空则查询所有主要币种
+// startTime: 起始时间戳（毫秒），如果为 0 则从最近开始
+// endTime: 结束时间戳（毫秒），如果为 0 则到当前时间
+// timeWindow: 每次查询的时间窗口（毫秒），建议设置为 1 小时或更短
+func (c *Client) GetAllAddressesFromMarketFills(coins []string, startTime, endTime int64, timeWindow time.Duration, logger *slog.Logger) ([]string, error) {
+	// 如果没有指定币种，使用默认的主要币种列表
+	if len(coins) == 0 {
+		coins = []string{"BTC", "ETH", "SOL", "BNB", "XRP", "DOGE", "ADA", "HYPE", "SUI"}
+		if logger != nil {
+			logger.Info("使用默认币种列表", "coins", coins)
+		}
+	}
+	
+	// 使用 map 存储唯一的地址
+	addressSet := make(map[string]bool)
+	
+	// 如果未指定时间范围，查询最近的数据（例如最近 7 天）
+	if startTime == 0 && endTime == 0 {
+		endTime = time.Now().UnixMilli()
+		startTime = endTime - 7*24*60*60*1000 // 最近 7 天
+		if logger != nil {
+			logger.Info("未指定时间范围，查询最近7天的数据",
+				"start_time", startTime,
+				"end_time", endTime)
+		}
+	}
+	
+	if endTime == 0 {
+		endTime = time.Now().UnixMilli()
+	}
+	
+	if timeWindow <= 0 {
+		timeWindow = time.Hour // 默认 1 小时
+	}
+	
+	if logger != nil {
+		logger.Info("开始通过 Hyperliquid Info API 获取地址",
+			"coins", coins,
+			"start_time", startTime,
+			"end_time", endTime,
+			"time_window", timeWindow)
+	}
+	
+	// 遍历每个币种
+	for _, coin := range coins {
+		if logger != nil {
+			logger.Info("查询币种的市场交易记录", "coin", coin)
+		}
+		
+		// 分批查询该币种的市场交易记录
+		fills, err := c.GetAllMarketFills(coin, startTime, endTime, timeWindow, 1000)
+		if err != nil {
+			if logger != nil {
+				logger.Warn("查询币种市场交易记录失败",
+					"coin", coin,
+					"error", err)
+			}
+			continue
+		}
+		
+		if logger != nil {
+			logger.Info("获取到币种市场交易记录",
+				"coin", coin,
+				"fills_count", len(fills))
+		}
+		
+		// 从交易记录中提取用户地址
+		// 注意：MarketFill 结构可能不包含用户地址，需要通过交易哈希查询
+		// 但为了效率，我们先尝试从 MarketFill 中提取（如果 API 返回了 user 字段）
+		for _, fill := range fills {
+			if fill.User != "" {
+				addressSet[strings.ToLower(fill.User)] = true
+			}
+		}
+		
+		// 添加延迟，避免请求过快
+		time.Sleep(100 * time.Millisecond)
+	}
+	
+	// 转换为切片
+	addresses := make([]string, 0, len(addressSet))
+	for addr := range addressSet {
+		addresses = append(addresses, addr)
+	}
+	
+	if logger != nil {
+		logger.Info("通过 Hyperliquid Info API 获取地址完成",
+			"total_addresses", len(addresses),
+			"coins_queried", len(coins))
+		
+		// 如果通过 marketFills 没有获取到地址（因为 MarketFill 可能不包含 user 字段）
+		// 返回空列表，让调用方知道需要其他方法
+		if len(addresses) == 0 {
+			logger.Warn("通过 marketFills 未获取到地址",
+				"tip", "MarketFill 结构可能不包含用户地址字段，建议使用链上 RPC 方法")
+		}
+	}
+	
+	return addresses, nil
 }

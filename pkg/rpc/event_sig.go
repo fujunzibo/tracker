@@ -8,15 +8,17 @@ import (
 
 // CalculateEventSignature 计算事件签名哈希
 // 事件签名格式：EventName(type1,type2,...)
-// 例如：Trade(address,uint256,uint256,uint256)
-// 返回：事件签名的 keccak256 哈希的前4字节（8个十六进制字符）
+// 例如：Fill(address,string,uint256,uint256,int256,uint256,uint256)
+// 返回：事件签名的 keccak256 哈希的完整32字节（64个十六进制字符）
+// 注意：在 eth_getLogs 的 topics[0] 中使用时，通常只需要前4字节，但某些实现可能需要完整哈希
 func CalculateEventSignature(eventSignature string) string {
 	// 使用 golang.org/x/crypto/sha3 的 NewLegacyKeccak256
 	// Keccak-256 是 Ethereum 使用的哈希算法
 	hasher := sha3.NewLegacyKeccak256()
 	hasher.Write([]byte(eventSignature))
 	hashBytes := hasher.Sum(nil)
-	return "0x" + hex.EncodeToString(hashBytes[:4]) // 只取前4字节
+	// 返回完整的32字节哈希（64个十六进制字符）
+	return "0x" + hex.EncodeToString(hashBytes)
 }
 
 // 常见的 Hyperliquid 事件签名（需要根据实际合约定义调整）
@@ -45,6 +47,7 @@ func GetClosePositionEventSignature() string {
 }
 
 // GetFillEventSignature 获取 Fill 事件签名哈希
+// 直接返回预定义的哈希值：0x7e127339796e67610e206087b33783c5139049a464c8d551e127a518cc342c16
 func GetFillEventSignature() string {
-	return CalculateEventSignature(FillEventSignature)
+	return "0x7e127339796e67610e206087b33783c5139049a464c8d551e127a518cc342c16"
 }

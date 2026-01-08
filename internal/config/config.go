@@ -38,15 +38,16 @@ func LoadConfig(file string) (*Config, error) {
 
 // Config 主配置结构
 type Config struct {
-	Server  ServerConfig   `json:"server" yaml:"server"`
-	CMM     cmm.Config     `json:"cmm" yaml:"cmm"`
-	Log     log.Config     `json:"log" yaml:"log"`
-	DSN     string         `json:"dsn" yaml:"dsn"`
-	Network NetworkConfig  `json:"network" yaml:"network"`
-	Collect CollectConfig  `json:"collect" yaml:"collect"`
-	Follow  FollowConfig   `json:"follow" yaml:"follow"`
-	Binance *BinanceConfig `json:"binance" yaml:"binance"`
-	Okx     *OkxConfig     `json:"okx" yaml:"okx"`
+	Server    ServerConfig      `json:"server" yaml:"server"`
+	CMM       cmm.Config        `json:"cmm" yaml:"cmm"`
+	Log       log.Config        `json:"log" yaml:"log"`
+	DSN       string            `json:"dsn" yaml:"dsn"`
+	Network   NetworkConfig     `json:"network" yaml:"network"`
+	Collect   CollectConfig     `json:"collect" yaml:"collect"`
+	Follow    FollowConfig      `json:"follow" yaml:"follow"`
+	QueryQysy QueryQysyConfig  `json:"queryQysy" yaml:"query_qysy"`
+	Binance   *BinanceConfig    `json:"binance" yaml:"binance"`
+	Okx       *OkxConfig        `json:"okx" yaml:"okx"`
 }
 
 // ServerConfig HTTP 服务器配置
@@ -133,7 +134,8 @@ func (c *OkxConfig) Preset() {
 
 // FollowConfig 跟单配置
 type FollowConfig struct {
-	RpcUrl                    string   `json:"rpcUrl" yaml:"rpcUrl"`
+	RpcUrl                    string   `json:"rpcUrl" yaml:"rpcUrl"`                             // QuickNode RPC URL（用于链上数据获取，备用）
+	HyperEvmRpcUrl            string   `json:"hyperEvmRpcUrl" yaml:"hyperEvmRpcUrl"`             // HyperEVM RPC URL（Hyperliquid 官方 RPC，默认：https://rpc.hyperliquid.xyz/evm）
 	ClearinghouseAddress      string   `json:"clearinghouseAddress" yaml:"clearinghouseAddress"` // Hyperliquid Clearinghouse 合约地址
 	ExchangeAddress           string   `json:"exchangeAddress" yaml:"exchangeAddress"`          // Hyperliquid Exchange 合约地址（可选）
 	AddressSets               []int    `json:"addressSets" yaml:"addressSets"`
@@ -159,4 +161,21 @@ func (c *FollowConfig) Preset() {
 	c.MinFollowValue = 5
 	c.MergeInterval = 1000
 	c.Listen = "127.0.0.1:3006"
+}
+
+// QueryQysyConfig 用户权益损益查询配置
+type QueryQysyConfig struct {
+	MaxConcurrency int `json:"maxConcurrency" yaml:"max_concurrency"` // 最大并发数
+	BatchSize      int `json:"batchSize" yaml:"batch_size"`           // 批量保存大小
+	RetryCount     int `json:"retryCount" yaml:"retry_count"`         // 重试次数
+	RetryDelay     int `json:"retryDelay" yaml:"retry_delay"`         // 重试延迟（秒）
+	RateLimit      int `json:"rateLimit" yaml:"rate_limit"`           // 速率限制（每10秒请求数）
+}
+
+func (c *QueryQysyConfig) Preset() {
+	c.MaxConcurrency = 400
+	c.BatchSize = 400
+	c.RetryCount = 3
+	c.RetryDelay = 2
+	c.RateLimit = 1000
 }

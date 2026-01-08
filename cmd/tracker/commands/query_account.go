@@ -114,12 +114,9 @@ func runQueryAccount() {
 	}
 	slog.Info("表创建/检查完成")
 
-	// 创建 QuickNode RPC 客户端（用于链上数据获取）
+	// 创建 RPC 客户端（优先使用 HyperEVM RPC，如果没有配置则使用 QuickNode RPC）
 	var rpcClient *rpc.Client
-	if cfg.Follow.RpcUrl == "" {
-		slog.Error("未配置 QuickNode RPC URL，无法从链上获取地址")
-		exitWithError(fmt.Errorf("必须配置 QuickNode RPC URL 才能从链上获取地址"))
-	}
+	var hyperEvmClient *rpc.Client
 	
 	// 使用相同的 localAddrs 配置
 	var localAddrs []string
@@ -133,12 +130,28 @@ func runQueryAccount() {
 		}
 	}
 	
-	rpcClient = rpc.NewClient(cfg.Follow.RpcUrl, localAddrs, cfg.Network.Proxies)
+	// 优先创建 HyperEVM RPC 客户端（Hyperliquid 官方 RPC）
+	hyperEvmRpcUrl := cfg.Follow.HyperEvmRpcUrl
+	if hyperEvmRpcUrl == "" {
+		hyperEvmRpcUrl = "https://rpc.hyperliquid.xyz/evm" // 默认 HyperEVM RPC URL
+		slog.Info("使用默认 HyperEVM RPC URL", "url", hyperEvmRpcUrl)
+	} else {
+		slog.Info("使用配置的 HyperEVM RPC URL", "url", hyperEvmRpcUrl)
+	}
+	hyperEvmClient = rpc.NewClient(hyperEvmRpcUrl, localAddrs, cfg.Network.Proxies)
+	
+	// 创建 QuickNode RPC 客户端（作为备用）
+	if cfg.Follow.RpcUrl != "" {
+		rpcClient = rpc.NewClient(cfg.Follow.RpcUrl, localAddrs, cfg.Network.Proxies)
+		slog.Info("已创建 QuickNode RPC 客户端（备用）", "url", cfg.Follow.RpcUrl)
+	} else {
+		slog.Warn("未配置 QuickNode RPC URL，将仅使用 HyperEVM RPC")
+	}
 	
 	// 设置 Hyperliquid 合约地址（从配置文件读取，如果未配置则使用默认值）
 	clearinghouseAddr := cfg.Follow.ClearinghouseAddress
 	if clearinghouseAddr == "" {
-		clearinghouseAddr = "0x8549fD7FFC092F8366e416E129a622EC060104ea"
+		clearinghouseAddr = "0x3333333333333333333333333333333333333333"
 		slog.Info("使用默认 Hyperliquid Clearinghouse 合约地址", "address", clearinghouseAddr)
 	} else {
 		slog.Info("使用配置的 Hyperliquid Clearinghouse 合约地址", "address", clearinghouseAddr)
@@ -153,74 +166,137 @@ func runQueryAccount() {
 		slog.Info("已设置 Hyperliquid Exchange 合约地址", "address", cfg.Follow.ExchangeAddress)
 	}
 	
-	slog.Info("开始从链上获取所有地址...")
+	slog.Info("开始获取所有地址...")
 	
-	// 从链上获取所有地址
-	var fromBlock *big.Int = nil
-	var toBlock *big.Int = nil
+	// 创建 Hyperliquid API 客户端
+	hyperClient := hyper.WithLocalAddrsAndProxies(localAddrs, cfg.Network.Proxies)
 	
-	// 获取最新区块号，用于估算请求数量
-	latestBlock, err := rpcClient.GetBlockNumber()
-	if err != nil {
-		// 检查是否是每日限制错误
-		if strings.Contains(err.Error(), "daily request limit") || strings.Contains(err.Error(), "-32003") {
-			slog.Error("QuickNode 已达到每日请求限制",
-				"error", err,
-				"tip", "请等待24小时后重试，或升级 QuickNode 账户，或使用 --block-range 参数限制查询范围以减少请求数")
-			exitWithError(fmt.Errorf("QuickNode 每日请求限制已到达: %w\n提示：可以使用 --block-range 参数限制查询范围（例如：--block-range 10000 只查询最近10000个区块）", err))
-		}
-		slog.Error("获取最新区块号失败", "error", err)
-		exitWithError(err)
-	}
+	var addresses []string
 	
-	// 如果指定了区块范围，只查询最近的区块
-	if blockRange > 0 {
-		slog.Info("限制查询区块范围", "recent_blocks", blockRange)
-		if latestBlock.Cmp(big.NewInt(blockRange)) > 0 {
-			fromBlock = new(big.Int).Sub(latestBlock, big.NewInt(blockRange))
-			slog.Info("设置查询区块范围",
-				"from_block", fromBlock.String(),
-				"to_block", latestBlock.String(),
-				"block_range", blockRange)
-		}
-		toBlock = latestBlock
+	// 优先尝试通过 Hyperliquid Info API 获取地址（不消耗 RPC 请求）
+	slog.Info("尝试通过 Hyperliquid Info API 获取地址...")
+	apiAddresses, apiErr := hyperClient.GetAllAddressesFromMarketFills(nil, 0, 0, time.Hour, slog.Default())
+	if apiErr == nil && len(apiAddresses) > 0 {
+		addresses = apiAddresses
+		slog.Info("成功通过 Hyperliquid Info API 获取地址", "count", len(addresses), "source", "API")
 	} else {
-		// 查询全部历史
-		// 估算请求数量：每5个区块需要1次请求（QuickNode限制）
-		totalBlocks := latestBlock.Int64()
-		estimatedRequests := totalBlocks / 5
-		if totalBlocks%5 != 0 {
-			estimatedRequests++
+		if apiErr != nil {
+			slog.Warn("通过 Hyperliquid Info API 获取地址失败，尝试使用链上 RPC",
+				"error", apiErr,
+				"tip", "MarketFill 可能不包含用户地址字段，将使用链上 RPC 方法")
+		} else {
+			slog.Warn("通过 Hyperliquid Info API 未获取到地址，尝试使用链上 RPC",
+				"tip", "MarketFill 可能不包含用户地址字段，将使用链上 RPC 方法")
 		}
 		
-		slog.Warn("将查询全部历史数据",
-			"latest_block", latestBlock.String(),
-			"total_blocks", totalBlocks,
-			"estimated_requests", estimatedRequests,
-			"warning", fmt.Sprintf("这将需要约 %d 次 RPC 请求，可能超过 QuickNode 每日限制", estimatedRequests),
-			"tip", "如果遇到每日限制错误，建议使用 --block-range 参数分批查询（例如：--block-range 50000）")
+		// 如果 API 方法失败，回退到链上 RPC 方法
+		slog.Info("开始从链上获取所有地址...")
 		
-		// 如果估算请求数超过 10000，给出强烈警告
-		if estimatedRequests > 10000 {
-			slog.Warn("⚠️  警告：查询全部历史将消耗大量请求",
-				"estimated_requests", estimatedRequests,
-				"recommendation", "强烈建议使用 --block-range 参数限制查询范围，例如：--block-range 50000")
+		// 从链上获取所有地址
+		var fromBlock *big.Int = nil
+		var toBlock *big.Int = nil
+		
+		// 如果手动指定了区块号，直接使用
+		if fromBlockNum > 0 {
+			fromBlock = big.NewInt(fromBlockNum)
+			slog.Info("使用手动指定的起始区块号", "from_block", fromBlock.String())
 		}
 		
-		toBlock = latestBlock
-	}
-	
-	addresses, err := rpcClient.QueryAllAddressesFromChain(fromBlock, toBlock, slog.Default())
-	if err != nil {
-		// 检查是否是每日限制错误
-		if strings.Contains(err.Error(), "daily request limit") || strings.Contains(err.Error(), "-32003") {
-			slog.Error("QuickNode 已达到每日请求限制",
-				"error", err,
-				"tip", "请等待24小时后重试，或升级 QuickNode 账户，或使用 --block-range 参数限制查询范围以减少请求数")
-			exitWithError(fmt.Errorf("QuickNode 每日请求限制已到达: %w\n提示：可以使用 --block-range 参数限制查询范围（例如：--block-range 10000 只查询最近10000个区块）", err))
+		if toBlockNum > 0 {
+			toBlock = big.NewInt(toBlockNum)
+			slog.Info("使用手动指定的结束区块号", "to_block", toBlock.String())
+		} else {
+			// 需要获取最新区块号
+			latestBlock, err := rpcClient.GetBlockNumber()
+			if err != nil {
+				// 检查是否是每日限制错误
+				if strings.Contains(err.Error(), "daily request limit") || strings.Contains(err.Error(), "-32003") {
+					slog.Error("QuickNode 已达到每日请求限制",
+						"error", err,
+						"tip", "请等待24小时后重试，或升级 QuickNode 账户，或使用 --block-range 参数限制查询范围以减少请求数")
+					exitWithError(fmt.Errorf("QuickNode 每日请求限制已到达: %w\n提示：可以使用 --block-range 参数限制查询范围（例如：--block-range 10000 只查询最近10000个区块）", err))
+				}
+				slog.Error("获取最新区块号失败", "error", err)
+				exitWithError(err)
+			}
+			
+			// 如果指定了区块范围，只查询最近的区块
+			if blockRange > 0 {
+				slog.Info("限制查询区块范围", "recent_blocks", blockRange)
+				if latestBlock.Cmp(big.NewInt(blockRange)) > 0 {
+					fromBlock = new(big.Int).Sub(latestBlock, big.NewInt(blockRange))
+					slog.Info("设置查询区块范围",
+						"from_block", fromBlock.String(),
+						"to_block", latestBlock.String(),
+						"block_range", blockRange)
+				}
+				toBlock = latestBlock
+			} else {
+				// 查询全部历史
+				// 估算请求数量：每5个区块需要1次请求（QuickNode限制）
+				totalBlocks := latestBlock.Int64()
+				estimatedRequests := totalBlocks / 5
+				if totalBlocks%5 != 0 {
+					estimatedRequests++
+				}
+				
+				slog.Warn("将查询全部历史数据",
+					"latest_block", latestBlock.String(),
+					"total_blocks", totalBlocks,
+					"estimated_requests", estimatedRequests,
+					"warning", fmt.Sprintf("这将需要约 %d 次 RPC 请求，可能超过 QuickNode 每日限制", estimatedRequests),
+					"tip", "如果遇到每日限制错误，建议使用 --block-range 参数分批查询（例如：--block-range 50000）")
+				
+				// 如果估算请求数超过 10000，给出强烈警告
+				if estimatedRequests > 10000 {
+					slog.Warn("⚠️  警告：查询全部历史将消耗大量请求",
+						"estimated_requests", estimatedRequests,
+						"recommendation", "强烈建议使用 --block-range 参数限制查询范围，例如：--block-range 50000")
+				}
+				
+				toBlock = latestBlock
+			}
 		}
-		slog.Error("从链上获取地址列表失败", "error", err)
-		exitWithError(err)
+		
+		// 优先使用 HyperEVM RPC 查询地址
+		var chainErr error
+		if hyperEvmClient != nil {
+			slog.Info("使用 HyperEVM RPC 查询地址", "rpc_url", hyperEvmRpcUrl)
+			addresses, chainErr = hyperEvmClient.QueryAllAddressesFromHyperEVM(fromBlock, toBlock, slog.Default())
+			if chainErr != nil {
+				slog.Warn("通过 HyperEVM RPC 获取地址失败，尝试使用 QuickNode RPC", "error", chainErr)
+				// 如果 HyperEVM RPC 失败，回退到 QuickNode RPC
+				if rpcClient != nil {
+					addresses, chainErr = rpcClient.QueryAllAddressesFromChain(fromBlock, toBlock, slog.Default())
+					if chainErr == nil {
+						slog.Info("成功通过 QuickNode RPC 获取地址", "count", len(addresses), "source", "QuickNode RPC")
+					}
+				}
+			} else {
+				slog.Info("成功通过 HyperEVM RPC 获取地址", "count", len(addresses), "source", "HyperEVM RPC")
+			}
+		} else if rpcClient != nil {
+			slog.Info("使用 QuickNode RPC 查询地址")
+			addresses, chainErr = rpcClient.QueryAllAddressesFromChain(fromBlock, toBlock, slog.Default())
+			if chainErr == nil {
+				slog.Info("成功通过 QuickNode RPC 获取地址", "count", len(addresses), "source", "QuickNode RPC")
+			}
+		} else {
+			exitWithError(fmt.Errorf("未配置任何 RPC 客户端，无法从链上获取地址"))
+		}
+		
+		err = chainErr
+		if err != nil {
+			// 检查是否是每日限制错误
+			if strings.Contains(err.Error(), "daily request limit") || strings.Contains(err.Error(), "-32003") {
+				slog.Error("RPC 已达到每日请求限制",
+					"error", err,
+					"tip", "请等待24小时后重试，或升级 RPC 账户，或使用 --block-range 参数限制查询范围以减少请求数")
+				exitWithError(fmt.Errorf("RPC 每日请求限制已到达: %w\n提示：可以使用 --block-range 参数限制查询范围（例如：--block-range 10000 只查询最近10000个区块）", err))
+			}
+			slog.Error("从链上获取地址列表失败", "error", err)
+			exitWithError(err)
+		}
 	}
 	
 	total := len(addresses)
@@ -247,8 +323,8 @@ func runQueryAccount() {
 		addressEquityMap[addr.Address] = addr
 	}
 
-	// 创建 Hyperliquid 客户端
-	client := hyper.WithLocalAddrsAndProxies(localAddrs, cfg.Network.Proxies)
+	// 使用之前创建的 Hyperliquid 客户端
+	client := hyperClient
 
 	// 创建速率限制器
 	rateLimiter := utils.NewRateLimiter(accountRateLimit)
