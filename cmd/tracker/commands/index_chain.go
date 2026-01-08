@@ -351,31 +351,56 @@ func runIndexChain() {
 						"progress", fmt.Sprintf("%.2f%%", float64(current)/float64(len(addresses))*100))
 				}
 
-				// 通过 Hyperliquid Info API 查询账户数据
-				data, err := queryAccountDataFromInfoAPI(hyperClient, address, slog.Default())
+				// 三级回退策略：Info API -> HyperEVM RPC -> QuickNode RPC
+				var data *dao.UserAccount
+				var err error
+				
+				// 1. 优先使用 Info API
+				data, err = queryAccountDataFromInfoAPI(hyperClient, address, slog.Default())
 				if err != nil {
-					atomic.AddInt64(&errorCount, 1)
-					if atomic.LoadInt64(&errorCount) <= 10 || atomic.LoadInt64(&errorCount)%100 == 0 {
-						slog.Warn("查询账户数据失败，保存空数据",
+					// 2. Info API 失败，尝试 HyperEVM RPC
+					if hyperEvmClient != nil {
+						slog.Debug("Info API 失败，尝试 HyperEVM RPC",
 							"worker", workerID,
 							"address", address,
-							"error", err,
-							"tip", "即使查询失败，也会保存地址信息（数据为0）")
+							"info_api_error", err)
+						data, err = queryAccountDataFromHyperEVM(hyperEvmClient, address, slog.Default())
 					}
-					// 即使查询失败，也保存地址信息（数据为0），确保地址被记录
-					emptyData := &dao.UserAccount{
-						Address:          address,
-						TotalEquity:      0,
-						AvailableBalance: 0,
-						UsedMargin:       0,
-						TotalPnl:         0,
-						TotalFee:         0,
-						TradeCount7d:     0,
-						UpdatedAt:        time.Now(),
-						Source:           "Info API Error",
+					
+					// 3. HyperEVM RPC 也失败，尝试 QuickNode RPC
+					if err != nil && rpcClient != nil {
+						slog.Debug("HyperEVM RPC 失败，尝试 QuickNode RPC",
+							"worker", workerID,
+							"address", address,
+							"hyperevm_error", err)
+						data, err = queryAccountDataFromQuickNodeForIndex(rpcClient, address, slog.Default())
 					}
-					resultCh <- emptyData
-					continue
+					
+					// 4. 所有方法都失败，保存空数据
+					if err != nil {
+						atomic.AddInt64(&errorCount, 1)
+						if atomic.LoadInt64(&errorCount) <= 10 || atomic.LoadInt64(&errorCount)%100 == 0 {
+							slog.Warn("所有数据源查询失败，保存空数据",
+								"worker", workerID,
+								"address", address,
+								"error", err,
+								"tip", "即使查询失败，也会保存地址信息（数据为0）")
+						}
+						// 即使查询失败，也保存地址信息（数据为0），确保地址被记录
+						emptyData := &dao.UserAccount{
+							Address:          address,
+							TotalEquity:      0,
+							AvailableBalance: 0,
+							UsedMargin:       0,
+							TotalPnl:         0,
+							TotalFee:         0,
+							TradeCount7d:      0,
+							UpdatedAt:        time.Now(),
+							Source:           "All Sources Failed",
+						}
+						resultCh <- emptyData
+						continue
+					}
 				}
 
 				atomic.AddInt64(&successCount, 1)
@@ -541,6 +566,212 @@ func queryAccountDataFromInfoAPI(client *hyper.Client, address string, logger *s
 
 	data.TradeCount7d = tradeCount7d
 
+	return data, nil
+}
+
+// queryAccountDataFromHyperEVM 从 HyperEVM RPC 查询账户数据（备用方案）
+// 从链上获取交易数据并计算 total_pnl 和 total_fee
+func queryAccountDataFromHyperEVM(rpcClient *rpc.Client, address string, logger *slog.Logger) (*dao.UserAccount, error) {
+	logger.Info("尝试从 HyperEVM RPC 获取数据", "address", address)
+	
+	data := &dao.UserAccount{
+		Address:     address,
+		TotalEquity: 0, // 从链上无法直接获取，需要通过合约调用
+		UpdatedAt:   time.Now(),
+		Source:      "HyperEVM RPC", // 标记数据来源
+	}
+
+	// 如果 RPC 客户端未配置，返回错误
+	if rpcClient == nil {
+		logger.Warn("HyperEVM RPC 客户端未配置，无法从链上获取数据", "address", address)
+		return data, fmt.Errorf("HyperEVM RPC 客户端未配置")
+	}
+
+	// 1. 获取最新区块号
+	logger.Debug("从 HyperEVM 获取最新区块号", "address", address)
+	latestBlock, err := rpcClient.GetBlockNumber()
+	if err != nil {
+		logger.Warn("从 HyperEVM 获取最新区块号失败", "error", err, "address", address)
+		return data, fmt.Errorf("获取最新区块号失败: %w", err)
+	}
+	logger.Info("成功从 HyperEVM 获取最新区块号", "address", address, "block", latestBlock.String())
+
+	// 2. 计算查询范围
+	// HyperEVM RPC 限制：每次查询最多 50 个区块
+	// QueryUserFillsFromChain 函数内部会自动分批查询
+	// 为了性能，可以只查询最近的区块，比如最近 1000 个区块（会分批查询）
+	fromBlock := big.NewInt(0)
+	if latestBlock.Cmp(big.NewInt(1000)) > 0 {
+		fromBlock.Sub(latestBlock, big.NewInt(1000))
+	}
+	logger.Debug("计算查询区块范围", "address", address, "from_block", fromBlock.String(), "to_block", latestBlock.String(), "note", "将自动分批查询，每批最多50个区块")
+
+	// 3. 从链上查询交易记录
+	logger.Info("从 HyperEVM 查询链上交易记录", "address", address, "from_block", fromBlock.String(), "to_block", latestBlock.String())
+	fills, err := rpcClient.QueryUserFillsFromChain(address, fromBlock, latestBlock, logger)
+	if err != nil {
+		logger.Warn("从 HyperEVM 查询链上交易记录失败", "error", err, "address", address)
+		return data, fmt.Errorf("查询链上交易记录失败: %w", err)
+	}
+	
+	logger.Info("成功从 HyperEVM 获取链上交易记录", "address", address, "fills_count", len(fills))
+
+	// 4. 计算累计盈亏和累计手续费
+	const maxValue = 9999999999999999999999999999.999999999999
+	sevenDaysAgo := time.Now().AddDate(0, 0, -7).UnixMilli()
+
+	var (
+		totalPnl     float64
+		totalFee     float64
+		tradeCount7d int
+	)
+
+	for _, fill := range fills {
+		totalPnl += fill.ClosedPnl
+		if fill.Fee < 0 {
+			totalFee += -fill.Fee
+		} else {
+			totalFee += fill.Fee
+		}
+
+		// 统计7日内的交易次数
+		if fill.Time >= sevenDaysAgo {
+			tradeCount7d++
+		}
+	}
+
+	// 限制数值范围
+	if totalPnl > maxValue {
+		data.TotalPnl = maxValue
+	} else if totalPnl < -maxValue {
+		data.TotalPnl = -maxValue
+	} else {
+		data.TotalPnl = totalPnl
+	}
+
+	if totalFee > maxValue {
+		data.TotalFee = maxValue
+	} else {
+		data.TotalFee = totalFee
+	}
+
+	data.TradeCount7d = tradeCount7d
+
+	// 标记数据来源为 HyperEVM RPC
+	data.Source = "HyperEVM RPC"
+
+	logger.Info("成功从 HyperEVM 计算账户数据",
+		"address", address,
+		"total_pnl", data.TotalPnl,
+		"total_fee", data.TotalFee,
+		"trade_count_7d", data.TradeCount7d,
+		"fills_count", len(fills))
+
+	// 注意：total_equity, available_balance, used_margin 需要调用合约函数获取
+	// 目前从 RPC 只能获取 total_pnl 和 total_fee
+	return data, nil
+}
+
+// queryAccountDataFromQuickNodeForIndex 从 QuickNode RPC 查询账户数据（用于 index-chain 命令）
+// 从链上获取交易数据并计算 total_pnl 和 total_fee
+func queryAccountDataFromQuickNodeForIndex(rpcClient *rpc.Client, address string, logger *slog.Logger) (*dao.UserAccount, error) {
+	logger.Info("尝试从 QuickNode RPC 获取数据", "address", address)
+	
+	data := &dao.UserAccount{
+		Address:     address,
+		TotalEquity: 0, // 从链上无法直接获取，需要通过合约调用
+		UpdatedAt:   time.Now(),
+		Source:      "QuickNode RPC", // 标记数据来源
+	}
+
+	// 如果 RPC 客户端未配置，返回错误
+	if rpcClient == nil {
+		logger.Warn("QuickNode RPC 客户端未配置，无法从链上获取数据", "address", address)
+		return data, fmt.Errorf("QuickNode RPC 客户端未配置")
+	}
+
+	// 1. 获取最新区块号
+	logger.Debug("从 QuickNode 获取最新区块号", "address", address)
+	latestBlock, err := rpcClient.GetBlockNumber()
+	if err != nil {
+		logger.Warn("从 QuickNode 获取最新区块号失败", "error", err, "address", address)
+		return data, fmt.Errorf("获取最新区块号失败: %w", err)
+	}
+	logger.Info("成功从 QuickNode 获取最新区块号", "address", address, "block", latestBlock.String())
+
+	// 2. 计算查询范围
+	// QuickNode 免费计划限制：每次查询最多 50 个区块
+	// QueryUserFillsFromChain 函数内部会自动分批查询
+	// 为了性能，可以只查询最近的区块，比如最近 1000 个区块（会分批查询）
+	fromBlock := big.NewInt(0)
+	if latestBlock.Cmp(big.NewInt(1000)) > 0 {
+		fromBlock.Sub(latestBlock, big.NewInt(1000))
+	}
+	logger.Debug("计算查询区块范围", "address", address, "from_block", fromBlock.String(), "to_block", latestBlock.String(), "note", "将自动分批查询，每批最多50个区块")
+
+	// 3. 从链上查询交易记录
+	logger.Info("从 QuickNode 查询链上交易记录", "address", address, "from_block", fromBlock.String(), "to_block", latestBlock.String())
+	fills, err := rpcClient.QueryUserFillsFromChain(address, fromBlock, latestBlock, logger)
+	if err != nil {
+		logger.Warn("从 QuickNode 查询链上交易记录失败", "error", err, "address", address)
+		return data, fmt.Errorf("查询链上交易记录失败: %w", err)
+	}
+	
+	logger.Info("成功从 QuickNode 获取链上交易记录", "address", address, "fills_count", len(fills))
+
+	// 4. 计算累计盈亏和累计手续费
+	const maxValue = 9999999999999999999999999999.999999999999
+	sevenDaysAgo := time.Now().AddDate(0, 0, -7).UnixMilli()
+
+	var (
+		totalPnl     float64
+		totalFee     float64
+		tradeCount7d int
+	)
+
+	for _, fill := range fills {
+		totalPnl += fill.ClosedPnl
+		if fill.Fee < 0 {
+			totalFee += -fill.Fee
+		} else {
+			totalFee += fill.Fee
+		}
+
+		// 统计7日内的交易次数
+		if fill.Time >= sevenDaysAgo {
+			tradeCount7d++
+		}
+	}
+
+	// 限制数值范围
+	if totalPnl > maxValue {
+		data.TotalPnl = maxValue
+	} else if totalPnl < -maxValue {
+		data.TotalPnl = -maxValue
+	} else {
+		data.TotalPnl = totalPnl
+	}
+
+	if totalFee > maxValue {
+		data.TotalFee = maxValue
+	} else {
+		data.TotalFee = totalFee
+	}
+
+	data.TradeCount7d = tradeCount7d
+
+	// 标记数据来源为 QuickNode RPC
+	data.Source = "QuickNode RPC"
+
+	logger.Info("成功从 QuickNode 计算账户数据",
+		"address", address,
+		"total_pnl", data.TotalPnl,
+		"total_fee", data.TotalFee,
+		"trade_count_7d", data.TradeCount7d,
+		"fills_count", len(fills))
+
+	// 注意：total_equity, available_balance, used_margin 需要调用合约函数获取
+	// 目前从 RPC 只能获取 total_pnl 和 total_fee
 	return data, nil
 }
 
