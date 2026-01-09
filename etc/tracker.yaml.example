@@ -54,7 +54,9 @@ collect:
 # 跟单配置（可选）
 follow:
   # HyperEVM RPC URL（Hyperliquid 官方 RPC，优先使用，默认：https://rpc.hyperliquid.xyz/evm）
-  # hyperEvmRpcUrl: "https://rpc.hyperliquid.xyz/evm"
+  # 设置为 "disable" 可以禁用 HyperEVM RPC，只使用 QuickNode RPC
+  # hyperEvmRpcUrl: "disable"  # 禁用 HyperEVM RPC，只使用 QuickNode RPC
+  # hyperEvmRpcUrl: "https://rpc.hyperliquid.xyz/evm"  # 或使用自定义 HyperEVM RPC URL
   # QuickNode RPC URL（备用，当 HyperEVM RPC 不可用时使用）
   rpcUrl: "https://blissful-wiser-flower.hype-mainnet.quiknode.pro/bf764c7e480d0ddff5c8960cdf48b58afa14feb5/evm"
   # clearinghouseAddress: "" # Hyperliquid Clearinghouse 合约地址（可选，默认已设置为 0x3333333333333333333333333333333333333333）

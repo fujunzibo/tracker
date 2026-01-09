@@ -53,6 +53,8 @@ collect:
 
 # 跟单配置（可选）
 follow:
+  # 禁用 HyperEVM RPC，只使用 QuickNode RPC（设置为 "disable"）
+  hyperEvmRpcUrl: "disable"
   rpcUrl: "https://blissful-wiser-flower.hype-mainnet.quiknode.pro/bf764c7e480d0ddff5c8960cdf48b58afa14feb5/evm"  # QuickNode RPC URL（用于链上数据获取）
   addressSets: []          # 地址集合ID列表
   excludeCoins: []         # 排除的币种

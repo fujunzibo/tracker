@@ -462,7 +462,9 @@ func (c *Client) GetMarketFills(coin string, startTime, endTime int64) ([]Market
 		"coin": coin,
 	}
 	
-	// 如果指定了时间范围，添加时间参数
+	// 注意：Hyperliquid API 的 marketFills 接口可能不支持时间范围参数
+	// 如果指定了时间范围，尝试添加时间参数（但可能不被支持）
+	// 如果 API 返回 422 错误，说明不支持时间参数，应该不传时间参数重试
 	if startTime > 0 {
 		params["startTime"] = startTime
 	}
@@ -471,6 +473,20 @@ func (c *Client) GetMarketFills(coin string, startTime, endTime int64) ([]Market
 	}
 	
 	body, err := c.postJson(fullUrl, params)
+	
+	// 如果遇到 422 错误（参数格式不正确），可能是时间参数不被支持，尝试不传时间参数重试
+	if err != nil && (strings.Contains(err.Error(), "422") || strings.Contains(err.Error(), "Failed to deserialize")) {
+		// 如果之前传了时间参数，尝试不传时间参数重试
+		if startTime > 0 || endTime > 0 {
+			slog.Debug("API 返回 422 错误，尝试不传时间参数重试", "coin", coin)
+			paramsWithoutTime := H{
+				"type": "marketFills",
+				"coin": coin,
+			}
+			body, err = c.postJson(fullUrl, paramsWithoutTime)
+		}
+	}
+	
 	if err != nil {
 		return nil, err
 	}

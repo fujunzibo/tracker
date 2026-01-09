@@ -735,7 +735,10 @@ func (c *Client) QueryAllAddressesFromChain(fromBlock, toBlock *big.Int, logger 
 	// 计算查询范围
 	startBlock := fromBlock
 	if startBlock == nil {
-		startBlock = big.NewInt(0)
+		startBlock = big.NewInt(1) // QuickNode 可能不支持区块 0，从区块 1 开始
+	} else if startBlock.Sign() == 0 {
+		startBlock = big.NewInt(1) // 如果指定了区块 0，改为从区块 1 开始
+		logger.Info("QuickNode 不支持区块 0，从区块 1 开始查询")
 	}
 	endBlock := toBlock
 	if endBlock == nil {
@@ -747,29 +750,42 @@ func (c *Client) QueryAllAddressesFromChain(fromBlock, toBlock *big.Int, logger 
 		endBlock = latest
 	}
 
-	// Hyperliquid RPC 硬性要求：每次查询最多 50 个区块（to_block - from_block ≤ 50）
-	const maxBlockRange = 50
+	// QuickNode 免费计划限制：每次查询最多 4 个区块（to_block - from_block ≤ 4）
+	// 注意：虽然文档说 5 个区块，但实际测试发现 4 个区块更稳定
+	const maxBlockRange = 4
 
 	// 使用 map 存储唯一的地址
 	addressSet := make(map[string]bool)
 	
+	// 获取 Fill 事件签名
+	fillEventSig := GetFillEventSignature()
+	
 	logger.Info("开始从链上查询所有地址",
 		"from_block", startBlock.String(),
 		"to_block", endBlock.String(),
-		"contract_address", contractAddress)
+		"contract_address", contractAddress,
+		"event_signature", fillEventSig,
+		"max_block_range", maxBlockRange,
+		"note", "QuickNode 免费计划限制：每次查询最多 4 个区块")
 
-	// 分批查询：每次查询 50 个区块（Hyperliquid RPC 硬性要求）
-	currentFrom := new(big.Int).Set(startBlock)
+	// 分批查询：从最新区块开始往前查询（每次查询 4 个区块，QuickNode 免费计划限制）
+	// 这样可以先获取最新的地址，更快看到结果
+	currentTo := new(big.Int).Set(endBlock)
 	batchCount := 0
 	
-	for currentFrom.Cmp(endBlock) <= 0 {
-		// 计算当前批次的结束区块（最多 50 个区块，Hyperliquid RPC 硬性要求）
-		currentTo := new(big.Int).Add(currentFrom, big.NewInt(maxBlockRange-1))
-		if currentTo.Cmp(endBlock) > 0 {
-			currentTo.Set(endBlock)
+	for currentTo.Cmp(startBlock) >= 0 {
+		// 计算当前批次的起始区块（最多 4 个区块，QuickNode 免费计划限制）
+		currentFrom := new(big.Int).Sub(currentTo, big.NewInt(maxBlockRange-1))
+		if currentFrom.Cmp(startBlock) < 0 {
+			currentFrom.Set(startBlock)
 		}
 		
 		// 确保 currentTo >= currentFrom
+		if currentTo.Cmp(currentFrom) < 0 {
+			break
+		}
+		
+		// 确保至少查询 1 个区块
 		if currentTo.Cmp(currentFrom) < 0 {
 			break
 		}
@@ -793,27 +809,47 @@ func (c *Client) QueryAllAddressesFromChain(fromBlock, toBlock *big.Int, logger 
 			toBlockHex = "0x0"
 		}
 
+		// 注意：不指定 Topics，返回所有事件
+		// 这样可以确保即使某些区块没有 Fill 事件，也能从其他事件中提取地址
+		// 与 HyperEVM RPC 保持一致
 		req := GetLogsRequest{
 			FromBlock: fromBlockHex,
 			ToBlock:   toBlockHex,
 			Address:   contractAddress,
-			Topics: []string{
-				// fillEventSig, // 只指定事件签名，不指定用户地址
-			},
+			// Topics 留空，返回所有事件（与 HyperEVM RPC 保持一致）
+			Topics: []string{},
 		}
 
 		logs, err := c.GetLogs(req)
 		if err != nil {
-			// 如果是范围限制错误，尝试缩小范围
-			if strings.Contains(err.Error(), "limited to a 5 range") || strings.Contains(err.Error(), "Invalid params") {
+			// 如果是范围限制错误或 invalid block range，尝试缩小范围
+			if strings.Contains(err.Error(), "limited to a 5 range") || 
+			   strings.Contains(err.Error(), "limited to a 4 range") ||
+			   strings.Contains(err.Error(), "invalid block range") ||
+			   strings.Contains(err.Error(), "Invalid params") {
 				logger.Debug("批次查询超出限制，尝试缩小范围",
 					"batch", batchCount,
 					"from_block", currentFrom.String(),
-					"to_block", currentTo.String())
-				// 尝试查询更小的范围（3个区块）
-				currentTo = new(big.Int).Add(currentFrom, big.NewInt(2))
+					"to_block", currentTo.String(),
+					"error", err)
+				// 尝试查询更小的范围（逐步缩小：3 -> 2 -> 1）
+				blockDiff := new(big.Int).Sub(currentTo, currentFrom).Int64()
+				if blockDiff >= 3 {
+					// 尝试 3 个区块
+					currentTo = new(big.Int).Add(currentFrom, big.NewInt(2))
+				} else if blockDiff >= 2 {
+					// 尝试 2 个区块
+					currentTo = new(big.Int).Add(currentFrom, big.NewInt(1))
+				} else {
+					// 尝试 1 个区块（from 和 to 相同）
+					currentTo = new(big.Int).Set(currentFrom)
+				}
 				if currentTo.Cmp(endBlock) > 0 {
 					currentTo.Set(endBlock)
+				}
+				// 确保至少查询 1 个区块（from 和 to 可以相同）
+				if currentTo.Cmp(currentFrom) < 0 {
+					currentTo.Set(currentFrom)
 				}
 				toBlockHex = "0x" + currentTo.Text(16)
 				if currentTo.Sign() == 0 {
@@ -821,6 +857,17 @@ func (c *Client) QueryAllAddressesFromChain(fromBlock, toBlock *big.Int, logger 
 				}
 				req.ToBlock = toBlockHex
 				logs, err = c.GetLogs(req)
+				// 如果仍然失败，跳过这个批次，继续往前查询
+				if err != nil && strings.Contains(err.Error(), "invalid block range") {
+					logger.Debug("跳过无效的区块范围，继续往前查询",
+						"from_block", currentFrom.String(),
+						"to_block", currentTo.String())
+					currentTo.Sub(currentFrom, big.NewInt(1))
+					if currentTo.Cmp(startBlock) < 0 {
+						break
+					}
+					continue
+				}
 			}
 			if err != nil {
 				logger.Warn("批次查询失败",
@@ -828,8 +875,11 @@ func (c *Client) QueryAllAddressesFromChain(fromBlock, toBlock *big.Int, logger 
 					"error", err,
 					"from_block", currentFrom.String(),
 					"to_block", currentTo.String())
-				// 继续下一个批次，不中断整个查询
-				currentFrom.Add(currentTo, big.NewInt(1))
+				// 继续下一个批次（往前查询），不中断整个查询
+				currentTo.Sub(currentFrom, big.NewInt(1))
+				if currentTo.Cmp(startBlock) < 0 {
+					break
+				}
 				continue
 			}
 		}
@@ -841,12 +891,42 @@ func (c *Client) QueryAllAddressesFromChain(fromBlock, toBlock *big.Int, logger 
 			"from_block", currentFrom.String(),
 			"to_block", currentTo.String())
 
+		// 调试：打印前几个日志的 Topics[0]，看看实际返回了什么事件
+		if len(logs) > 0 {
+			maxDebugLogs := 5
+			if len(logs) < maxDebugLogs {
+				maxDebugLogs = len(logs)
+			}
+			for i := 0; i < maxDebugLogs; i++ {
+				if len(logs[i].Topics) > 0 {
+					logger.Info("调试：日志事件签名",
+						"batch", batchCount,
+						"log_index", i,
+						"topic0", logs[i].Topics[0],
+						"topics_count", len(logs[i].Topics),
+						"expected_fill_sig", fillEventSig)
+				} else {
+					logger.Info("调试：日志无 Topics",
+						"batch", batchCount,
+						"log_index", i)
+				}
+			}
+		} else {
+			logger.Debug("批次无日志返回",
+				"batch", batchCount,
+				"from_block", currentFrom.String(),
+				"to_block", currentTo.String(),
+				"contract_address", contractAddress)
+		}
+
 		// 从事件日志中提取用户地址
-		// Fill 事件的 Topics[1] 是用户地址（indexed）
+		// 注意：与 HyperEVM RPC 保持一致，不验证事件签名，直接从所有日志中提取地址
+		// 这样可以确保即使某些区块没有 Fill 事件，也能从其他事件中提取地址
 		batchAddressCount := 0
 		for _, log := range logs {
 			if len(log.Topics) >= 2 {
 				// Topics[1] 是用户地址（32字节格式，需要提取后20字节）
+				// 不验证事件签名，直接从所有日志中提取地址（与 HyperEVM RPC 保持一致）
 				userTopic := log.Topics[1]
 				// 移除 0x 前缀
 				userTopic = strings.TrimPrefix(userTopic, "0x")
@@ -857,10 +937,11 @@ func (c *Client) QueryAllAddressesFromChain(fromBlock, toBlock *big.Int, logger 
 					if !addressSet[addressLower] {
 						addressSet[addressLower] = true
 						batchAddressCount++
-						logger.Debug("提取到新地址",
+						logger.Info("提取到新地址",
 							"batch", batchCount,
 							"address", address,
-							"topic", log.Topics[1])
+							"topic", log.Topics[1],
+							"event_sig", log.Topics[0])
 					}
 				}
 			}
@@ -876,8 +957,11 @@ func (c *Client) QueryAllAddressesFromChain(fromBlock, toBlock *big.Int, logger 
 				"to_block", currentTo.String())
 		}
 
-		// 移动到下一个批次
-		currentFrom.Add(currentTo, big.NewInt(1))
+		// 移动到下一个批次（往前查询）
+		currentTo.Sub(currentFrom, big.NewInt(1))
+		if currentTo.Cmp(startBlock) < 0 {
+			break
+		}
 
 		// 添加延迟，避免请求过快
 		time.Sleep(200 * time.Millisecond)
