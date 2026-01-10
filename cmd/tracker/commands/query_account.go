@@ -267,7 +267,7 @@ func runQueryAccount() {
 				slog.Warn("通过 HyperEVM RPC 获取地址失败，尝试使用 QuickNode RPC", "error", chainErr)
 				// 如果 HyperEVM RPC 失败，回退到 QuickNode RPC
 				if rpcClient != nil {
-					addresses, chainErr = rpcClient.QueryAllAddressesFromChain(fromBlock, toBlock, slog.Default())
+					addresses, chainErr = rpcClient.QueryAllAddressesFromChain(fromBlock, toBlock, slog.Default(), nil)
 					if chainErr == nil {
 						slog.Info("成功通过 QuickNode RPC 获取地址", "count", len(addresses), "source", "QuickNode RPC")
 					}
@@ -277,7 +277,7 @@ func runQueryAccount() {
 			}
 		} else if rpcClient != nil {
 			slog.Info("使用 QuickNode RPC 查询地址")
-			addresses, chainErr = rpcClient.QueryAllAddressesFromChain(fromBlock, toBlock, slog.Default())
+			addresses, chainErr = rpcClient.QueryAllAddressesFromChain(fromBlock, toBlock, slog.Default(), nil)
 			if chainErr == nil {
 				slog.Info("成功通过 QuickNode RPC 获取地址", "count", len(addresses), "source", "QuickNode RPC")
 			}

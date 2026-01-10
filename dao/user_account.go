@@ -83,8 +83,67 @@ func SaveUserAccount(data *UserAccount) error {
 }
 
 // BatchSaveUserAccount 批量保存用户账户数据
+// 如果所有数值字段都是0，则只插入新地址，不更新已有地址（避免覆盖已有数据）
+// 如果有非零值，则正常更新
 func BatchSaveUserAccount(dataList []*UserAccount) error {
 	if len(dataList) == 0 {
+		return nil
+	}
+	
+	// 分离出只有地址信息（所有数值字段为0）的记录和包含实际数据的记录
+	var addressOnlyRecords []*UserAccount
+	var dataRecords []*UserAccount
+	
+	for _, data := range dataList {
+		// 检查是否所有数值字段都是0
+		if data.TotalEquity == 0 && data.AvailableBalance == 0 && data.UsedMargin == 0 &&
+		   data.TotalPnl == 0 && data.TotalFee == 0 && data.TradeCount7d == 0 {
+			addressOnlyRecords = append(addressOnlyRecords, data)
+		} else {
+			dataRecords = append(dataRecords, data)
+		}
+	}
+	
+	// 保存只有地址信息的记录：只插入新地址，不更新已有地址（避免覆盖已有数据）
+	if len(addressOnlyRecords) > 0 {
+		query := fmt.Sprintf(`
+			INSERT INTO %s (address, total_equity, available_balance, used_margin, total_pnl, total_fee, trade_count_7d, updated_at)
+			VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+			ON CONFLICT (address) DO NOTHING
+		`, TableUserAccount)
+		
+		batch := &pgx.Batch{}
+		for _, data := range addressOnlyRecords {
+			batch.Queue(query,
+				data.Address,
+				data.TotalEquity,
+				data.AvailableBalance,
+				data.UsedMargin,
+				data.TotalPnl,
+				data.TotalFee,
+				data.TradeCount7d,
+				data.UpdatedAt,
+			)
+		}
+		
+		ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+		defer cancel()
+		
+		batchResults := db.SendBatch(ctx, batch)
+		defer batchResults.Close()
+		
+		for i := 0; i < len(addressOnlyRecords); i++ {
+			_, err := batchResults.Exec()
+			if err != nil {
+				data := addressOnlyRecords[i]
+				return fmt.Errorf("批量保存地址信息失败 [%d] address=%s: %w", 
+					i, data.Address, err)
+			}
+		}
+	}
+	
+	// 保存包含实际数据的记录：正常更新
+	if len(dataRecords) == 0 {
 		return nil
 	}
 	
@@ -102,7 +161,7 @@ func BatchSaveUserAccount(dataList []*UserAccount) error {
 	`, TableUserAccount)
 	
 	batch := &pgx.Batch{}
-	for _, data := range dataList {
+	for _, data := range dataRecords {
 		batch.Queue(query,
 			data.Address,
 			data.TotalEquity,
@@ -121,13 +180,42 @@ func BatchSaveUserAccount(dataList []*UserAccount) error {
 	batchResults := db.SendBatch(ctx, batch)
 	defer batchResults.Close()
 	
-	for i := 0; i < len(dataList); i++ {
+	for i := 0; i < len(dataRecords); i++ {
 		_, err := batchResults.Exec()
 		if err != nil {
-			data := dataList[i]
+			data := dataRecords[i]
 			return fmt.Errorf("批量保存失败 [%d] address=%s: %w", 
 				i, data.Address, err)
 		}
 	}
 	return nil
+}
+
+// GetAllAddressesFromUserAccount 从 tb_user_account 表获取所有地址
+func GetAllAddressesFromUserAccount() ([]string, error) {
+	query := fmt.Sprintf(`SELECT address FROM %s ORDER BY address`, TableUserAccount)
+	
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+	
+	rows, err := db.Query(ctx, query)
+	if err != nil {
+		return nil, fmt.Errorf("查询地址失败: %w", err)
+	}
+	defer rows.Close()
+	
+	var addresses []string
+	for rows.Next() {
+		var address string
+		if err := rows.Scan(&address); err != nil {
+			return nil, fmt.Errorf("扫描地址失败: %w", err)
+		}
+		addresses = append(addresses, address)
+	}
+	
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("遍历地址失败: %w", err)
+	}
+	
+	return addresses, nil
 }

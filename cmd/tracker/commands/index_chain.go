@@ -63,6 +63,7 @@ func init() {
 
 const (
 	indexChainBatchSize     = 200   // 批量保存大小
+	indexChainSaveInterval  = 120 * time.Second // 定期保存间隔（即使未达到批量大小，也定期保存，避免数据丢失）
 	indexChainRetryCount    = 3     // 重试次数
 	indexChainRetryDelay    = 2 * time.Second // 重试延迟
 	indexChainWorkerDelay   = 500 * time.Millisecond // Worker启动延迟（增加到500ms，避免同时启动导致 rate limited）
@@ -290,7 +291,8 @@ func runIndexChain() {
 				// 如果 HyperEVM RPC 失败，尝试 QuickNode RPC（作为备用）
 				if rpcClient != nil {
 					slog.Info("尝试使用 QuickNode RPC 查询地址（备用）", "rpc_url", cfg.Follow.RpcUrl)
-					quickNodeAddresses, quickNodeErr := rpcClient.QueryAllAddressesFromChain(fromBlock, toBlock, slog.Default())
+					// 使用 nil 回调，因为 HyperEVM 已经收集了地址，这里只是作为备用
+					quickNodeAddresses, quickNodeErr := rpcClient.QueryAllAddressesFromChain(fromBlock, toBlock, slog.Default(), nil)
 					if quickNodeErr == nil {
 						// 合并已收集的地址和 QuickNode 返回的地址
 						addressMap := make(map[string]bool)
@@ -330,7 +332,102 @@ func runIndexChain() {
 			}
 		} else if rpcClient != nil {
 			slog.Info("使用 QuickNode RPC 查询地址（仅此选项）", "rpc_url", cfg.Follow.RpcUrl)
-			addresses, chainErr = rpcClient.QueryAllAddressesFromChain(fromBlock, toBlock, slog.Default())
+			
+			// 用于跟踪已保存的地址，避免重复保存
+			savedAddressSet := make(map[string]bool)
+			var savedMutex sync.Mutex
+			
+			// 定义回调函数：每找到新地址就保存，或定时保存所有已找到的地址
+			addressCallback := func(currentAddresses []string, newCount int) {
+				savedMutex.Lock()
+				defer savedMutex.Unlock()
+				
+				// newCount=0 表示定时保存，需要保存所有已找到的地址（包括已保存的）
+				// newCount>0 表示找到了新地址，只保存新地址
+				var addressesToSave []*dao.UserAccount
+				
+				if newCount == 0 {
+					// 定时保存：保存所有已找到的地址（即使之前已保存过，也要更新）
+					slog.Info("定时保存触发", "total_addresses", len(currentAddresses), "reason", "time_interval")
+					addressesToSave = make([]*dao.UserAccount, 0, len(currentAddresses))
+					for _, addr := range currentAddresses {
+						addrLower := strings.ToLower(addr)
+						// 标记为已保存（如果还没有标记）
+						if !savedAddressSet[addrLower] {
+							savedAddressSet[addrLower] = true
+						}
+						addressesToSave = append(addressesToSave, &dao.UserAccount{
+							Address:          addr,
+							TotalEquity:      0,
+							AvailableBalance: 0,
+							UsedMargin:       0,
+							TotalPnl:         0,
+							TotalFee:         0,
+							TradeCount7d:      0,
+							UpdatedAt:        time.Now(),
+							Source:           "Address Query (Timed Save)",
+						})
+					}
+				} else {
+					// 找到新地址：只保存未保存的新地址
+					slog.Info("新地址回调触发", "new_count", newCount, "total_addresses", len(currentAddresses))
+					addressesToSave = make([]*dao.UserAccount, 0, newCount)
+					for _, addr := range currentAddresses {
+						addrLower := strings.ToLower(addr)
+						if !savedAddressSet[addrLower] {
+							savedAddressSet[addrLower] = true
+							addressesToSave = append(addressesToSave, &dao.UserAccount{
+								Address:          addr,
+								TotalEquity:      0,
+								AvailableBalance: 0,
+								UsedMargin:       0,
+								TotalPnl:         0,
+								TotalFee:         0,
+								TradeCount7d:      0,
+								UpdatedAt:        time.Now(),
+								Source:           "Address Query (In Progress)",
+							})
+						}
+					}
+				}
+				
+				// 批量保存（每批10个）
+				if len(addressesToSave) > 0 {
+					const addressBatchSize = 10
+					for i := 0; i < len(addressesToSave); i += addressBatchSize {
+						end := i + addressBatchSize
+						if end > len(addressesToSave) {
+							end = len(addressesToSave)
+						}
+						batch := addressesToSave[i:end]
+						if err := dao.BatchSaveUserAccount(batch); err != nil {
+							slog.Warn("查询过程中批量保存地址失败", 
+								"error", err, 
+								"batch_start", i, 
+								"batch_end", end,
+								"new_count", newCount,
+								"total_to_save", len(addressesToSave))
+						} else {
+							slog.Info("查询过程中批量保存地址成功", 
+								"batch_start", i, 
+								"batch_end", end, 
+								"count", len(batch),
+								"new_count", newCount,
+								"total_saved_in_memory", len(savedAddressSet),
+								"total_found", len(currentAddresses),
+								"save_type", map[bool]string{true: "timed_save", false: "new_addresses"}[newCount == 0])
+						}
+					}
+				} else {
+					// 没有地址需要保存，记录日志
+					slog.Debug("回调函数被调用但没有地址需要保存", 
+						"new_count", newCount,
+						"total_addresses", len(currentAddresses),
+						"saved_in_memory", len(savedAddressSet))
+				}
+			}
+			
+			addresses, chainErr = rpcClient.QueryAllAddressesFromChain(fromBlock, toBlock, slog.Default(), addressCallback)
 			if chainErr == nil {
 				slog.Info("成功通过 QuickNode RPC 获取地址", "count", len(addresses), "source", "QuickNode RPC")
 			}
@@ -357,7 +454,40 @@ func runIndexChain() {
 		return
 	}
 
-	slog.Info("开始通过 Hyperliquid Info API 获取账户数据并保存", "total_addresses", len(addresses))
+	// 地址查询完成后，立即保存所有地址（使用空数据），确保地址被记录
+	// 这样即使后续查询详细数据很慢，至少地址已经被保存了
+	slog.Info("地址查询完成，立即保存地址列表", "total_addresses", len(addresses))
+	addressRecords := make([]*dao.UserAccount, 0, len(addresses))
+	for _, addr := range addresses {
+		addressRecords = append(addressRecords, &dao.UserAccount{
+			Address:          addr,
+			TotalEquity:      0,
+			AvailableBalance: 0,
+			UsedMargin:       0,
+			TotalPnl:         0,
+			TotalFee:         0,
+			TradeCount7d:      0,
+			UpdatedAt:        time.Now(),
+			Source:           "Address Query Only",
+		})
+	}
+	
+	// 批量保存地址（分批保存，避免一次性保存太多）
+	const addressBatchSize = 10
+	for i := 0; i < len(addressRecords); i += addressBatchSize {
+		end := i + addressBatchSize
+		if end > len(addressRecords) {
+			end = len(addressRecords)
+		}
+		batch := addressRecords[i:end]
+		if err := dao.BatchSaveUserAccount(batch); err != nil {
+			slog.Warn("批量保存地址失败", "error", err, "batch_start", i, "batch_end", end)
+		} else {
+			slog.Info("批量保存地址成功", "batch_start", i, "batch_end", end, "count", len(batch))
+		}
+	}
+	
+	slog.Info("地址列表保存完成，开始通过 Hyperliquid Info API 获取账户详细数据", "total_addresses", len(addresses))
 
 	// 创建 Worker Pool 来并发查询账户数据
 	resultCh := make(chan *dao.UserAccount, indexChainBatchSize*2)
@@ -898,44 +1028,66 @@ func queryAccountDataFromRPC(rpcClient *rpc.Client, address string, logger *slog
 }
 
 // saveIndexResults 批量保存索引结果
+// 支持两种保存策略：
+// 1. 达到批量大小时立即保存（indexChainBatchSize）
+// 2. 定期保存（indexChainSaveInterval），即使未达到批量大小也保存，避免数据丢失
 func saveIndexResults(resultCh <-chan *dao.UserAccount, total int) {
 	var results []*dao.UserAccount
 	var savedCount int
 
-	for result := range resultCh {
-		// 所有记录都保存，不跳过任何数据
-		// 所有记录都保存，不跳过任何数据
-		results = append(results, result)
+	// 创建定时器，用于定期保存
+	ticker := time.NewTicker(indexChainSaveInterval)
+	defer ticker.Stop()
 
-		// 批量保存
-		if len(results) >= indexChainBatchSize {
+	// 定期保存函数
+	saveBatch := func(reason string) {
+		if len(results) > 0 {
 			err := dao.BatchSaveUserAccount(results)
 			if err != nil {
-				slog.Error("批量保存失败", "error", err, "count", len(results))
+				slog.Error("批量保存失败", "error", err, "count", len(results), "reason", reason)
 			} else {
 				savedCount += len(results)
 				slog.Info("批量保存成功",
 					"batch_size", len(results),
 					"total_saved", savedCount,
-					"progress", fmt.Sprintf("%.2f%%", float64(savedCount)/float64(total)*100))
+					"progress", fmt.Sprintf("%.2f%%", float64(savedCount)/float64(total)*100),
+					"reason", reason)
+				results = results[:0]
 			}
-			results = results[:0]
 		}
 	}
 
-	// 保存剩余数据
-	if len(results) > 0 {
-		err := dao.BatchSaveUserAccount(results)
-		if err != nil {
-			slog.Error("批量保存剩余数据失败", "error", err, "count", len(results))
-		} else {
-			savedCount += len(results)
-			slog.Info("批量保存剩余数据成功",
-				"batch_size", len(results),
-				"total_saved", savedCount)
+	for {
+		select {
+		case result, ok := <-resultCh:
+			if !ok {
+				// Channel 已关闭，保存剩余数据
+				saveBatch("channel_closed")
+				slog.Info("索引数据保存完成",
+					"total_saved", savedCount)
+				return
+			}
+
+			// 所有记录都保存，不跳过任何数据
+			results = append(results, result)
+
+			// 达到批量大小时立即保存
+			if len(results) >= indexChainBatchSize {
+				saveBatch("batch_size_reached")
+			}
+
+		case <-ticker.C:
+			// 定期保存（即使未达到批量大小）
+			// ticker 已经按照 indexChainSaveInterval 间隔触发，只要有数据就保存
+			if len(results) > 0 {
+				saveBatch("time_interval")
+			} else {
+				// 调试日志：ticker 触发但没有数据
+				slog.Debug("定期保存检查：ticker 触发但暂无数据",
+					"results_count", len(results),
+					"total_expected", total,
+					"saved_count", savedCount)
+			}
 		}
 	}
-
-	slog.Info("索引数据保存完成",
-		"total_saved", savedCount)
 }

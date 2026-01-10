@@ -52,10 +52,7 @@ collect:
 follow:
   # 禁用 HyperEVM RPC，只使用 QuickNode RPC（设置为 "disable"）
   hyperEvmRpcUrl: "disable"
-  # rpcUrl: "https://empty-soft-uranium.hype-mainnet.quiknode.pro/ccdb87782e026f2204cc4a0ba1a0aea7c730e50a"
   rpcUrl: "https://blissful-wiser-flower.hype-mainnet.quiknode.pro/bf764c7e480d0ddff5c8960cdf48b58afa14feb5/evm"
-# https://empty-soft-uranium.hype-mainnet.quiknode.pro/ccdb87782e026f2204cc4a0ba1a0aea7c730e50a/evm
-# https://empty-soft-uranium.hype-mainnet.quiknode.pro/047456d60a8abf922becd998583ed0c815433133/evm 
   addressSets: []          # 地址集合ID列表
   excludeCoins: []         # 排除的币种
   followRatio: 1           # 跟单比例

@@ -711,11 +711,18 @@ func (c *Client) QueryUserFillsFromChain(userAddress string, fromBlock, toBlock 
 	return allFills, nil
 }
 
+// AddressCallback 地址回调函数类型
+// 当找到新地址时，会调用此函数
+// addresses: 当前已找到的所有地址
+// newCount: 本次新增的地址数量
+type AddressCallback func(addresses []string, newCount int)
+
 // QueryAllAddressesFromChain 从链上查询所有唯一的用户地址
 // 通过查询所有 Fill 事件，提取唯一的用户地址
 // fromBlock: 起始区块号，如果为 nil 则从 0 开始
 // toBlock: 结束区块号，如果为 nil 则查询到最新区块
-func (c *Client) QueryAllAddressesFromChain(fromBlock, toBlock *big.Int, logger *slog.Logger) ([]string, error) {
+// callback: 可选的回调函数，每找到一定数量的地址或每过一定时间就调用一次
+func (c *Client) QueryAllAddressesFromChain(fromBlock, toBlock *big.Int, logger *slog.Logger, callback AddressCallback) ([]string, error) {
 	if c == nil {
 		return nil, fmt.Errorf("RPC client is nil")
 	}
@@ -772,6 +779,10 @@ func (c *Client) QueryAllAddressesFromChain(fromBlock, toBlock *big.Int, logger 
 	// 这样可以先获取最新的地址，更快看到结果
 	currentTo := new(big.Int).Set(endBlock)
 	batchCount := 0
+	
+	// 用于定时保存：每300秒保存一次已找到的地址（即使没有新地址）
+	lastSaveTime := time.Now()
+	const saveInterval = 300 * time.Second
 	
 	for currentTo.Cmp(startBlock) >= 0 {
 		// 计算当前批次的起始区块（最多 4 个区块，QuickNode 免费计划限制）
@@ -919,14 +930,15 @@ func (c *Client) QueryAllAddressesFromChain(fromBlock, toBlock *big.Int, logger 
 				"contract_address", contractAddress)
 		}
 
-		// 从事件日志中提取用户地址
+		// 从事件日志中提取用户地址和  地址
 		// 注意：与 HyperEVM RPC 保持一致，不验证事件签名，直接从所有日志中提取地址
 		// 这样可以确保即使某些区块没有 Fill 事件，也能从其他事件中提取地址
 		batchAddressCount := 0
+		fillEventCount := 0
 		for _, log := range logs {
+			// 提取 Topics[1] 中的地址（通常是用户地址）
 			if len(log.Topics) >= 2 {
 				// Topics[1] 是用户地址（32字节格式，需要提取后20字节）
-				// 不验证事件签名，直接从所有日志中提取地址（与 HyperEVM RPC 保持一致）
 				userTopic := log.Topics[1]
 				// 移除 0x 前缀
 				userTopic = strings.TrimPrefix(userTopic, "0x")
@@ -937,7 +949,7 @@ func (c *Client) QueryAllAddressesFromChain(fromBlock, toBlock *big.Int, logger 
 					if !addressSet[addressLower] {
 						addressSet[addressLower] = true
 						batchAddressCount++
-						logger.Info("提取到新地址",
+						logger.Info("提取到新地址（Topics[1]）",
 							"batch", batchCount,
 							"address", address,
 							"topic", log.Topics[1],
@@ -945,6 +957,56 @@ func (c *Client) QueryAllAddressesFromChain(fromBlock, toBlock *big.Int, logger 
 					}
 				}
 			}
+			
+			// 对 Fill 事件的 Data 字段进行 ABI 解码，提取  地址
+			// 尝试处理所有有 Data 字段的日志，不仅限于 Fill 事件签名匹配的
+			// 因为可能事件签名不匹配，但数据格式相同
+			if len(log.Topics) > 0 && log.Data != "" && len(log.Data) > 0 {
+				// 检查是否是 Fill 事件
+				isFillEvent := log.Topics[0] == fillEventSig
+				
+				// 尝试解码 Data 字段（无论事件签名是否匹配）
+				fillData, err := DecodeFillEvent(log.Data)
+				if err == nil {
+					fillEventCount++
+					// 记录解码结果，用于调试
+					if fillData.Counterparty != "" {
+						// 成功解码，提取 地址
+						counterpartyAddress := strings.ToLower(fillData.Counterparty)
+						if !addressSet[counterpartyAddress] {
+							addressSet[counterpartyAddress] = true
+							batchAddressCount++
+							
+						}
+					} else {
+						// 不再记录未找到 地址的调试信息
+					}
+				} else if isFillEvent {
+					// 只有 Fill 事件签名匹配时才记录解码失败（避免日志过多）
+					fillEventCount++
+					if fillEventCount <= 10 || fillEventCount%100 == 0 {
+						dataPreview := log.Data
+						if len(dataPreview) > 200 {
+							dataPreview = dataPreview[:200] + "..."
+						}
+						logger.Info("Fill 事件 Data 解码失败",
+							"batch", batchCount,
+							"fill_event_index", fillEventCount,
+							"error", err,
+							"event_sig", log.Topics[0],
+							"data_length", len(log.Data),
+							"data_preview", dataPreview)
+					}
+				}
+			}
+		}
+		
+		// 记录本批次 Fill 事件的数量
+		if fillEventCount > 0 {
+			logger.Info("本批次 Fill 事件统计",
+				"batch", batchCount,
+				"fill_events", fillEventCount,
+				"total_logs", len(logs))
 		}
 
 		// 记录本批次提取到的地址数量
@@ -955,6 +1017,35 @@ func (c *Client) QueryAllAddressesFromChain(fromBlock, toBlock *big.Int, logger 
 				"total_unique_addresses", len(addressSet),
 				"from_block", currentFrom.String(),
 				"to_block", currentTo.String())
+			
+			// 如果提供了回调函数，且找到了新地址，调用回调函数
+			if callback != nil && batchAddressCount > 0 {
+				// 转换为切片
+				currentAddresses := make([]string, 0, len(addressSet))
+				for addr := range addressSet {
+					currentAddresses = append(currentAddresses, addr)
+				}
+				callback(currentAddresses, batchAddressCount)
+				lastSaveTime = time.Now() // 更新保存时间
+			}
+		}
+		
+		// 定时保存：即使没有找到新地址，也每300秒保存一次已找到的地址
+		if callback != nil && len(addressSet) > 0 {
+			if time.Since(lastSaveTime) >= saveInterval {
+				// 转换为切片
+				currentAddresses := make([]string, 0, len(addressSet))
+				for addr := range addressSet {
+					currentAddresses = append(currentAddresses, addr)
+				}
+				logger.Info("触发定时保存", 
+					"batch", batchCount,
+					"total_addresses", len(addressSet),
+					"time_since_last_save", time.Since(lastSaveTime),
+					"save_interval", saveInterval)
+				callback(currentAddresses, 0) // newCount=0 表示定时保存，不是新找到的地址
+				lastSaveTime = time.Now()
+			}
 		}
 
 		// 移动到下一个批次（往前查询）
@@ -1263,9 +1354,10 @@ func (c *Client) QueryAllAddressesFromHyperEVM(fromBlock, toBlock *big.Int, logg
 			"from_block", currentFrom.String(),
 			"to_block", currentTo.String())
 
-		// 从事件日志中提取用户地址
+		// 从事件日志中提取用户地址和 地址
 		// Fill 事件的 Topics[1] 是用户地址（indexed）
 		batchAddressCount := 0
+		fillEventCount := 0
 		for _, log := range logs {
 			// 打印每个日志的 Topic[0]（事件签名）
 			if len(log.Topics) > 0 {
@@ -1274,6 +1366,8 @@ func (c *Client) QueryAllAddressesFromHyperEVM(fromBlock, toBlock *big.Int, logg
 					"topic0", log.Topics[0],
 					"topics_count", len(log.Topics))
 			}
+			
+			// 提取 Topics[1] 中的地址（通常是用户地址）
 			if len(log.Topics) >= 2 {
 				// Topics[1] 是用户地址（32字节格式，需要提取后20字节）
 				userTopic := log.Topics[1]
@@ -1286,13 +1380,62 @@ func (c *Client) QueryAllAddressesFromHyperEVM(fromBlock, toBlock *big.Int, logg
 					if !addressSet[addressLower] {
 						addressSet[addressLower] = true
 						batchAddressCount++
-						logger.Debug("提取到新地址",
+						logger.Debug("提取到新地址（Topics[1]）",
 							"batch", batchCount,
 							"address", address,
 							"topic", log.Topics[1])
 					}
 				}
 			}
+			
+			// 对 Fill 事件的 Data 字段进行 ABI 解码，提取  地址
+			// 尝试处理所有有 Data 字段的日志，不仅限于 Fill 事件签名匹配的
+			// 因为可能事件签名不匹配，但数据格式相同
+			if len(log.Topics) > 0 && log.Data != "" && len(log.Data) > 0 {
+				// 检查是否是 Fill 事件
+				isFillEvent := log.Topics[0] == fillEventSig
+				
+				// 尝试解码 Data 字段（无论事件签名是否匹配）
+				fillData, err := DecodeFillEvent(log.Data)
+				if err == nil {
+					fillEventCount++
+					// 记录解码结果，用于调试
+					if fillData.Counterparty != "" {
+						// 成功解码，提取 地址
+						counterpartyAddress := strings.ToLower(fillData.Counterparty)
+						if !addressSet[counterpartyAddress] {
+							addressSet[counterpartyAddress] = true
+							batchAddressCount++
+						}
+					} else {
+						// 不再记录未找到 地址的调试信息
+					}
+				} else if isFillEvent {
+					// 只有 Fill 事件签名匹配时才记录解码失败（避免日志过多）
+					fillEventCount++
+					if fillEventCount <= 10 || fillEventCount%100 == 0 {
+						dataPreview := log.Data
+						if len(dataPreview) > 200 {
+							dataPreview = dataPreview[:200] + "..."
+						}
+						logger.Info("Fill 事件 Data 解码失败",
+							"batch", batchCount,
+							"fill_event_index", fillEventCount,
+							"error", err,
+							"event_sig", log.Topics[0],
+							"data_length", len(log.Data),
+							"data_preview", dataPreview)
+					}
+				}
+			}
+		}
+		
+		// 记录本批次 Fill 事件的数量
+		if fillEventCount > 0 {
+			logger.Info("本批次 Fill 事件统计",
+				"batch", batchCount,
+				"fill_events", fillEventCount,
+				"total_logs", len(logs))
 		}
 
 		// 记录本批次提取到的地址数量

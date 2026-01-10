@@ -71,6 +71,17 @@ func (d *ABIDecoder) readInt256() (*big.Int, error) {
 	return value, nil
 }
 
+// readAddress 读取地址（20字节，32字节格式，左补0）
+func (d *ABIDecoder) readAddress() (string, error) {
+	bytes, err := d.readBytes(32)
+	if err != nil {
+		return "", err
+	}
+	// 地址是后20字节（40个十六进制字符）
+	addressBytes := bytes[12:32] // 跳过前12字节，取后20字节
+	return "0x" + hex.EncodeToString(addressBytes), nil
+}
+
 // readStringAtOffset 在指定位置读取 string（动态类型）
 // offset 是相对于数据开始位置的字节偏移
 func (d *ABIDecoder) readStringAtOffset(offset int64) (string, error) {
@@ -173,17 +184,78 @@ func DecodeFillEvent(logData string) (*FillEventData, error) {
 	}
 	data.Coin = coin
 	
+	// 8. 尝试读取  地址（如果 Data 字段中包含）
+	// 注意：根据 Fill 事件定义，Data 字段只包含：coin, price, size, closedPnl, fee, time
+	//   地址可能不在 Fill 事件的 Data 字段中
+	// 但为了完整性，我们尝试在读取完所有已知字段后，检查是否还有剩余数据
+	// 如果  地址在 Data 字段中，它可能在 coin 字符串之后的位置
+	
+	// 记录解码后的位置和数据长度，用于调试
+	remainingData := len(decoder.data) - decoder.pos
+	
+	// 如果还有剩余数据，尝试读取  地址
+	//   地址可能在 coin 字符串之后
+	if remainingData >= 64 {
+		// 尝试读取一个地址（32字节）
+		counterparty, err := decoder.readAddress()
+		if err == nil && counterparty != "" && counterparty != "0x0000000000000000000000000000000000000000" {
+			data.Counterparty = counterparty
+		}
+	}
+	
+	// 如果仍然没有找到  地址，尝试从 coin 字符串之后的位置查找
+	// 重新创建解码器，精确定位到 coin 字符串之后
+	if data.Counterparty == "" {
+		decoder2, err := NewABIDecoder(logData)
+		if err == nil {
+			// 1. 读取 coin_offset
+			coinOffset2, err := decoder2.readUint256()
+			if err == nil {
+				coinOffsetValue := coinOffset2.Int64()
+				
+				// 2. 跳过 price, size, closedPnl, fee, time (5 * 32 = 160 字节 = 320 个十六进制字符)
+				decoder2.pos += 320
+				
+				// 3. 跳转到 coin 字符串位置
+				if coinOffsetValue > 0 && int(coinOffsetValue)*2 < len(decoder2.data) {
+					decoder2.pos = int(coinOffsetValue) * 2
+					
+					// 4. 读取 coin 字符串长度
+					coinLengthBytes, err := decoder2.readBytes(32)
+					if err == nil {
+						coinLength := new(big.Int).SetBytes(coinLengthBytes).Int64()
+						
+						// 5. 计算 coin 字符串占用的字节数（对齐到32字节）
+						coinPaddedLength := int((coinLength + 31) / 32 * 32)
+						
+						// 6. 跳过 coin 字符串（长度字段 + 数据）
+						decoder2.pos += (32 + coinPaddedLength) * 2
+						
+						// 7. 尝试读取  地址（在 coin 字符串之后）
+						if decoder2.pos+64 <= len(decoder2.data) {
+							counterparty, err := decoder2.readAddress()
+							if err == nil && counterparty != "" && counterparty != "0x0000000000000000000000000000000000000000" {
+								data.Counterparty = counterparty
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
 	return data, nil
 }
 
 // FillEventData Fill 事件数据
 type FillEventData struct {
-	Coin      string  // 币种
-	Price     float64 // 价格
-	Size      float64 // 数量
-	ClosedPnl float64 // 已实现盈亏
-	Fee       float64 // 手续费
-	Time      int64   // 时间戳（毫秒）
+	Coin         string  // 币种
+	Price        float64 // 价格
+	Size         float64 // 数量
+	ClosedPnl    float64 // 已实现盈亏
+	Fee          float64 // 手续费
+	Time         int64   // 时间戳（毫秒）
+	Counterparty string  //   地址（如果存在，从 Data 字段解码）
 }
 
 // bigIntToFloat64 将 big.Int 转换为 float64，考虑小数位
