@@ -1077,7 +1077,7 @@ func (c *Client) QueryAllAddressesFromChain(fromBlock, toBlock *big.Int, logger 
 // fromBlock: 起始区块号，如果为 nil 则从 0 开始
 // toBlock: 结束区块号，如果为 nil 则查询到最新区块
 // 注意：HyperEVM RPC 可能没有区块范围限制，可以查询更大的区块范围
-func (c *Client) QueryAllAddressesFromHyperEVM(fromBlock, toBlock *big.Int, logger *slog.Logger) ([]string, error) {
+func (c *Client) QueryAllAddressesFromHyperEVM(fromBlock, toBlock *big.Int, logger *slog.Logger, callback AddressCallback) ([]string, error) {
 	if c == nil {
 		return nil, fmt.Errorf("RPC client is nil")
 	}
@@ -1115,6 +1115,10 @@ func (c *Client) QueryAllAddressesFromHyperEVM(fromBlock, toBlock *big.Int, logg
 	// 使用 map 存储唯一的地址
 	addressSet := make(map[string]bool)
 	
+	// 用于定时保存：每300秒保存一次已找到的地址（即使没有新地址）
+	lastSaveTime := time.Now()
+	const saveInterval = 300 * time.Second
+	
 	// 构建查询参数（只查询 Fill 事件，不指定用户地址）
 	fillEventSig := GetFillEventSignature()
 	
@@ -1138,15 +1142,16 @@ func (c *Client) QueryAllAddressesFromHyperEVM(fromBlock, toBlock *big.Int, logg
 		"latest_block", testBlock.String(),
 		"rpc_url", c.rpcURL)
 
-	// 分批查询：每次查询 maxBlockRange 个区块
-	currentFrom := new(big.Int).Set(startBlock)
+	// 分批查询：从最新区块开始往前查询（每次查询 maxBlockRange 个区块）
+	// 这样可以先获取最新的地址，更快看到结果
+	currentTo := new(big.Int).Set(endBlock)
 	batchCount := 0
 	
-	for currentFrom.Cmp(endBlock) <= 0 { // 确保包含 endBlock
-		// 计算当前批次的结束区块（最多 maxBlockRange 个区块）
-		currentTo := new(big.Int).Add(currentFrom, big.NewInt(maxBlockRange-1))
-		if currentTo.Cmp(endBlock) > 0 {
-			currentTo.Set(endBlock)
+	for currentTo.Cmp(startBlock) >= 0 { // 从最新区块往前查询到起始区块
+		// 计算当前批次的起始区块（最多 maxBlockRange 个区块）
+		currentFrom := new(big.Int).Sub(currentTo, big.NewInt(maxBlockRange-1))
+		if currentFrom.Cmp(startBlock) < 0 {
+			currentFrom.Set(startBlock)
 		}
 		
 		// 确保 currentTo >= currentFrom
@@ -1219,8 +1224,8 @@ func (c *Client) QueryAllAddressesFromHyperEVM(fromBlock, toBlock *big.Int, logg
 						"tip", "将回退到 QuickNode RPC 继续查询")
 					return addresses, fmt.Errorf("HyperEVM RPC 速率限制: %w\n提示：程序将自动回退到 QuickNode RPC", err)
 				}
-				// 继续尝试，但增加延迟
-				currentFrom.Add(currentTo, big.NewInt(1))
+				// 继续尝试，但增加延迟（往前查询）
+				currentTo.Sub(currentFrom, big.NewInt(1))
 				time.Sleep(5 * time.Second) // rate limited 时增加延迟到 5 秒，确保不会再次触发
 				continue
 			}
@@ -1249,8 +1254,8 @@ func (c *Client) QueryAllAddressesFromHyperEVM(fromBlock, toBlock *big.Int, logg
 						"tip", "将回退到 QuickNode RPC 继续查询")
 					return addresses, fmt.Errorf("HyperEVM RPC 不支持当前的查询方式: %w\n提示：程序将自动回退到 QuickNode RPC", err)
 				}
-				// 继续尝试，但记录警告
-				currentFrom.Add(currentTo, big.NewInt(1))
+				// 继续尝试，但记录警告（往前查询）
+				currentTo.Sub(currentFrom, big.NewInt(1))
 				time.Sleep(200 * time.Millisecond)
 				continue
 			} else if strings.Contains(err.Error(), "limited to a") || 
@@ -1264,10 +1269,11 @@ func (c *Client) QueryAllAddressesFromHyperEVM(fromBlock, toBlock *big.Int, logg
 					"original_range", maxBlockRange)
 				
 				// 逐步缩小范围：先尝试 50 个区块（Hyperliquid RPC 最大限制）
+				// 从当前 currentTo 往前计算 currentFrom
 				smallerRange := int64(50)
-				currentTo = new(big.Int).Add(currentFrom, big.NewInt(smallerRange-1))
-				if currentTo.Cmp(endBlock) > 0 {
-					currentTo.Set(endBlock)
+				currentFrom = new(big.Int).Sub(currentTo, big.NewInt(smallerRange-1))
+				if currentFrom.Cmp(startBlock) < 0 {
+					currentFrom.Set(startBlock)
 				}
 				toBlockHex = "0x" + currentTo.Text(16)
 				if currentTo.Sign() == 0 {
@@ -1288,10 +1294,11 @@ func (c *Client) QueryAllAddressesFromHyperEVM(fromBlock, toBlock *big.Int, logg
 						"original_range", maxBlockRange)
 					
 					// 超时说明范围太大，尝试缩小到 50 个区块（Hyperliquid RPC 最大限制）
+					// 从当前 currentTo 往前计算 currentFrom
 					smallerRange := int64(50)
-					currentTo = new(big.Int).Add(currentFrom, big.NewInt(smallerRange-1))
-					if currentTo.Cmp(endBlock) > 0 {
-						currentTo.Set(endBlock)
+					currentFrom = new(big.Int).Sub(currentTo, big.NewInt(smallerRange-1))
+					if currentFrom.Cmp(startBlock) < 0 {
+						currentFrom.Set(startBlock)
 					}
 					toBlockHex = "0x" + currentTo.Text(16)
 					if currentTo.Sign() == 0 {
@@ -1305,9 +1312,9 @@ func (c *Client) QueryAllAddressesFromHyperEVM(fromBlock, toBlock *big.Int, logg
 					   strings.Contains(err.Error(), "Gateway Timeout")) {
 						logger.Debug("50个区块仍然超时，尝试25个区块")
 						smallerRange = 25
-						currentTo = new(big.Int).Add(currentFrom, big.NewInt(smallerRange-1))
-						if currentTo.Cmp(endBlock) > 0 {
-							currentTo.Set(endBlock)
+						currentFrom = new(big.Int).Sub(currentTo, big.NewInt(smallerRange-1))
+						if currentFrom.Cmp(startBlock) < 0 {
+							currentFrom.Set(startBlock)
 						}
 						toBlockHex = "0x" + currentTo.Text(16)
 						if currentTo.Sign() == 0 {
@@ -1327,8 +1334,8 @@ func (c *Client) QueryAllAddressesFromHyperEVM(fromBlock, toBlock *big.Int, logg
 						"to_block", currentTo.String())
 					// 增加延迟，避免请求过快
 					time.Sleep(5 * time.Second) // rate limited 时增加延迟到 5 秒，确保不会再次触发
-					// 继续下一个批次
-					currentFrom.Add(currentTo, big.NewInt(1))
+					// 继续下一个批次（往前查询）
+					currentTo.Sub(currentFrom, big.NewInt(1))
 					continue
 				}
 				
@@ -1339,8 +1346,8 @@ func (c *Client) QueryAllAddressesFromHyperEVM(fromBlock, toBlock *big.Int, logg
 						"from_block", currentFrom.String(),
 						"to_block", currentTo.String(),
 						"rpc_url", c.rpcURL)
-					// 继续下一个批次，不中断整个查询
-					currentFrom.Add(currentTo, big.NewInt(1))
+					// 继续下一个批次，不中断整个查询（往前查询）
+					currentTo.Sub(currentFrom, big.NewInt(1))
 					time.Sleep(200 * time.Millisecond) // 失败也延迟
 					continue
 				}
@@ -1446,10 +1453,39 @@ func (c *Client) QueryAllAddressesFromHyperEVM(fromBlock, toBlock *big.Int, logg
 				"total_unique_addresses", len(addressSet),
 				"from_block", currentFrom.String(),
 				"to_block", currentTo.String())
+			
+			// 如果提供了回调函数，且找到了新地址，调用回调函数
+			if callback != nil && batchAddressCount > 0 {
+				// 转换为切片
+				currentAddresses := make([]string, 0, len(addressSet))
+				for addr := range addressSet {
+					currentAddresses = append(currentAddresses, addr)
+				}
+				callback(currentAddresses, batchAddressCount)
+				lastSaveTime = time.Now() // 更新保存时间
+			}
+		}
+		
+		// 定时保存：即使没有找到新地址，也每300秒保存一次已找到的地址
+		if callback != nil && len(addressSet) > 0 {
+			if time.Since(lastSaveTime) >= saveInterval {
+				// 转换为切片
+				currentAddresses := make([]string, 0, len(addressSet))
+				for addr := range addressSet {
+					currentAddresses = append(currentAddresses, addr)
+				}
+				logger.Info("触发定时保存", 
+					"batch", batchCount,
+					"total_addresses", len(addressSet),
+					"time_since_last_save", time.Since(lastSaveTime),
+					"save_interval", saveInterval)
+				callback(currentAddresses, 0) // newCount=0 表示定时保存，不是新找到的地址
+				lastSaveTime = time.Now()
+			}
 		}
 
-		// 移动到下一个批次
-		currentFrom.Add(currentTo, big.NewInt(1))
+		// 移动到下一个批次（往前查询）
+		currentTo.Sub(currentFrom, big.NewInt(1))
 
 		// 添加延迟，避免请求过快（HyperEVM RPC 有严格的速率限制，增加延迟以避免 rate limited 错误）
 		time.Sleep(2 * time.Second) // 增加到 2 秒，确保不会触发 rate limited

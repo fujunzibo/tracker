@@ -262,7 +262,7 @@ func runQueryAccount() {
 		var chainErr error
 		if hyperEvmClient != nil {
 			slog.Info("使用 HyperEVM RPC 查询地址", "rpc_url", hyperEvmRpcUrl)
-			addresses, chainErr = hyperEvmClient.QueryAllAddressesFromHyperEVM(fromBlock, toBlock, slog.Default())
+			addresses, chainErr = hyperEvmClient.QueryAllAddressesFromHyperEVM(fromBlock, toBlock, slog.Default(), nil)
 			if chainErr != nil {
 				slog.Warn("通过 HyperEVM RPC 获取地址失败，尝试使用 QuickNode RPC", "error", chainErr)
 				// 如果 HyperEVM RPC 失败，回退到 QuickNode RPC

@@ -247,10 +247,11 @@ func runIndexChain() {
 				}
 				toBlock = latestBlock
 			} else {
-				// 如果没有指定起始区块和区块范围，默认查询全部历史（从区块0开始）
+				// 如果没有指定起始区块和区块范围，默认查询全部历史（从最新区块往前到区块0）
+				// 从最新区块开始无限查询下去，直到区块0
 				if fromBlock == nil {
 					fromBlock = big.NewInt(0)
-					slog.Info("未指定起始区块和区块范围，查询全部历史",
+					slog.Info("未指定起始区块和区块范围，将从最新区块开始无限查询（往前到区块0）",
 						"from_block", fromBlock.String(),
 						"to_block", latestBlock.String(),
 						"total_blocks", latestBlock.String(),
@@ -263,7 +264,7 @@ func runIndexChain() {
 		// 如果指定了结束区块但没有指定起始区块，默认从区块0开始查询全部历史
 		if indexChainToBlock > 0 && fromBlock == nil {
 			fromBlock = big.NewInt(0)
-			slog.Info("指定了结束区块但未指定起始区块，从区块0开始查询全部历史",
+			slog.Info("指定了结束区块但未指定起始区块，将从区块0开始查询全部历史",
 				"from_block", fromBlock.String(),
 				"to_block", toBlock.String(),
 				"tip", "如需限制查询范围，请使用 --block-range 参数")
@@ -274,7 +275,81 @@ func runIndexChain() {
 		var collectedAddresses []string // 保存已收集到的地址
 		if hyperEvmClient != nil {
 			slog.Info("使用 HyperEVM RPC 查询地址（优先）", "rpc_url", hyperEvmRpcUrl)
-			addresses, chainErr = hyperEvmClient.QueryAllAddressesFromHyperEVM(fromBlock, toBlock, slog.Default())
+			
+			savedAddressSet := make(map[string]bool)
+			var savedMutex sync.Mutex
+
+			addressCallback := func(currentAddresses []string, newCount int) {
+				savedMutex.Lock()
+				defer savedMutex.Unlock()
+
+				var addressesToSave []*dao.UserAccount
+
+				if newCount == 0 { // Timed save
+					slog.Info("定时保存触发", "total_addresses", len(currentAddresses), "reason", "time_interval")
+					addressesToSave = make([]*dao.UserAccount, 0, len(currentAddresses))
+					for _, addr := range currentAddresses {
+						addrLower := strings.ToLower(addr)
+						if !savedAddressSet[addrLower] {
+							savedAddressSet[addrLower] = true
+						}
+						addressesToSave = append(addressesToSave, &dao.UserAccount{
+							Address:   addr,
+							UpdatedAt: time.Now(),
+							Source:    "Address Query (Timed Save)",
+						})
+					}
+				} else { // New addresses found
+					slog.Info("新地址回调触发", "new_count", newCount, "total_addresses", len(currentAddresses))
+					addressesToSave = make([]*dao.UserAccount, 0, newCount)
+					for _, addr := range currentAddresses {
+						addrLower := strings.ToLower(addr)
+						if !savedAddressSet[addrLower] {
+							savedAddressSet[addrLower] = true
+							addressesToSave = append(addressesToSave, &dao.UserAccount{
+								Address:   addr,
+								UpdatedAt: time.Now(),
+								Source:    "Address Query (In Progress)",
+							})
+						}
+					}
+				}
+
+				if len(addressesToSave) > 0 {
+					const addressBatchSize = 10
+					for i := 0; i < len(addressesToSave); i += addressBatchSize {
+						end := i + addressBatchSize
+						if end > len(addressesToSave) {
+							end = len(addressesToSave)
+						}
+						batch := addressesToSave[i:end]
+						if err := dao.BatchSaveUserAccount(batch); err != nil {
+							slog.Warn("查询过程中批量保存地址失败",
+								"error", err,
+								"batch_start", i,
+								"batch_end", end,
+								"new_count", newCount,
+								"total_to_save", len(addressesToSave))
+						} else {
+							slog.Info("查询过程中批量保存地址成功",
+								"batch_start", i,
+								"batch_end", end,
+								"count", len(batch),
+								"new_count", newCount,
+								"total_saved_in_memory", len(savedAddressSet),
+								"total_found", len(currentAddresses),
+								"save_type", map[bool]string{true: "timed_save", false: "new_addresses"}[newCount == 0])
+						}
+					}
+				} else {
+					slog.Debug("回调函数被调用但没有地址需要保存",
+						"new_count", newCount,
+						"total_addresses", len(currentAddresses),
+						"saved_in_memory", len(savedAddressSet))
+				}
+			}
+			
+			addresses, chainErr = hyperEvmClient.QueryAllAddressesFromHyperEVM(fromBlock, toBlock, slog.Default(), addressCallback)
 			if chainErr == nil {
 				slog.Info("成功通过 HyperEVM RPC 获取地址", "count", len(addresses), "source", "HyperEVM RPC")
 			} else {
