@@ -68,11 +68,10 @@ type RPCError struct {
 // getGlobalRPCRateLimiter 获取全局 RPC 速率限制器
 func getGlobalRPCRateLimiter() *utils.RateLimiter {
 	rpcRateLimiterOnce.Do(func() {
-		// QuickNode 免费计划限制：15 请求/秒
-		// 考虑到可能有多个进程同时运行，进一步降低到 8 请求/秒（留更多余量）
-		// 如果有 4 个进程，每个进程 8 请求/秒，总共 32 请求/秒，仍然可能超过限制
-		// 但通过速率限制器，可以平滑请求分布
-		globalRPCRateLimiter = utils.NewRateLimiter(80) // 每10秒80个请求 = 8请求/秒
+		// 在安全范围内提高速度
+		// 每10秒50个请求 = 5请求/秒（在限制范围内，留有余量）
+		// 如果遇到速率限制，会自动退避重试
+		globalRPCRateLimiter = utils.NewRateLimiter(50) // 每10秒50个请求 = 5请求/秒
 	})
 	return globalRPCRateLimiter
 }
